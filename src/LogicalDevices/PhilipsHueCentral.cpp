@@ -810,7 +810,7 @@ PVariable PhilipsHueCentral::searchDevices(int32_t clientID)
 			if(pos > 0) swversion = swversion.substr(0, pos);
 			BaseLib::HelperFunctions::stringReplace(swversion, ".", "");
 			if(swversion.size() > 4) swversion = swversion.substr(0, 4);
-			LogicalDeviceType deviceType(BaseLib::Systems::DeviceFamilies::PhilipsHue, (uint32_t)type);
+			LogicalDeviceType deviceType(5, (uint32_t)type);
 
 			std::string serialNumber = "HUE";
 			std::string addressString = std::to_string((*i)->senderAddress());
