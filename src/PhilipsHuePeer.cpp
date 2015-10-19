@@ -684,7 +684,7 @@ PVariable PhilipsHuePeer::getParamsetDescription(int32_t clientID, int32_t chann
 		Functions::iterator functionIterator = _rpcDevice->functions.find(channel);
 		if(functionIterator == _rpcDevice->functions.end()) return Variable::createError(-2, "Unknown channel");
 		PParameterGroup parameterGroup = functionIterator->second->getParameterGroup(type);
-		if(!parameterGroup || parameterGroup->parameters.empty()) return Variable::createError(-3, "Unknown parameter set");
+		if(!parameterGroup) return Variable::createError(-3, "Unknown parameter set");
 
 		return Peer::getParamsetDescription(clientID, parameterGroup);
 	}
@@ -713,7 +713,7 @@ PVariable PhilipsHuePeer::putParamset(int32_t clientID, int32_t channel, Paramet
 		Functions::iterator functionIterator = _rpcDevice->functions.find(channel);
 		if(functionIterator == _rpcDevice->functions.end()) return Variable::createError(-2, "Unknown channel");
 		PParameterGroup parameterGroup = functionIterator->second->getParameterGroup(type);
-		if(!parameterGroup || parameterGroup->parameters.empty()) return Variable::createError(-3, "Unknown parameter set");
+		if(!parameterGroup) return Variable::createError(-3, "Unknown parameter set");
 		if(variables->structValue->empty()) return PVariable(new Variable(VariableType::tVoid));
 
 		if(type == ParameterGroup::Type::Enum::variables)
@@ -755,7 +755,7 @@ PVariable PhilipsHuePeer::getParamset(int32_t clientID, int32_t channel, Paramet
 		Functions::iterator functionIterator = _rpcDevice->functions.find(channel);
 		if(functionIterator == _rpcDevice->functions.end()) return Variable::createError(-2, "Unknown channel");
 		PParameterGroup parameterGroup = functionIterator->second->getParameterGroup(type);
-		if(!parameterGroup || parameterGroup->parameters.empty()) return Variable::createError(-3, "Unknown parameter set");
+		if(!parameterGroup) return Variable::createError(-3, "Unknown parameter set");
 		PVariable variables(new Variable(VariableType::tStruct));
 
 		for(Parameters::iterator i = parameterGroup->parameters.begin(); i != parameterGroup->parameters.end(); ++i)
