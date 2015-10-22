@@ -1,191 +1,554 @@
-<?xml version="1.0"?>
-<device version="1">
-	<types>
-		<type name="Philips hue A19" id="LCT001">
-			<type_id>0x0001</type_id>
-			<firmware cond_op="GE">0x10</firmware>
-		</type>
-	</types>
-	<parameters type="MASTER" id="remote_dev_master">
-	</parameters>
-	<channels>
-		<channel index="0" type="MAINTENANCE" ui_flags="internal" class="maintenance" count="1">
-			<parameters type="MASTER" id="maint_ch_master"/>
-			<parameters type="VALUES" id="maint_ch_values">
-				<parameter id="UNREACH" operations="read,event" ui_flags="service">
-					<logical type="boolean"/>
-					<physical type="integer" interface="internal" value_id="UNREACH"/>
-				</parameter>
-				<parameter id="STICKY_UNREACH" operations="read,write,event" ui_flags="service,sticky">
-					<logical type="boolean"/>
-					<physical type="integer" interface="internal" value_id="STICKY_UNREACH"/>
-				</parameter>
-				<parameter id="CONFIG_PENDING" operations="read,event" ui_flags="service">
-					<logical type="boolean"/>
-					<physical type="integer" interface="internal" value_id="CONFIG_PENDING"/>
-				</parameter>
-				<parameter id="RSSI_DEVICE" operations="read,event">
-					<logical type="integer"/>
-					<physical type="integer" interface="internal" value_id="RSSI_DEVICE"/>
-				</parameter>
-				<parameter id="RSSI_PEER" operations="read,event">
-					<logical type="integer"/>
-					<physical type="integer" interface="internal" value_id="RSSI_PEER"/>
-				</parameter>
-			</parameters>
-		</channel>
-		<channel index="1" type="SWITCH">
-			<parameters type="VALUES" id="switch_valueset">
-				<parameter id="STATE" operations="read,write,event">
-					<logical type="boolean"/>
-					<physical interface="command" value_id="STATE" id="STATE">
-						<event packet="INFO" />
-						<set request="STATE_SET" />
-					</physical>
-					<conversion type="rpc_binary"/>
-				</parameter>
-				<parameter id="BRIGHTNESS" operations="read,write,event">
-					<logical type="integer" min="1" max="255" />
-					<physical interface="command" value_id="BRIGHTNESS" id="BRIGHTNESS">
-						<event packet="INFO" />
-						<set request="BRIGHTNESS_SET"/>
-					</physical>
-					<conversion type="rpc_binary"/>
-				</parameter>
-				<parameter id="HUE" operations="read,write,event">
-					<logical type="integer" min="0" max="65535" />
-					<physical interface="command" value_id="HUE" id="HUE">
-						<event packet="INFO" />
-						<set request="HUE_SET" />
-					</physical>
-					<conversion type="rpc_binary"/>
-				</parameter>
-				<parameter id="SATURATION" operations="read,write,event">
-					<logical type="integer" min="0" max="255" />
-					<physical interface="command" value_id="SATURATION" id="SATURATION">
-						<event packet="INFO" />
-						<set request="SATURATION_SET"/>
-					</physical>
-					<conversion type="rpc_binary"/>
-				</parameter>
-				<parameter id="COLOR_TEMPERATURE" operations="read,write,event">
-					<logical type="integer" min="153" max="500" />
-					<physical interface="command" value_id="COLOR_TEMPERATURE" id="COLOR_TEMPERATURE">
-						<event packet="INFO" />
-						<set request="COLOR_TEMPERATURE_SET" />
-					</physical>
-					<conversion type="rpc_binary"/>
-				</parameter>
-				<parameter id="ALERT" operations="read,write,event">
-					<logical type="option">
-						<option id="none" default="true" />
-						<option id="select" />
-						<option id="lselect" />
-					</logical>
-					<physical type="string" interface="command" value_id="ALERT" id="ALERT">
-						<event packet="INFO" />
-						<set request="ALERT_SET"/>
-					</physical>
-					<conversion type="option_string"/>
-					<conversion type="rpc_binary"/>
-				</parameter>
-				<parameter id="EFFECT" operations="read,write,event">
-					<logical type="option">
-						<option id="none" default="true" />
-						<option id="colorloop" />
-					</logical>
-					<physical interface="command" value_id="EFFECT" id="EFFECT">
-						<event packet="INFO" />
-						<set request="EFFECT_SET" />
-					</physical>
-					<conversion type="option_string"/>
-					<conversion type="rpc_binary"/>
-				</parameter>
-				<parameter id="RGB" operations="read,write,event">
-					<logical type="string" />
-					<physical interface="command" value_id="RGB" id="RGB" />
-					<conversion type="rpc_binary"/>
-				</parameter>
-				<parameter id="COLORMODE" operations="read,event">
-					<logical type="option">
-						<option id="hs" />
-						<option id="xy" />
-						<option id="ct" />
-					</logical>
-					<physical interface="command" value_id="COLORMODE" id="COLORMODE">
-						<event packet="INFO" />
-					</physical>
-					<conversion type="option_string"/>
-					<conversion type="rpc_binary"/>
-				</parameter>
-				<parameter id="REACHABLE" operations="read,event" ui_flags="service">
-					<logical type="boolean"/>
-					<physical interface="command" value_id="REACHABLE" id="REACHABLE">
-						<event packet="INFO" />
-					</physical>
-					<conversion type="rpc_binary"/>
-				</parameter>
-				<parameter id="XY" operations="read,write,event">
-					<logical type="string"/>
-					<physical interface="command" value_id="XY" id="XY">
-						<event packet="INFO" />
-						<set request="XY_SET" />
-					</physical>
-					<conversion type="string_json_array_float"/>
-					<conversion type="rpc_binary"/>
-				</parameter>
-			</parameters>
-		</channel>
-	</channels>
+<homegearDevice version="1">
+	<supportedDevices>
+		<device id="LCT001">
+			<description>Philips hue A19</description>
+			<typeNumber>0x1</typeNumber>
+			<minFirmwareVersion>0x10</minFirmwareVersion>
+		</device>
+	</supportedDevices>
+	<properties/>
+	<functions>
+		<function channel="0" type="MAINTENANCE" channelCount="1">
+			<properties>
+				<internal>true</internal>
+			</properties>
+			<configParameters>maint_ch_master--0</configParameters>
+			<variables>maint_ch_values--0</variables>
+		</function>
+		<function channel="1" type="SWITCH" channelCount="1">
+			<properties/>
+			<configParameters>config--1</configParameters>
+			<variables>switch_valueset--1</variables>
+		</function>
+	</functions>
 	<packets>
-		<packet id="INFO" direction="from_device" allowed_receivers="BROADCAST,CENTRAL,OTHER" type="0x01" fixed_channel="1" event="true">
-			<parameter field="state" subfield="on" param="STATE"/>
-			<parameter field="state" subfield="bri" param="BRIGHTNESS"/>
-			<parameter field="state" subfield="hue" param="HUE"/>
-			<parameter field="state" subfield="sat" param="SATURATION"/>
-			<parameter field="state" subfield="ct" param="COLOR_TEMPERATURE"/>
-			<parameter field="state" subfield="alert" param="ALERT"/>
-			<parameter field="state" subfield="effect" param="EFFECT"/>
-			<parameter field="state" subfield="colormode" param="COLORMODE"/>
-			<parameter field="state" subfield="reachable" param="REACHABLE"/>
-			<parameter field="state" subfield="xy" param="XY"/>
+		<packet id="ALERT_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+					<constValueString/>
+				</element>
+				<element>
+					<key>alert</key>
+					<parameterId>ALERT</parameterId>
+					<constValueString/>
+				</element>
+			</jsonPayload>
 		</packet>
-		<packet id="STATE_SET" direction="to_device" type="0x02">
-			<parameter field="on" param="STATE"/>
+		<packet id="BRIGHTNESS_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+					<constValueString/>
+				</element>
+				<element>
+					<key>bri</key>
+					<parameterId>BRIGHTNESS</parameterId>
+					<constValueString/>
+				</element>
+			</jsonPayload>
 		</packet>
-		<packet id="BRIGHTNESS_SET" direction="to_device" type="0x02">
-			<parameter type="boolean" field="on" const_value="1"/>
-			<parameter field="bri" param="BRIGHTNESS"/>
+		<packet id="COLOR_TEMPERATURE_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+					<constValueString/>
+				</element>
+				<element>
+					<key>ct</key>
+					<parameterId>COLOR_TEMPERATURE</parameterId>
+					<constValueString/>
+				</element>
+			</jsonPayload>
 		</packet>
-		<packet id="SATURATION_SET" direction="to_device" type="0x02">
-			<parameter type="boolean" field="on" const_value="1"/>
-			<parameter field="bri" param="BRIGHTNESS"/>
-			<parameter field="hue" param="HUE"/>
-			<parameter field="sat" param="SATURATION"/>
-			<parameter field="on" param="STATE"/>
+		<packet id="EFFECT_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+					<constValueString/>
+				</element>
+				<element>
+					<key>effect</key>
+					<parameterId>EFFECT</parameterId>
+					<constValueString/>
+				</element>
+			</jsonPayload>
 		</packet>
-		<packet id="HUE_SET" direction="to_device" type="0x02">
-			<parameter type="boolean" field="on" const_value="1"/>
-			<parameter field="bri" param="BRIGHTNESS"/>
-			<parameter field="hue" param="HUE"/>
-			<parameter field="sat" param="SATURATION"/>
-			<parameter field="on" param="STATE"/>
+		<packet id="HUE_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+					<constValueString/>
+				</element>
+				<element>
+					<key>bri</key>
+					<parameterId>BRIGHTNESS</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>hue</key>
+					<parameterId>HUE</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>sat</key>
+					<parameterId>SATURATION</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>on</key>
+					<parameterId>STATE</parameterId>
+					<constValueString/>
+				</element>
+			</jsonPayload>
 		</packet>
-		<packet id="ALERT_SET" direction="to_device" type="0x02">
-			<parameter type="boolean" field="on" const_value="1"/>
-			<parameter field="alert" param="ALERT"/>
+		<packet id="INFO">
+			<direction>toCentral</direction>
+			<type>0x1</type>
+			<channel>1</channel>
+			<jsonPayload>
+				<element>
+					<key>state</key>
+					<subkey>on</subkey>
+					<parameterId>STATE</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>bri</subkey>
+					<parameterId>BRIGHTNESS</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>hue</subkey>
+					<parameterId>HUE</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>sat</subkey>
+					<parameterId>SATURATION</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>ct</subkey>
+					<parameterId>COLOR_TEMPERATURE</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>alert</subkey>
+					<parameterId>ALERT</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>effect</subkey>
+					<parameterId>EFFECT</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>colormode</subkey>
+					<parameterId>COLORMODE</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>reachable</subkey>
+					<parameterId>REACHABLE</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>xy</subkey>
+					<parameterId>XY</parameterId>
+					<constValueString/>
+				</element>
+			</jsonPayload>
 		</packet>
-		<packet id="EFFECT_SET" direction="to_device" type="0x02">
-			<parameter type="boolean" field="on" const_value="1"/>
-			<parameter field="effect" param="EFFECT"/>
+		<packet id="SATURATION_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+					<constValueString/>
+				</element>
+				<element>
+					<key>bri</key>
+					<parameterId>BRIGHTNESS</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>hue</key>
+					<parameterId>HUE</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>sat</key>
+					<parameterId>SATURATION</parameterId>
+					<constValueString/>
+				</element>
+				<element>
+					<key>on</key>
+					<parameterId>STATE</parameterId>
+					<constValueString/>
+				</element>
+			</jsonPayload>
 		</packet>
-		<packet id="COLOR_TEMPERATURE_SET" direction="to_device" type="0x02">
-			<parameter type="boolean" field="on" const_value="1"/>
-			<parameter field="ct" param="COLOR_TEMPERATURE"/>
+		<packet id="STATE_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<parameterId>STATE</parameterId>
+					<constValueString/>
+				</element>
+			</jsonPayload>
 		</packet>
-		<packet id="XY_SET" direction="to_device" type="0x02">
-			<parameter type="boolean" field="on" const_value="1"/>
-			<parameter field="xy" param="XY"/>
+		<packet id="XY_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+					<constValueString/>
+				</element>
+				<element>
+					<key>xy</key>
+					<parameterId>XY</parameterId>
+					<constValueString/>
+				</element>
+			</jsonPayload>
 		</packet>
 	</packets>
-</device>
+	<parameterGroups>
+		<configParameters id="config--1"/>
+		<configParameters id="maint_ch_master--0"/>
+		<variables id="maint_ch_values--0">
+			<parameter id="UNREACH">
+				<properties>
+					<writeable>false</writeable>
+					<service>true</service>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="UNREACH">
+					<operationType>internal</operationType>
+				</physicalInteger>
+			</parameter>
+			<parameter id="STICKY_UNREACH">
+				<properties>
+					<service>true</service>
+					<sticky>true</sticky>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="STICKY_UNREACH">
+					<operationType>internal</operationType>
+				</physicalInteger>
+			</parameter>
+			<parameter id="CONFIG_PENDING">
+				<properties>
+					<writeable>false</writeable>
+					<service>true</service>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="CONFIG_PENDING">
+					<operationType>internal</operationType>
+				</physicalInteger>
+			</parameter>
+			<parameter id="RSSI_DEVICE">
+				<properties>
+					<writeable>false</writeable>
+				</properties>
+				<logicalInteger/>
+				<physicalInteger groupId="RSSI_DEVICE">
+					<operationType>internal</operationType>
+				</physicalInteger>
+			</parameter>
+			<parameter id="RSSI_PEER">
+				<properties>
+					<writeable>false</writeable>
+				</properties>
+				<logicalInteger/>
+				<physicalInteger groupId="RSSI_PEER">
+					<operationType>internal</operationType>
+				</physicalInteger>
+			</parameter>
+		</variables>
+		<variables id="switch_valueset--1">
+			<parameter id="STATE">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="STATE">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="STATE_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="BRIGHTNESS">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger>
+					<minimumValue>1</minimumValue>
+					<maximumValue>255</maximumValue>
+				</logicalInteger>
+				<physicalInteger groupId="BRIGHTNESS">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="BRIGHTNESS_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="HUE">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger>
+					<minimumValue>0</minimumValue>
+					<maximumValue>65535</maximumValue>
+				</logicalInteger>
+				<physicalInteger groupId="HUE">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="HUE_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="SATURATION">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger>
+					<minimumValue>0</minimumValue>
+					<maximumValue>255</maximumValue>
+				</logicalInteger>
+				<physicalInteger groupId="SATURATION">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="SATURATION_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="COLOR_TEMPERATURE">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger>
+					<minimumValue>153</minimumValue>
+					<maximumValue>500</maximumValue>
+				</logicalInteger>
+				<physicalInteger groupId="COLOR_TEMPERATURE">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="COLOR_TEMPERATURE_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="ALERT">
+				<properties>
+					<casts>
+						<optionString/>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalEnumeration>
+					<defaultValue>0</defaultValue>
+					<value>
+						<id>none</id>
+						<index>0</index>
+					</value>
+					<value>
+						<id>select</id>
+						<index>1</index>
+					</value>
+					<value>
+						<id>lselect</id>
+						<index>2</index>
+					</value>
+				</logicalEnumeration>
+				<physicalString groupId="ALERT">
+					<operationType>command</operationType>
+				</physicalString>
+				<packets>
+					<packet id="ALERT_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="EFFECT">
+				<properties>
+					<casts>
+						<optionString/>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalEnumeration>
+					<defaultValue>0</defaultValue>
+					<value>
+						<id>none</id>
+						<index>0</index>
+					</value>
+					<value>
+						<id>colorloop</id>
+						<index>1</index>
+					</value>
+				</logicalEnumeration>
+				<physicalInteger groupId="EFFECT">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="EFFECT_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="RGB">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalString/>
+				<physicalInteger groupId="RGB">
+					<operationType>command</operationType>
+				</physicalInteger>
+			</parameter>
+			<parameter id="COLORMODE">
+				<properties>
+					<writeable>false</writeable>
+					<casts>
+						<optionString/>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalEnumeration>
+					<value>
+						<id>hs</id>
+						<index>0</index>
+					</value>
+					<value>
+						<id>xy</id>
+						<index>1</index>
+					</value>
+					<value>
+						<id>ct</id>
+						<index>2</index>
+					</value>
+				</logicalEnumeration>
+				<physicalInteger groupId="COLORMODE">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="REACHABLE">
+				<properties>
+					<writeable>false</writeable>
+					<service>true</service>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="REACHABLE">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="XY">
+				<properties>
+					<casts>
+						<stringJsonArrayDecimal/>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalString/>
+				<physicalInteger groupId="XY">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="XY_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+		</variables>
+	</parameterGroups>
+</homegearDevice>
+
