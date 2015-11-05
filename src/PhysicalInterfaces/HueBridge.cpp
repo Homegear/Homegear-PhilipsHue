@@ -411,59 +411,76 @@ void HueBridge::listen()
 
         while(!_stopCallbackThread)
         {
-        	for(int32_t i = 0; i < 30; i++)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-				if(_stopCallbackThread) return;
-			}
-        	for(int32_t i = 0; i < 5; i++)
+        	try
         	{
-				try
+				for(int32_t i = 0; i < 30; i++)
 				{
-					_client->sendRequest(getAllData, response);
-					break;
-				}
-				catch(const BaseLib::HTTPClientException& ex)
-				{
-					exception = ex;
 					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+					if(_stopCallbackThread) return;
 				}
-        	}
-        	if(!exception.what().empty())
-			{
-				_out.printError("Error: Command was not send to Hue Bridge: " + exception.what());
-			}
-
-			PVariable json = getJson(response);
-			if(!json) return;
-
-			if(!json->arrayValue->empty() && json->arrayValue->at(0)->structValue->find("error") != json->arrayValue->at(0)->structValue->end())
-			{
-				json = json->arrayValue->at(0)->structValue->at("error");
-				if(json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 1)
+				for(int32_t i = 0; i < 5; i++)
 				{
-					createUser();
+					try
+					{
+						_client->sendRequest(getAllData, response);
+						exception = BaseLib::HTTPClientException("");
+						break;
+					}
+					catch(const BaseLib::HTTPClientException& ex)
+					{
+						exception = ex;
+						std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+					}
 				}
-				else
+				if(!exception.what().empty())
 				{
-					if(json->structValue->find("description") != json->structValue->end()) _out.printError("Error: " + json->structValue->at("description")->stringValue);
-					else _out.printError("Unknown error during polling. Response was: " + response);
+					_out.printError("Error: Command was not send to Hue Bridge: " + exception.what());
+					continue;
 				}
-				continue;
-			}
 
-			if(json->structValue->find("lights") != json->structValue->end())
+				PVariable json = getJson(response);
+				if(!json) return;
+
+				if(!json->arrayValue->empty() && json->arrayValue->at(0)->structValue->find("error") != json->arrayValue->at(0)->structValue->end())
+				{
+					json = json->arrayValue->at(0)->structValue->at("error");
+					if(json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 1)
+					{
+						createUser();
+					}
+					else
+					{
+						if(json->structValue->find("description") != json->structValue->end()) _out.printError("Error: " + json->structValue->at("description")->stringValue);
+						else _out.printError("Unknown error during polling. Response was: " + response);
+					}
+					continue;
+				}
+
+				if(json->structValue->find("lights") != json->structValue->end())
+				{
+					json = json->structValue->at("lights");
+					for(std::map<std::string, PVariable>::iterator i = json->structValue->begin(); i != json->structValue->end(); ++i)
+					{
+						std::string address = i->first;
+						std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(BaseLib::Math::getNumber(address), 0, 1, i->second, BaseLib::HelperFunctions::getTime()));
+						raisePacketReceived(packet);
+					}
+				}
+
+				_lastPacketReceived = BaseLib::HelperFunctions::getTime();
+			}
+			catch(const std::exception& ex)
 			{
-				json = json->structValue->at("lights");
-				for(std::map<std::string, PVariable>::iterator i = json->structValue->begin(); i != json->structValue->end(); ++i)
-				{
-					std::string address = i->first;
-					std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(BaseLib::Math::getNumber(address), 0, 1, i->second, BaseLib::HelperFunctions::getTime()));
-					raisePacketReceived(packet);
-				}
+				_out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
 			}
-
-        	_lastPacketReceived = BaseLib::HelperFunctions::getTime();
+			catch(BaseLib::Exception& ex)
+			{
+				_out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+			}
+			catch(...)
+			{
+				_out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+			}
         }
     }
     catch(const std::exception& ex)
