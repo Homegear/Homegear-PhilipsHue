@@ -99,7 +99,25 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 		data.push_back('\n');
     	std::string response;
 
-    	_client->sendRequest(data, response);
+    	HTTPClientException exception("");
+    	for(int i = 0; i < 5; i++)
+    	{
+			try
+			{
+				_client->sendRequest(data, response);
+				exception = HTTPClientException("");
+				break;
+			}
+			catch(HTTPClientException& ex)
+			{
+				exception = ex;
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			}
+    	}
+    	if(!exception.what().empty())
+    	{
+    		_out.printError("Error: Command was not send to Hue Bridge: " + exception.what());
+    	}
 
     	json = getJson(response);
 		if(!json) return;
@@ -112,7 +130,24 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 		}
 
 		std::string getData = "GET /api/homegear" + _settings->id + "/lights/" + std::to_string(packet->destinationAddress()) + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
-		_client->sendRequest(getData, response);
+		for(int i = 0; i < 5; i++)
+    	{
+			try
+			{
+				_client->sendRequest(getData, response);
+				exception = HTTPClientException("");
+				break;
+			}
+			catch(HTTPClientException& ex)
+			{
+				exception = ex;
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			}
+    	}
+    	if(!exception.what().empty())
+    	{
+    		_out.printWarning("Warning: Could not read updated data from Hue Bridge: " + exception.what());
+    	}
 
 		json = getJson(response);
 		if(!json) return;
@@ -372,23 +407,31 @@ void HueBridge::listen()
     {
     	std::string getAllData = "GET /api/homegear" + _settings->id + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
     	std::string response;
+    	HTTPClientException exception("");
 
         while(!_stopCallbackThread)
         {
-			try
+        	for(int32_t i = 0; i < 30; i++)
 			{
-				for(int32_t i = 0; i < 30; i++)
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-					if(_stopCallbackThread) return;
-				}
-				_client->sendRequest(getAllData, response);
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+				if(_stopCallbackThread) return;
 			}
-			catch(const BaseLib::HTTPClientException& ex)
+        	for(int32_t i = 0; i < 5; i++)
+        	{
+				try
+				{
+					_client->sendRequest(getAllData, response);
+					break;
+				}
+				catch(const BaseLib::HTTPClientException& ex)
+				{
+					exception = ex;
+					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+				}
+        	}
+        	if(!exception.what().empty())
 			{
-				_out.printError("Error: " + ex.what());
-				std::this_thread::sleep_for(std::chrono::milliseconds(10000));
-				continue;
+				_out.printError("Error: Command was not send to Hue Bridge: " + exception.what());
 			}
 
 			PVariable json = getJson(response);
