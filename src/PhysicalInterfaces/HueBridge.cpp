@@ -99,16 +99,16 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 		data.push_back('\n');
     	std::string response;
 
-    	HTTPClientException exception("");
+    	Exception exception("");
     	for(int i = 0; i < 5; i++)
     	{
 			try
 			{
 				_client->sendRequest(data, response);
-				exception = HTTPClientException("");
+				exception = Exception("");
 				break;
 			}
-			catch(HTTPClientException& ex)
+			catch(Exception& ex)
 			{
 				exception = ex;
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -135,10 +135,10 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 			try
 			{
 				_client->sendRequest(getData, response);
-				exception = HTTPClientException("");
+				exception = Exception("");
 				break;
 			}
-			catch(HTTPClientException& ex)
+			catch(Exception& ex)
 			{
 				exception = ex;
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -407,7 +407,7 @@ void HueBridge::listen()
     {
     	std::string getAllData = "GET /api/homegear" + _settings->id + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
     	std::string response;
-    	HTTPClientException exception("");
+    	Exception exception("");
 
         while(!_stopCallbackThread)
         {
@@ -423,10 +423,10 @@ void HueBridge::listen()
 					try
 					{
 						_client->sendRequest(getAllData, response);
-						exception = BaseLib::HTTPClientException("");
+						exception = BaseLib::Exception("");
 						break;
 					}
-					catch(const BaseLib::HTTPClientException& ex)
+					catch(const BaseLib::Exception& ex)
 					{
 						exception = ex;
 						std::this_thread::sleep_for(std::chrono::milliseconds(1000));

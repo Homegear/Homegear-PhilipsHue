@@ -320,7 +320,6 @@ GD.lo: GD.cpp /usr/include/stdc-predef.h GD.h \
  /usr/include/homegear-base/Variable.h \
  /usr/include/homegear-base/IQueue.h PhilipsHue.h \
  PhysicalInterfaces/IPhilipsHueInterface.h \
- /usr/include/homegear-base/BaseLib.h \
  PhysicalInterfaces/../PhilipsHuePacket.h
 
 /usr/include/stdc-predef.h:
@@ -1106,7 +1105,5 @@ GD.h:
 PhilipsHue.h:
 
 PhysicalInterfaces/IPhilipsHueInterface.h:
-
-/usr/include/homegear-base/BaseLib.h:
 
 PhysicalInterfaces/../PhilipsHuePacket.h:

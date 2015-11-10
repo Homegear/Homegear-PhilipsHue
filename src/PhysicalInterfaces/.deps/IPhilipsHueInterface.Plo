@@ -321,8 +321,7 @@ PhysicalInterfaces/IPhilipsHueInterface.lo: \
  /usr/include/homegear-base/Encoding/HTTP.h \
  /usr/include/homegear-base/Variable.h \
  /usr/include/homegear-base/IQueue.h \
- PhysicalInterfaces/../PhilipsHuePacket.h \
- /usr/include/homegear-base/BaseLib.h PhysicalInterfaces/../GD.h \
+ PhysicalInterfaces/../PhilipsHuePacket.h PhysicalInterfaces/../GD.h \
  PhysicalInterfaces/../PhilipsHue.h \
  PhysicalInterfaces/../PhysicalInterfaces/IPhilipsHueInterface.h
 
@@ -1107,8 +1106,6 @@ PhysicalInterfaces/IPhilipsHueInterface.h:
 /usr/include/homegear-base/IQueue.h:
 
 PhysicalInterfaces/../PhilipsHuePacket.h:
-
-/usr/include/homegear-base/BaseLib.h:
 
 PhysicalInterfaces/../GD.h:
 

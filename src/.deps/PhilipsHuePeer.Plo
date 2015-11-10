@@ -325,7 +325,6 @@ PhilipsHuePeer.lo: PhilipsHuePeer.cpp /usr/include/stdc-predef.h \
  LogicalDevices/../PhilipsHuePacket.h LogicalDevices/../PacketManager.h \
  /usr/include/c++/4.8/queue /usr/include/c++/4.8/bits/stl_queue.h GD.h \
  PhilipsHue.h PhysicalInterfaces/IPhilipsHueInterface.h \
- /usr/include/homegear-base/BaseLib.h \
  PhysicalInterfaces/../PhilipsHuePacket.h
 
 /usr/include/stdc-predef.h:
@@ -1131,7 +1130,5 @@ GD.h:
 PhilipsHue.h:
 
 PhysicalInterfaces/IPhilipsHueInterface.h:
-
-/usr/include/homegear-base/BaseLib.h:
 
 PhysicalInterfaces/../PhilipsHuePacket.h:

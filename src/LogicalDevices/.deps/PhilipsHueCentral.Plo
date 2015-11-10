@@ -327,7 +327,6 @@ LogicalDevices/PhilipsHueCentral.lo: LogicalDevices/PhilipsHueCentral.cpp \
  /usr/include/c++/4.8/bits/stl_queue.h LogicalDevices/../GD.h \
  LogicalDevices/../PhilipsHue.h \
  LogicalDevices/../PhysicalInterfaces/IPhilipsHueInterface.h \
- /usr/include/homegear-base/BaseLib.h \
  LogicalDevices/../PhysicalInterfaces/../PhilipsHuePacket.h
 
 /usr/include/stdc-predef.h:
@@ -1129,7 +1128,5 @@ LogicalDevices/../GD.h:
 LogicalDevices/../PhilipsHue.h:
 
 LogicalDevices/../PhysicalInterfaces/IPhilipsHueInterface.h:
-
-/usr/include/homegear-base/BaseLib.h:
 
 LogicalDevices/../PhysicalInterfaces/../PhilipsHuePacket.h:
