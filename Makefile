@@ -81,10 +81,11 @@ subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
 	$(srcdir)/config.h.in cfg/compile cfg/config.guess \
-	cfg/config.sub cfg/install-sh cfg/missing cfg/ltmain.sh \
-	$(top_srcdir)/cfg/compile $(top_srcdir)/cfg/config.guess \
-	$(top_srcdir)/cfg/config.sub $(top_srcdir)/cfg/install-sh \
-	$(top_srcdir)/cfg/ltmain.sh $(top_srcdir)/cfg/missing
+	cfg/config.sub cfg/depcomp cfg/install-sh cfg/missing \
+	cfg/ltmain.sh $(top_srcdir)/cfg/compile \
+	$(top_srcdir)/cfg/config.guess $(top_srcdir)/cfg/config.sub \
+	$(top_srcdir)/cfg/install-sh $(top_srcdir)/cfg/ltmain.sh \
+	$(top_srcdir)/cfg/missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
@@ -252,17 +253,17 @@ OTOOL64 =
 PACKAGE = homegar-philipshue
 PACKAGE_BUGREPORT = sathya@laufers.net
 PACKAGE_NAME = homegar-philipshue
-PACKAGE_STRING = homegar-philipshue 0.6.0
+PACKAGE_STRING = homegar-philipshue 0.6.0-1032
 PACKAGE_TARNAME = homegar-philipshue
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.6.0
+PACKAGE_VERSION = 0.6.0-1032
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = strip
-VERSION = 0.6.0
+VERSION = 0.6.0-1032
 abs_builddir = /home/PREETZ/sathya/GitHub/Homegear/homegear-philipshue
 abs_srcdir = /home/PREETZ/sathya/GitHub/Homegear/homegear-philipshue
 abs_top_builddir = /home/PREETZ/sathya/GitHub/Homegear/homegear-philipshue
@@ -297,7 +298,7 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /home/PREETZ/sathya/GitHub/Homegear/homegear-philipshue/cfg/install-sh
-libdir = ${exec_prefix}/lib
+libdir = /usr/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = /var
