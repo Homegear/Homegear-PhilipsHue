@@ -44,7 +44,7 @@ PhilipsHue::PhilipsHue(BaseLib::Obj* bl, BaseLib::Systems::DeviceFamily::IFamily
 	GD::out.setPrefix("Module Philips hue: ");
 	GD::out.printDebug("Debug: Loading module...");
 	_family = 5;
-	GD::rpcDevices.init(_bl);
+	GD::rpcDevices.init(_bl, this);
 }
 
 PhilipsHue::~PhilipsHue()
