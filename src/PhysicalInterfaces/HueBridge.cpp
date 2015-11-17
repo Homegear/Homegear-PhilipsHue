@@ -104,6 +104,7 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
     	{
 			try
 			{
+				if(_stopCallbackThread) return;
 				_client->sendRequest(data, response);
 				exception = Exception("");
 				break;
@@ -422,6 +423,7 @@ void HueBridge::listen()
 				{
 					try
 					{
+						if(_stopCallbackThread) return;
 						_client->sendRequest(getAllData, response);
 						exception = BaseLib::Exception("");
 						break;

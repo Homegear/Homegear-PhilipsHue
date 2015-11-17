@@ -148,7 +148,7 @@ void PhilipsHuePeer::loadVariables(BaseLib::Systems::LogicalDevice* device, std:
 {
 	try
 	{
-		if(!rows) rows = raiseGetPeerVariables();
+		if(!rows) rows = _bl->db->getPeerVariables(_peerID);
 		Peer::loadVariables(device, rows);
 	}
 	catch(const std::exception& ex)
