@@ -33,11 +33,11 @@
 namespace PhilipsHue
 {
 
-PhilipsHueDevice::PhilipsHueDevice(IDeviceEventSink* eventHandler) : LogicalDevice(5, GD::bl, eventHandler)
+PhilipsHueDevice::PhilipsHueDevice(IDeviceEventSink* eventHandler) : LogicalDevice(HUE_FAMILY_ID, GD::bl, eventHandler)
 {
 }
 
-PhilipsHueDevice::PhilipsHueDevice(uint32_t deviceID, std::string serialNumber, int32_t address, IDeviceEventSink* eventHandler) : LogicalDevice(5, GD::bl, deviceID, serialNumber, address, eventHandler)
+PhilipsHueDevice::PhilipsHueDevice(uint32_t deviceID, std::string serialNumber, int32_t address, IDeviceEventSink* eventHandler) : LogicalDevice(HUE_FAMILY_ID, GD::bl, deviceID, serialNumber, address, eventHandler)
 {
 }
 

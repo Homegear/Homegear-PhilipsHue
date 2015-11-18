@@ -29,22 +29,22 @@
 
 #include "PhilipsHue.h"
 #include "PhilipsHueDeviceTypes.h"
-#include "PhysicalInterfaces/HueBridge.h"
+#include "Interfaces.h"
 #include "LogicalDevices/PhilipsHueCentral.h"
 #include "GD.h"
 
 namespace PhilipsHue
 {
 
-PhilipsHue::PhilipsHue(BaseLib::Obj* bl, BaseLib::Systems::DeviceFamily::IFamilyEventSink* eventHandler) : BaseLib::Systems::DeviceFamily(bl, eventHandler)
+PhilipsHue::PhilipsHue(BaseLib::Obj* bl, BaseLib::Systems::DeviceFamily::IFamilyEventSink* eventHandler) : BaseLib::Systems::DeviceFamily(bl, eventHandler, HUE_FAMILY_ID, "Philips hue")
 {
 	GD::bl = _bl;
 	GD::family = this;
 	GD::out.init(bl);
 	GD::out.setPrefix("Module Philips hue: ");
 	GD::out.printDebug("Debug: Loading module...");
-	_family = 5;
 	GD::rpcDevices.init(_bl, this);
+	_physicalInterfaces.reset(new Interfaces(bl, _settings->getPhysicalInterfaceSettings()));
 }
 
 PhilipsHue::~PhilipsHue()
@@ -71,33 +71,6 @@ void PhilipsHue::dispose()
 }
 
 std::shared_ptr<BaseLib::Systems::Central> PhilipsHue::getCentral() { return _central; }
-
-std::shared_ptr<BaseLib::Systems::IPhysicalInterface> PhilipsHue::createPhysicalDevice(std::shared_ptr<BaseLib::Systems::PhysicalInterfaceSettings> settings)
-{
-	try
-	{
-		std::shared_ptr<IPhilipsHueInterface> device;
-		if(!settings) return device;
-		GD::out.printDebug("Debug: Creating physical device. Type defined in physicalinterfaces.conf is: " + settings->type);
-		if(settings->type == "huebridge") device.reset(new HueBridge(settings));
-		else GD::out.printError("Error: Unsupported physical device type: " + settings->type);
-		if(device) GD::physicalInterface = device;
-		return device;
-	}
-	catch(const std::exception& ex)
-	{
-		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-	}
-	catch(BaseLib::Exception& ex)
-	{
-		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-	}
-	catch(...)
-	{
-		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-	}
-	return std::shared_ptr<BaseLib::Systems::IPhysicalInterface>();
-}
 
 uint32_t PhilipsHue::getUniqueAddress(uint32_t seed)
 {
@@ -201,7 +174,7 @@ void PhilipsHue::load()
 	try
 	{
 		_devices.clear();
-		std::shared_ptr<BaseLib::Database::DataTable> rows = _bl->db->getDevices((uint32_t)_family);
+		std::shared_ptr<BaseLib::Database::DataTable> rows = _bl->db->getDevices((uint32_t)getFamily());
 		for(BaseLib::Database::DataTable::iterator row = rows->begin(); row != rows->end(); ++row)
 		{
 			uint32_t deviceID = row->second.at(0)->intValue;

@@ -27,33 +27,24 @@
  * files in the program, then also delete it here.
  */
 
-#ifndef GD_H_
-#define GD_H_
-
-#define HUE_FAMILY_ID 5
+#ifndef INTERFACES_H_
+#define INTERFACES_H_
 
 #include "homegear-base/BaseLib.h"
-#include "PhilipsHue.h"
-#include "PhysicalInterfaces/IPhilipsHueInterface.h"
-
-using namespace BaseLib;
-using namespace BaseLib::DeviceDescription;
 
 namespace PhilipsHue
 {
 
-class GD
+using namespace BaseLib;
+
+class Interfaces : public BaseLib::Systems::PhysicalInterfaces
 {
 public:
-	virtual ~GD();
+	Interfaces(BaseLib::Obj* bl, std::vector<std::shared_ptr<Systems::PhysicalInterfaceSettings>> physicalInterfaceSettings);
+	virtual ~Interfaces();
 
-	static BaseLib::Obj* bl;
-	static PhilipsHue* family;
-	static std::shared_ptr<IPhilipsHueInterface> physicalInterface;
-	static Devices rpcDevices;
-	static BaseLib::Output out;
-private:
-	GD();
+protected:
+	virtual void create();
 };
 
 }

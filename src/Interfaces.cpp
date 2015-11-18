@@ -27,35 +27,54 @@
  * files in the program, then also delete it here.
  */
 
-#ifndef GD_H_
-#define GD_H_
-
-#define HUE_FAMILY_ID 5
-
-#include "homegear-base/BaseLib.h"
-#include "PhilipsHue.h"
-#include "PhysicalInterfaces/IPhilipsHueInterface.h"
-
-using namespace BaseLib;
-using namespace BaseLib::DeviceDescription;
+#include "Interfaces.h"
+#include "GD.h"
+#include "PhysicalInterfaces/HueBridge.h"
 
 namespace PhilipsHue
 {
 
-class GD
+Interfaces::Interfaces(BaseLib::Obj* bl, std::vector<std::shared_ptr<Systems::PhysicalInterfaceSettings>> physicalInterfaceSettings) : Systems::PhysicalInterfaces(bl, GD::family->getFamily(), physicalInterfaceSettings)
 {
-public:
-	virtual ~GD();
-
-	static BaseLib::Obj* bl;
-	static PhilipsHue* family;
-	static std::shared_ptr<IPhilipsHueInterface> physicalInterface;
-	static Devices rpcDevices;
-	static BaseLib::Output out;
-private:
-	GD();
-};
-
+	create();
 }
 
-#endif
+Interfaces::~Interfaces()
+{
+}
+
+void Interfaces::create()
+{
+	try
+	{
+
+		for(std::vector<std::shared_ptr<Systems::PhysicalInterfaceSettings>>::iterator i = _physicalInterfaceSettings.begin(); i != _physicalInterfaceSettings.end(); ++i)
+		{
+			std::shared_ptr<IPhilipsHueInterface> device;
+			if(!*i) continue;
+			GD::out.printDebug("Debug: Creating physical device. Type defined in philipshue.conf is: " + (*i)->type);
+			if((*i)->type == "huebridge") device.reset(new HueBridge(*i));
+			else GD::out.printError("Error: Unsupported physical device type: " + (*i)->type);
+			if(device)
+			{
+				if(_physicalInterfaces.find((*i)->id) != _physicalInterfaces.end()) GD::out.printError("Error: id used for two devices: " + (*i)->id);
+				_physicalInterfaces[(*i)->id] = device;
+				GD::physicalInterface = device;
+			}
+		}
+	}
+	catch(const std::exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(BaseLib::Exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(...)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+	}
+}
+
+}
