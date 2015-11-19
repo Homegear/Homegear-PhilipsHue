@@ -904,8 +904,8 @@ PVariable PhilipsHuePeer::setValue(int32_t clientID, uint32_t channel, std::stri
 				if((*i)->constValueBooleanSet)
 				{
 					if((*i)->key.empty()) continue;
-					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = PVariable(new Variable((bool)(*i)->constValueInteger));
-					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = PVariable(new Variable((bool)(*i)->constValueInteger));
+					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = PVariable(new Variable((*i)->constValueBoolean));
+					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = PVariable(new Variable((*i)->constValueBoolean));
 					continue;
 				}
 				//We can't just search for param, because it is ambiguous (see for example LEVEL for HM-CC-TC).

@@ -44,12 +44,10 @@
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
-					<constValueString/>
 				</element>
 				<element>
 					<key>alert</key>
 					<parameterId>ALERT</parameterId>
-					<constValueString/>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -60,12 +58,10 @@
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
-					<constValueString/>
 				</element>
 				<element>
 					<key>bri</key>
 					<parameterId>BRIGHTNESS</parameterId>
-					<constValueString/>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -76,12 +72,10 @@
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
-					<constValueString/>
 				</element>
 				<element>
 					<key>ct</key>
 					<parameterId>COLOR_TEMPERATURE</parameterId>
-					<constValueString/>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -92,12 +86,10 @@
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
-					<constValueString/>
 				</element>
 				<element>
 					<key>effect</key>
 					<parameterId>EFFECT</parameterId>
-					<constValueString/>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -108,27 +100,22 @@
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
-					<constValueString/>
 				</element>
 				<element>
 					<key>bri</key>
 					<parameterId>BRIGHTNESS</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>hue</key>
 					<parameterId>HUE</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>sat</key>
 					<parameterId>SATURATION</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>on</key>
 					<parameterId>STATE</parameterId>
-					<constValueString/>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -141,61 +128,51 @@
 					<key>state</key>
 					<subkey>on</subkey>
 					<parameterId>STATE</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>state</key>
 					<subkey>bri</subkey>
 					<parameterId>BRIGHTNESS</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>state</key>
 					<subkey>hue</subkey>
 					<parameterId>HUE</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>state</key>
 					<subkey>sat</subkey>
 					<parameterId>SATURATION</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>state</key>
 					<subkey>ct</subkey>
 					<parameterId>COLOR_TEMPERATURE</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>state</key>
 					<subkey>alert</subkey>
 					<parameterId>ALERT</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>state</key>
 					<subkey>effect</subkey>
 					<parameterId>EFFECT</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>state</key>
 					<subkey>colormode</subkey>
 					<parameterId>COLORMODE</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>state</key>
 					<subkey>reachable</subkey>
 					<parameterId>REACHABLE</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>state</key>
 					<subkey>xy</subkey>
 					<parameterId>XY</parameterId>
-					<constValueString/>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -206,27 +183,22 @@
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
-					<constValueString/>
 				</element>
 				<element>
 					<key>bri</key>
 					<parameterId>BRIGHTNESS</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>hue</key>
 					<parameterId>HUE</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>sat</key>
 					<parameterId>SATURATION</parameterId>
-					<constValueString/>
 				</element>
 				<element>
 					<key>on</key>
 					<parameterId>STATE</parameterId>
-					<constValueString/>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -237,7 +209,6 @@
 				<element>
 					<key>on</key>
 					<parameterId>STATE</parameterId>
-					<constValueString/>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -248,12 +219,10 @@
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
-					<constValueString/>
 				</element>
 				<element>
 					<key>xy</key>
 					<parameterId>XY</parameterId>
-					<constValueString/>
 				</element>
 			</jsonPayload>
 		</packet>
