@@ -5,6 +5,16 @@
 			<typeNumber>0x1</typeNumber>
 			<minFirmwareVersion>0x10</minFirmwareVersion>
 		</device>
+		<device id="LCT007">
+			<description>Philips hue A60</description>
+			<typeNumber>0x7</typeNumber>
+			<minFirmwareVersion>0x10</minFirmwareVersion>
+		</device>
+		<device id="LIGHTIFY Classic A60 RGBW">
+			<description>OSRAM LIGHTIFY Classic A60 RGBW</description>
+			<typeNumber>0x401</typeNumber>
+			<minFirmwareVersion>0x10</minFirmwareVersion>
+		</device>
 	</supportedDevices>
 	<properties/>
 	<functions>

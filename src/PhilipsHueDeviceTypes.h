@@ -36,16 +36,18 @@ namespace PhilipsHue
 {
 	enum class DeviceType : uint32_t
 	{
-		none = 					0xFFFFFFFF,
-		HMRCV50 = 				0x0000,
-		CENTRAL = 				0xFFFFFFFD,
-		LCT001 =				0x0001,
-		LLC001 =				0x0101,
-		LLC006 =				0x0106,
-		LLC007 =				0x0107,
-		LLC011 =				0x0111,
-		LST001 =				0x0201,
-		LWB004 =				0x0304
+		none = 						0xFFFFFFFF,
+		HMRCV50 = 					0x0000,
+		CENTRAL = 					0xFFFFFFFD,
+		LCT001 =					0x0001,
+		LCT007 =					0x0007,
+		LLC001 =					0x0101,
+		LLC006 =					0x0106,
+		LLC007 =					0x0107,
+		LLC011 =					0x0111,
+		LST001 =					0x0201,
+		LWB004 =					0x0304,
+		LightifyClassicA60Rgbw =	0x0401
 	};
 }
 #endif

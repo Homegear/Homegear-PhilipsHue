@@ -378,18 +378,20 @@ void PhilipsHueDevice::sendPacket(std::shared_ptr<PhilipsHuePacket> packet)
     }
 }
 
-DeviceType PhilipsHueDevice::deviceTypeFromString(std::string deviceType)
+DeviceType PhilipsHueDevice::deviceTypeFromString(std::string& manufacturer, std::string& deviceType)
 {
 	try
 	{
 		if(deviceType.length() < 4) return DeviceType::none;
 		if(deviceType == "LCT001") return DeviceType::LCT001;
+		else if (deviceType == "LCT007") return DeviceType::LCT007;
 		else if(deviceType == "LLC001") return DeviceType::LLC001;
 		else if(deviceType == "LLC006") return DeviceType::LLC006;
 		else if(deviceType == "LLC007") return DeviceType::LLC007;
 		else if(deviceType == "LLC011") return DeviceType::LLC011;
 		else if(deviceType == "LST001") return DeviceType::LST001;
 		else if(deviceType == "LWB004") return DeviceType::LWB004;
+		else if(deviceType == "Classic A60 RGBW" && manufacturer == "OSRAM") return DeviceType::LightifyClassicA60Rgbw;
 		else if(deviceType.compare(0, 3, "LCT") == 0) return DeviceType::LCT001;
 		else if(deviceType.compare(0, 3, "LLC") == 0) return DeviceType::LLC001;
 		else if(deviceType.compare(0, 3, "LST") == 0) return DeviceType::LST001;

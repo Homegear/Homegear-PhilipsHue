@@ -795,7 +795,9 @@ PVariable PhilipsHueCentral::searchDevices(int32_t clientID)
 		{
 			PVariable info = (*i)->getJson();
 			if(info->structValue->find("modelid") == info->structValue->end() || info->structValue->find("swversion") == info->structValue->end()) continue;
-			DeviceType type = deviceTypeFromString(info->structValue->at("modelid")->stringValue);
+			std::string manufacturer;
+			if(info->structValue->find("manufacturername") != info->structValue->end()) manufacturer = info->structValue->at("manufacturername")->stringValue;
+			DeviceType type = deviceTypeFromString(manufacturer, info->structValue->at("modelid")->stringValue);
 
 			std::shared_ptr<PhilipsHuePeer> peer = getPeer((*i)->senderAddress());
 			if(peer)
@@ -819,7 +821,7 @@ PVariable PhilipsHueCentral::searchDevices(int32_t clientID)
 				GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)type, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". Address string is too long.");
 				continue;
 			}
-			serialNumber.resize(10 - addressString.size(), '0');
+			if(addressString.size() < 10) serialNumber.resize(10 - addressString.size(), '0');
 			serialNumber.append(addressString);
 			peer = createPeer((*i)->senderAddress(), BaseLib::Math::getNumber(swversion, true), deviceType, serialNumber, true);
 			if(!peer)
