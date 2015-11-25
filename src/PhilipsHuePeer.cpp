@@ -28,12 +28,12 @@
  */
 
 #include "PhilipsHuePeer.h"
-#include "LogicalDevices/PhilipsHueCentral.h"
+#include "PhilipsHueCentral.h"
 #include "GD.h"
 
 namespace PhilipsHue
 {
-std::shared_ptr<BaseLib::Systems::Central> PhilipsHuePeer::getCentral()
+std::shared_ptr<BaseLib::Systems::ICentral> PhilipsHuePeer::getCentral()
 {
 	try
 	{
@@ -53,28 +53,7 @@ std::shared_ptr<BaseLib::Systems::Central> PhilipsHuePeer::getCentral()
 	{
 		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
 	}
-	return std::shared_ptr<BaseLib::Systems::Central>();
-}
-
-std::shared_ptr<BaseLib::Systems::LogicalDevice> PhilipsHuePeer::getDevice(int32_t address)
-{
-	try
-	{
-		return GD::family->get(address);
-	}
-	catch(const std::exception& ex)
-	{
-		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-	}
-	catch(BaseLib::Exception& ex)
-	{
-		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-	}
-	catch(...)
-	{
-		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-	}
-	return std::shared_ptr<BaseLib::Systems::LogicalDevice>();
+	return std::shared_ptr<BaseLib::Systems::ICentral>();
 }
 
 PhilipsHuePeer::PhilipsHuePeer(uint32_t parentID, bool centralFeatures, IPeerEventSink* eventHandler) : Peer(GD::bl, parentID, centralFeatures, eventHandler)
@@ -94,7 +73,7 @@ PhilipsHuePeer::~PhilipsHuePeer()
 	dispose();
 }
 
-std::string PhilipsHuePeer::handleCLICommand(std::string command)
+std::string PhilipsHuePeer::handleCliCommand(std::string command)
 {
 	try
 	{
@@ -144,12 +123,12 @@ void PhilipsHuePeer::save(bool savePeer, bool variables, bool centralConfig)
     }
 }
 
-void PhilipsHuePeer::loadVariables(BaseLib::Systems::LogicalDevice* device, std::shared_ptr<BaseLib::Database::DataTable> rows)
+void PhilipsHuePeer::loadVariables(BaseLib::Systems::ICentral* central, std::shared_ptr<BaseLib::Database::DataTable>& rows)
 {
 	try
 	{
 		if(!rows) rows = _bl->db->getPeerVariables(_peerID);
-		Peer::loadVariables(device, rows);
+		Peer::loadVariables(central, rows);
 	}
 	catch(const std::exception& ex)
     {
@@ -165,11 +144,12 @@ void PhilipsHuePeer::loadVariables(BaseLib::Systems::LogicalDevice* device, std:
     }
 }
 
-bool PhilipsHuePeer::load(BaseLib::Systems::LogicalDevice* device)
+bool PhilipsHuePeer::load(BaseLib::Systems::ICentral* central)
 {
 	try
 	{
-		loadVariables(device);
+		std::shared_ptr<BaseLib::Database::DataTable> rows;
+		loadVariables(central, rows);
 
 		_rpcDevice = GD::rpcDevices.find(_deviceType, _firmwareVersion, -1);
 		if(!_rpcDevice)

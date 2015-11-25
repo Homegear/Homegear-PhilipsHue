@@ -37,8 +37,6 @@ namespace PhilipsHue
 	enum class DeviceType : uint32_t
 	{
 		none = 						0xFFFFFFFF,
-		HMRCV50 = 					0x0000,
-		CENTRAL = 					0xFFFFFFFD,
 		LCT001 =					0x0001,
 		LCT007 =					0x0007,
 		LLC001 =					0x0101,

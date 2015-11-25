@@ -30,7 +30,11 @@
 #ifndef PHILIPSHUECENTRAL_H_
 #define PHILIPSHUECENTRAL_H_
 
-#include "../PhilipsHueDevice.h"
+#include "homegear-base/BaseLib.h"
+#include "PhilipsHuePeer.h"
+#include "PhilipsHuePacket.h"
+#include "PacketManager.h"
+#include "PhilipsHueDeviceTypes.h"
 
 #include <memory>
 #include <mutex>
@@ -39,19 +43,33 @@
 namespace PhilipsHue
 {
 
-class PhilipsHueCentral : public PhilipsHueDevice, public BaseLib::Systems::Central
+class PhilipsHueCentral : public BaseLib::Systems::ICentral
 {
 public:
-	PhilipsHueCentral(IDeviceEventSink* eventHandler);
-	PhilipsHueCentral(uint32_t deviceType, std::string serialNumber, int32_t address, IDeviceEventSink* eventHandler);
+	//In table variables
+	int32_t getFirmwareVersion() { return _firmwareVersion; }
+	void setFirmwareVersion(int32_t value) { _firmwareVersion = value; saveVariable(0, value); }
+	//End
+
+	PhilipsHueCentral(ICentralEventSink* eventHandler);
+	PhilipsHueCentral(uint32_t deviceType, std::string serialNumber, int32_t address, ICentralEventSink* eventHandler);
 	virtual ~PhilipsHueCentral();
+	virtual void dispose(bool wait = true);
+
+	virtual void loadVariables();
+	virtual void saveVariables();
+	virtual void loadPeers();
+	virtual void savePeers(bool full);
 
 	virtual bool onPacketReceived(std::string& senderID, std::shared_ptr<BaseLib::Systems::Packet> packet);
-	virtual std::string handleCLICommand(std::string command);
-	virtual uint64_t getPeerIDFromSerial(std::string serialNumber) { std::shared_ptr<PhilipsHuePeer> peer = getPeer(serialNumber); if(peer) return peer->getID(); else return 0; }
+	virtual std::string handleCliCommand(std::string command);
+	virtual uint64_t getPeerIdFromSerial(std::string serialNumber) { std::shared_ptr<PhilipsHuePeer> peer = getPeer(serialNumber); if(peer) return peer->getID(); else return 0; }
+	virtual void sendPacket(std::shared_ptr<PhilipsHuePacket> packet);
+	DeviceType deviceTypeFromString(std::string& manufacturer, std::string& deviceType);
 
-	virtual bool knowsDevice(std::string serialNumber);
-	virtual bool knowsDevice(uint64_t id);
+	std::shared_ptr<PhilipsHuePeer> getPeer(int32_t address);
+	std::shared_ptr<PhilipsHuePeer> getPeer(uint64_t id);
+	std::shared_ptr<PhilipsHuePeer> getPeer(std::string serialNumber);
 
 	virtual PVariable deleteDevice(int32_t clientID, std::string serialNumber, int32_t flags);
 	virtual PVariable deleteDevice(int32_t clientID, uint64_t peerID, int32_t flags);
@@ -60,6 +78,12 @@ public:
 	virtual PVariable putParamset(int32_t clientID, uint64_t peerID, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel, PVariable paramset);
 	virtual PVariable searchDevices(int32_t clientID);
 protected:
+	//In table variables
+	int32_t _firmwareVersion = 0;
+	//End
+
+	PacketManager _sentPackets;
+
 	std::mutex _peerInitMutex;
 
 	/**

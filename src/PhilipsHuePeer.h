@@ -42,7 +42,6 @@ using namespace BaseLib::Systems;
 namespace PhilipsHue
 {
 class PhilipsHueCentral;
-class PhilipsHueDevice;
 
 class FrameValue
 {
@@ -71,12 +70,10 @@ public:
 	virtual bool wireless() { return true; }
 	//End features
 
-	virtual std::string handleCLICommand(std::string command);
+	virtual std::string handleCliCommand(std::string command);
 
-	virtual bool load(BaseLib::Systems::LogicalDevice* device);
+	virtual bool load(BaseLib::Systems::ICentral* central);
 	virtual void save(bool savePeer, bool saveVariables, bool saveCentralConfig);
-    virtual void loadVariables(BaseLib::Systems::LogicalDevice* device = nullptr, std::shared_ptr<BaseLib::Database::DataTable> rows = std::shared_ptr<BaseLib::Database::DataTable>());
-    virtual void saveVariables();
 	virtual void savePeers() {};
 	virtual int32_t getChannelGroupedWith(int32_t channel) { return -1; }
 	virtual int32_t getNewFirmwareVersion() { return 0; }
@@ -120,8 +117,7 @@ protected:
 	BaseLib::Math::Matrix3x3 _rgbXyzConversionMatrix;
 	BaseLib::Math::Matrix3x3 _xyzRgbConversionMatrix;
 
-	virtual std::shared_ptr<BaseLib::Systems::Central> getCentral();
-	virtual std::shared_ptr<BaseLib::Systems::LogicalDevice> getDevice(int32_t address);
+	virtual std::shared_ptr<BaseLib::Systems::ICentral> getCentral();
 	void getValuesFromPacket(std::shared_ptr<PhilipsHuePacket> packet, std::vector<FrameValues>& frameValue);
 
 	virtual PParameterGroup getParameterSet(int32_t channel, ParameterGroup::Type::Enum type);
@@ -133,6 +129,9 @@ protected:
 	double getHueFactor(const int32_t& hue);
 
 	PVariable setValue(int32_t clientID, uint32_t channel, std::string valueKey, PVariable value, bool noSending);
+
+	virtual void loadVariables(BaseLib::Systems::ICentral* central, std::shared_ptr<BaseLib::Database::DataTable>& rows);
+    virtual void saveVariables();
 };
 
 }
