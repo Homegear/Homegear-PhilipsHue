@@ -68,7 +68,6 @@ void PhilipsHueCentral::dispose(bool wait)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
-	_disposed = true;
 }
 
 bool PhilipsHueCentral::onPacketReceived(std::string& senderID, std::shared_ptr<BaseLib::Systems::Packet> packet)
