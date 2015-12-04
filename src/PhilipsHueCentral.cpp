@@ -833,7 +833,7 @@ std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createPeer(int32_t address, i
 		peer->setFirmwareVersion(firmwareVersion);
 		peer->setDeviceType(deviceType);
 		peer->setSerialNumber(serialNumber);
-		peer->setRpcDevice(GD::rpcDevices.find(deviceType, firmwareVersion, -1));
+		peer->setRpcDevice(GD::family->getRpcDevices()->find(deviceType, firmwareVersion, -1));
 		if(!peer->getRpcDevice()) return std::shared_ptr<PhilipsHuePeer>();
 		if(save) peer->save(true, true, false); //Save and create peerID
 		return peer;

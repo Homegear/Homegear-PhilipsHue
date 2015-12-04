@@ -50,7 +50,6 @@ public:
 	static BaseLib::Obj* bl;
 	static PhilipsHue* family;
 	static std::shared_ptr<IPhilipsHueInterface> physicalInterface;
-	static Devices rpcDevices;
 	static BaseLib::Output out;
 private:
 	GD();

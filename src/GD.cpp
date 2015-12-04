@@ -35,5 +35,4 @@ namespace PhilipsHue
 	PhilipsHue* GD::family = nullptr;
 	std::shared_ptr<IPhilipsHueInterface> GD::physicalInterface;
 	BaseLib::Output GD::out;
-	Devices GD::rpcDevices(HUE_FAMILY_ID);
 }
