@@ -802,7 +802,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 				index++;
 			}
 
-			PVariable result = searchDevices(-1);
+			PVariable result = searchDevices(nullptr);
 			if(result->errorStruct) stringStream << "Error: " << result->structValue->at("faultString")->stringValue << std::endl;
 			else stringStream << "Search completed successfully." << std::endl;
 			return stringStream.str();
@@ -854,7 +854,7 @@ std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createPeer(int32_t address, i
 }
 
 //RPC functions
-PVariable PhilipsHueCentral::deleteDevice(int32_t clientID, std::string serialNumber, int32_t flags)
+PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, std::string serialNumber, int32_t flags)
 {
 	try
 	{
@@ -862,7 +862,7 @@ PVariable PhilipsHueCentral::deleteDevice(int32_t clientID, std::string serialNu
 		if(serialNumber[0] == '*') return Variable::createError(-2, "Cannot delete virtual device.");
 		std::shared_ptr<PhilipsHuePeer> peer = getPeer(serialNumber);
 		if(!peer) return Variable::createError(-2, "Unknown device.");
-		return deleteDevice(clientID, peer->getID(), flags);
+		return deleteDevice(clientInfo, peer->getID(), flags);
 	}
 	catch(const std::exception& ex)
     {
@@ -879,7 +879,7 @@ PVariable PhilipsHueCentral::deleteDevice(int32_t clientID, std::string serialNu
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHueCentral::deleteDevice(int32_t clientID, uint64_t peerID, int32_t flags)
+PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, uint64_t peerID, int32_t flags)
 {
 	try
 	{
@@ -907,7 +907,7 @@ PVariable PhilipsHueCentral::deleteDevice(int32_t clientID, uint64_t peerID, int
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHueCentral::getDeviceInfo(int32_t clientID, uint64_t id, std::map<std::string, bool> fields)
+PVariable PhilipsHueCentral::getDeviceInfo(BaseLib::PRpcClientInfo clientInfo, uint64_t id, std::map<std::string, bool> fields)
 {
 	try
 	{
@@ -916,7 +916,7 @@ PVariable PhilipsHueCentral::getDeviceInfo(int32_t clientID, uint64_t id, std::m
 			std::shared_ptr<PhilipsHuePeer> peer(getPeer(id));
 			if(!peer) return Variable::createError(-2, "Unknown device.");
 
-			return peer->getDeviceInfo(clientID, fields);
+			return peer->getDeviceInfo(clientInfo, fields);
 		}
 		else
 		{
@@ -935,7 +935,7 @@ PVariable PhilipsHueCentral::getDeviceInfo(int32_t clientID, uint64_t id, std::m
 			{
 				//listDevices really needs a lot of resources, so wait a little bit after each device
 				std::this_thread::sleep_for(std::chrono::milliseconds(3));
-				PVariable info = (*i)->getDeviceInfo(clientID, fields);
+				PVariable info = (*i)->getDeviceInfo(clientInfo, fields);
 				if(!info) continue;
 				array->arrayValue->push_back(info);
 			}
@@ -961,7 +961,7 @@ PVariable PhilipsHueCentral::getDeviceInfo(int32_t clientID, uint64_t id, std::m
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHueCentral::putParamset(int32_t clientID, std::string serialNumber, int32_t channel, ParameterGroup::Type::Enum type, std::string remoteSerialNumber, int32_t remoteChannel, PVariable paramset)
+PVariable PhilipsHueCentral::putParamset(BaseLib::PRpcClientInfo clientInfo, std::string serialNumber, int32_t channel, ParameterGroup::Type::Enum type, std::string remoteSerialNumber, int32_t remoteChannel, PVariable paramset)
 {
 	try
 	{
@@ -977,7 +977,7 @@ PVariable PhilipsHueCentral::putParamset(int32_t clientID, std::string serialNum
 			}
 			else remoteID = remotePeer->getID();
 		}
-		PVariable result = peer->putParamset(clientID, channel, type, remoteID, remoteChannel, paramset);
+		PVariable result = peer->putParamset(clientInfo, channel, type, remoteID, remoteChannel, paramset);
 		return result;
 	}
 	catch(const std::exception& ex)
@@ -995,13 +995,13 @@ PVariable PhilipsHueCentral::putParamset(int32_t clientID, std::string serialNum
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHueCentral::putParamset(int32_t clientID, uint64_t peerID, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel, PVariable paramset)
+PVariable PhilipsHueCentral::putParamset(BaseLib::PRpcClientInfo clientInfo, uint64_t peerID, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel, PVariable paramset)
 {
 	try
 	{
 		std::shared_ptr<PhilipsHuePeer> peer(getPeer(peerID));
 		if(!peer) return Variable::createError(-2, "Unknown device.");
-		PVariable result = peer->putParamset(clientID, channel, type, remoteID, remoteChannel, paramset);
+		PVariable result = peer->putParamset(clientInfo, channel, type, remoteID, remoteChannel, paramset);
 		return result;
 	}
 	catch(const std::exception& ex)
@@ -1019,7 +1019,7 @@ PVariable PhilipsHueCentral::putParamset(int32_t clientID, uint64_t peerID, int3
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHueCentral::searchDevices(int32_t clientID)
+PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 {
 	try
 	{
@@ -1098,7 +1098,7 @@ PVariable PhilipsHueCentral::searchDevices(int32_t clientID)
 			PVariable deviceDescriptions(new Variable(VariableType::tArray));
 			for(std::vector<std::shared_ptr<PhilipsHuePeer>>::iterator i = newPeers.begin(); i != newPeers.end(); ++i)
 			{
-				std::shared_ptr<std::vector<PVariable>> descriptions = (*i)->getDeviceDescriptions(clientID, true, std::map<std::string, bool>());
+				std::shared_ptr<std::vector<PVariable>> descriptions = (*i)->getDeviceDescriptions(clientInfo, true, std::map<std::string, bool>());
 				if(!descriptions) continue;
 				for(std::vector<PVariable>::iterator j = descriptions->begin(); j != descriptions->end(); ++j)
 				{

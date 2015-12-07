@@ -86,27 +86,27 @@ public:
 	/**
 	 * {@inheritDoc}
 	 */
-    virtual PVariable getDeviceInfo(int32_t clientID, std::map<std::string, bool> fields);
+    virtual PVariable getDeviceInfo(BaseLib::PRpcClientInfo clientInfo, std::map<std::string, bool> fields);
 
     /**
 	 * {@inheritDoc}
 	 */
-	virtual PVariable getParamsetDescription(int32_t clientID, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel);
+	virtual PVariable getParamsetDescription(BaseLib::PRpcClientInfo clientInfo, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel);
 
 	/**
 	 * {@inheritDoc}
 	 */
-	virtual PVariable getParamset(int32_t clientID, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel);
+	virtual PVariable getParamset(BaseLib::PRpcClientInfo clientInfo, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel);
 
 	/**
 	 * {@inheritDoc}
 	 */
-	virtual PVariable putParamset(int32_t clientID, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel, PVariable variables, bool onlyPushing = false);
+	virtual PVariable putParamset(BaseLib::PRpcClientInfo clientInfo, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel, PVariable variables, bool onlyPushing = false);
 
 	/**
 	 * {@inheritDoc}
 	 */
-	virtual PVariable setValue(int32_t clientID, uint32_t channel, std::string valueKey, PVariable value);
+	virtual PVariable setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value);
 	//End RPC methods
 protected:
 	std::shared_ptr<BaseLib::RPC::RPCEncoder> _binaryEncoder;
@@ -128,7 +128,7 @@ protected:
 	double getHueFactor(const double& hue);
 	double getHueFactor(const int32_t& hue);
 
-	PVariable setValue(int32_t clientID, uint32_t channel, std::string valueKey, PVariable value, bool noSending);
+	PVariable setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value, bool noSending);
 
 	virtual void loadVariables(BaseLib::Systems::ICentral* central, std::shared_ptr<BaseLib::Database::DataTable>& rows);
     virtual void saveVariables();

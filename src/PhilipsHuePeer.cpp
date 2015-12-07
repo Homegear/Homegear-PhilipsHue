@@ -629,11 +629,11 @@ double PhilipsHuePeer::getHueFactor(const double& hue)
 }
 
 //RPC Methods
-PVariable PhilipsHuePeer::getDeviceInfo(int32_t clientID, std::map<std::string, bool> fields)
+PVariable PhilipsHuePeer::getDeviceInfo(BaseLib::PRpcClientInfo clientInfo, std::map<std::string, bool> fields)
 {
 	try
 	{
-		PVariable info(Peer::getDeviceInfo(clientID, fields));
+		PVariable info(Peer::getDeviceInfo(clientInfo, fields));
 		if(info->errorStruct) return info;
 
 		if(fields.empty() || fields.find("INTERFACE") != fields.end()) info->structValue->insert(StructElement("INTERFACE", PVariable(new Variable(GD::physicalInterface->getID()))));
@@ -655,7 +655,7 @@ PVariable PhilipsHuePeer::getDeviceInfo(int32_t clientID, std::map<std::string, 
     return PVariable();
 }
 
-PVariable PhilipsHuePeer::getParamsetDescription(int32_t clientID, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel)
+PVariable PhilipsHuePeer::getParamsetDescription(BaseLib::PRpcClientInfo clientInfo, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel)
 {
 	try
 	{
@@ -666,7 +666,7 @@ PVariable PhilipsHuePeer::getParamsetDescription(int32_t clientID, int32_t chann
 		PParameterGroup parameterGroup = functionIterator->second->getParameterGroup(type);
 		if(!parameterGroup) return Variable::createError(-3, "Unknown parameter set");
 
-		return Peer::getParamsetDescription(clientID, parameterGroup);
+		return Peer::getParamsetDescription(clientInfo, parameterGroup);
 	}
 	catch(const std::exception& ex)
     {
@@ -683,7 +683,7 @@ PVariable PhilipsHuePeer::getParamsetDescription(int32_t clientID, int32_t chann
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHuePeer::putParamset(int32_t clientID, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel, PVariable variables, bool onlyPushing)
+PVariable PhilipsHuePeer::putParamset(BaseLib::PRpcClientInfo clientInfo, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel, PVariable variables, bool onlyPushing)
 {
 	try
 	{
@@ -701,7 +701,7 @@ PVariable PhilipsHuePeer::putParamset(int32_t clientID, int32_t channel, Paramet
 			for(Struct::iterator i = variables->structValue->begin(); i != variables->structValue->end(); ++i)
 			{
 				if(i->first.empty() || !i->second) continue;
-				setValue(clientID, channel, i->first, i->second);
+				setValue(clientInfo, channel, i->first, i->second);
 			}
 		}
 		else
@@ -725,7 +725,7 @@ PVariable PhilipsHuePeer::putParamset(int32_t clientID, int32_t channel, Paramet
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHuePeer::getParamset(int32_t clientID, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel)
+PVariable PhilipsHuePeer::getParamset(BaseLib::PRpcClientInfo clientInfo, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel)
 {
 	try
 	{
@@ -776,16 +776,16 @@ PVariable PhilipsHuePeer::getParamset(int32_t clientID, int32_t channel, Paramet
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHuePeer::setValue(int32_t clientID, uint32_t channel, std::string valueKey, PVariable value)
+PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value)
 {
-	return setValue(clientID, channel, valueKey, value, false);
+	return setValue(clientInfo, channel, valueKey, value, false);
 }
 
-PVariable PhilipsHuePeer::setValue(int32_t clientID, uint32_t channel, std::string valueKey, PVariable value, bool noSending)
+PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value, bool noSending)
 {
 	try
 	{
-		Peer::setValue(clientID, channel, valueKey, value); //Ignore result, otherwise setHomegerValue might not be executed
+		Peer::setValue(clientInfo, channel, valueKey, value); //Ignore result, otherwise setHomegerValue might not be executed
 		if(_disposing) return Variable::createError(-32500, "Peer is disposing.");
 		if(!_centralFeatures) return Variable::createError(-2, "Not a central peer.");
 		if(valueKey.empty()) return Variable::createError(-5, "Value key is empty.");
@@ -809,16 +809,16 @@ PVariable PhilipsHuePeer::setValue(int32_t clientID, uint32_t channel, std::stri
 
 			PVariable result;
 			uint8_t brightness = std::lround(hsv.getBrightness() * 255.0);
-			if(brightness < 10) result = setValue(clientID, channel, "STATE", PVariable(new Variable(false)), true);
-			else result = setValue(clientID, channel, "STATE", PVariable(new Variable(true)), true);
+			if(brightness < 10) result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(false)), true);
+			else result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(true)), true);
 			if(result->errorStruct) return result;
-			result = setValue(clientID, channel, "BRIGHTNESS", PVariable(new Variable((int32_t)brightness)), true);
+			result = setValue(clientInfo, channel, "BRIGHTNESS", PVariable(new Variable((int32_t)brightness)), true);
 			if(result->errorStruct) return result;
 			int32_t hue = std::lround(hsv.getHue() * getHueFactor(hsv.getHue()));
-			result = setValue(clientID, channel, "HUE", PVariable(new Variable(hue)), true);
+			result = setValue(clientInfo, channel, "HUE", PVariable(new Variable(hue)), true);
 			if(result->errorStruct) return result;
 			uint8_t saturation = std::lround(hsv.getSaturation() * 255.0);
-			result = setValue(clientID, channel, "SATURATION", PVariable(new Variable((int32_t)saturation)), false);
+			result = setValue(clientInfo, channel, "SATURATION", PVariable(new Variable((int32_t)saturation)), false);
 			if(result->errorStruct) return result;
 
 			//Convert back, because the value might be different than the passed one.
