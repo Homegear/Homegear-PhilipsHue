@@ -35,7 +35,7 @@
 namespace PhilipsHue
 {
 
-PhilipsHue::PhilipsHue(BaseLib::Obj* bl, BaseLib::Systems::DeviceFamily::IFamilyEventSink* eventHandler) : BaseLib::Systems::DeviceFamily(bl, eventHandler, HUE_FAMILY_ID, "Philips hue")
+PhilipsHue::PhilipsHue(BaseLib::Obj* bl, BaseLib::Systems::DeviceFamily::IFamilyEventSink* eventHandler) : BaseLib::Systems::DeviceFamily(bl, eventHandler, HUE_FAMILY_ID, HUE_FAMILY_NAME)
 {
 	GD::bl = _bl;
 	GD::family = this;

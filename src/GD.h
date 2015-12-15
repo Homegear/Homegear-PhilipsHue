@@ -31,6 +31,7 @@
 #define GD_H_
 
 #define HUE_FAMILY_ID 5
+#define HUE_FAMILY_NAME "Philips hue"
 
 #include "homegear-base/BaseLib.h"
 #include "PhilipsHue.h"
