@@ -62,8 +62,8 @@ public:
 class PhilipsHuePeer : public BaseLib::Systems::Peer
 {
 public:
-	PhilipsHuePeer(uint32_t parentID, bool centralFeatures, IPeerEventSink* eventHandler);
-	PhilipsHuePeer(int32_t id, int32_t address, std::string serialNumber, uint32_t parentID, bool centralFeatures, IPeerEventSink* eventHandler);
+	PhilipsHuePeer(uint32_t parentID, IPeerEventSink* eventHandler);
+	PhilipsHuePeer(int32_t id, int32_t address, std::string serialNumber, uint32_t parentID, IPeerEventSink* eventHandler);
 	virtual ~PhilipsHuePeer();
 
 	//Features

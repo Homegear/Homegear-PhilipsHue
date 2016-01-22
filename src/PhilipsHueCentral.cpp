@@ -175,7 +175,7 @@ void PhilipsHueCentral::loadPeers()
 			int32_t peerID = row->second.at(0)->intValue;
 			GD::out.printMessage("Loading peer " + std::to_string(peerID));
 			int32_t address = row->second.at(2)->intValue;
-			std::shared_ptr<PhilipsHuePeer> peer(new PhilipsHuePeer(peerID, address, row->second.at(3)->textValue, _deviceId, true, this));
+			std::shared_ptr<PhilipsHuePeer> peer(new PhilipsHuePeer(peerID, address, row->second.at(3)->textValue, _deviceId, this));
 			if(!peer->load(this)) continue;
 			if(!peer->getRpcDevice()) continue;
 			_peersMutex.lock();
@@ -828,7 +828,7 @@ std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createPeer(int32_t address, i
 {
 	try
 	{
-		std::shared_ptr<PhilipsHuePeer> peer(new PhilipsHuePeer(_deviceId, true, this));
+		std::shared_ptr<PhilipsHuePeer> peer(new PhilipsHuePeer(_deviceId, this));
 		peer->setAddress(address);
 		peer->setFirmwareVersion(firmwareVersion);
 		peer->setDeviceType(deviceType);

@@ -56,13 +56,13 @@ std::shared_ptr<BaseLib::Systems::ICentral> PhilipsHuePeer::getCentral()
 	return std::shared_ptr<BaseLib::Systems::ICentral>();
 }
 
-PhilipsHuePeer::PhilipsHuePeer(uint32_t parentID, bool centralFeatures, IPeerEventSink* eventHandler) : Peer(GD::bl, parentID, centralFeatures, eventHandler)
+PhilipsHuePeer::PhilipsHuePeer(uint32_t parentID, IPeerEventSink* eventHandler) : Peer(GD::bl, parentID, eventHandler)
 {
 	_binaryEncoder.reset(new BaseLib::RPC::RPCEncoder(GD::bl));
 	_binaryDecoder.reset(new BaseLib::RPC::RPCDecoder(GD::bl));
 }
 
-PhilipsHuePeer::PhilipsHuePeer(int32_t id, int32_t address, std::string serialNumber, uint32_t parentID, bool centralFeatures, IPeerEventSink* eventHandler) : Peer(GD::bl, id, address, serialNumber, parentID, centralFeatures, eventHandler)
+PhilipsHuePeer::PhilipsHuePeer(int32_t id, int32_t address, std::string serialNumber, uint32_t parentID, IPeerEventSink* eventHandler) : Peer(GD::bl, id, address, serialNumber, parentID, eventHandler)
 {
 	_binaryEncoder.reset(new BaseLib::RPC::RPCEncoder(GD::bl));
 	_binaryDecoder.reset(new BaseLib::RPC::RPCDecoder(GD::bl));
@@ -335,7 +335,7 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 	try
 	{
 		if(!packet) return;
-		if(!_centralFeatures || _disposing) return;
+		if(_disposing) return;
 		if(packet->senderAddress() != _address) return;
 		if(!_rpcDevice) return;
 		std::shared_ptr<PhilipsHueCentral> central = std::dynamic_pointer_cast<PhilipsHueCentral>(getCentral());
@@ -688,7 +688,6 @@ PVariable PhilipsHuePeer::putParamset(BaseLib::PRpcClientInfo clientInfo, int32_
 	try
 	{
 		if(_disposing) return Variable::createError(-32500, "Peer is disposing.");
-		if(!_centralFeatures) return Variable::createError(-2, "Not a central peer.");
 		if(channel < 0) channel = 0;
 		Functions::iterator functionIterator = _rpcDevice->functions.find(channel);
 		if(functionIterator == _rpcDevice->functions.end()) return Variable::createError(-2, "Unknown channel");
@@ -787,7 +786,6 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 	{
 		Peer::setValue(clientInfo, channel, valueKey, value, wait); //Ignore result, otherwise setHomegerValue might not be executed
 		if(_disposing) return Variable::createError(-32500, "Peer is disposing.");
-		if(!_centralFeatures) return Variable::createError(-2, "Not a central peer.");
 		if(valueKey.empty()) return Variable::createError(-5, "Value key is empty.");
 		if(channel == 0 && serviceMessages->set(valueKey, value->booleanValue)) return PVariable(new Variable(VariableType::tVoid));
 		std::unordered_map<uint32_t, std::unordered_map<std::string, RPCConfigurationParameter>>::iterator channelIterator = valuesCentral.find(channel);
