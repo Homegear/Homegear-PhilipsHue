@@ -58,7 +58,7 @@ HueBridge::~HueBridge()
 	try
 	{
 		_stopCallbackThread = true;
-		if(_listenThread.joinable()) _listenThread.join();
+		_bl->threadManager.join(_listenThread);
 	}
     catch(const std::exception& ex)
     {
@@ -195,8 +195,8 @@ void HueBridge::startListening()
 	{
 		stopListening();
 		_client = std::unique_ptr<BaseLib::HTTPClient>(new BaseLib::HTTPClient(_bl, _hostname, _port, false, _settings->ssl, _settings->caFile, _settings->verifyCertificate));
-		_listenThread = std::thread(&HueBridge::listen, this);
-		if(_settings->listenThreadPriority > -1) BaseLib::Threads::setThreadPriority(_bl, _listenThread.native_handle(), _settings->listenThreadPriority, _settings->listenThreadPolicy);
+		if(_settings->listenThreadPriority > -1) _bl->threadManager.start(_listenThread, true, _settings->listenThreadPriority, _settings->listenThreadPolicy, &HueBridge::listen, this);
+		else _bl->threadManager.start(_listenThread, true, &HueBridge::listen, this);
 		IPhysicalInterface::startListening();
 	}
     catch(const std::exception& ex)
@@ -218,7 +218,7 @@ void HueBridge::stopListening()
 	try
 	{
 		_stopCallbackThread = true;
-		if(_listenThread.joinable()) _listenThread.join();
+		_bl->threadManager.join(_listenThread);
 		_stopCallbackThread = false;
 		if(_client)
 		{

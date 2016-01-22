@@ -106,7 +106,7 @@ public:
 	/**
 	 * {@inheritDoc}
 	 */
-	virtual PVariable setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value);
+	virtual PVariable setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value, bool wait);
 	//End RPC methods
 protected:
 	std::shared_ptr<BaseLib::RPC::RPCEncoder> _binaryEncoder;
@@ -128,7 +128,7 @@ protected:
 	double getHueFactor(const double& hue);
 	double getHueFactor(const int32_t& hue);
 
-	PVariable setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value, bool noSending);
+	PVariable setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value, bool noSending, bool wait);
 
 	virtual void loadVariables(BaseLib::Systems::ICentral* central, std::shared_ptr<BaseLib::Database::DataTable>& rows);
     virtual void saveVariables();

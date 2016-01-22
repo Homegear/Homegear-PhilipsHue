@@ -701,7 +701,7 @@ PVariable PhilipsHuePeer::putParamset(BaseLib::PRpcClientInfo clientInfo, int32_
 			for(Struct::iterator i = variables->structValue->begin(); i != variables->structValue->end(); ++i)
 			{
 				if(i->first.empty() || !i->second) continue;
-				setValue(clientInfo, channel, i->first, i->second);
+				setValue(clientInfo, channel, i->first, i->second, true);
 			}
 		}
 		else
@@ -776,16 +776,16 @@ PVariable PhilipsHuePeer::getParamset(BaseLib::PRpcClientInfo clientInfo, int32_
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value)
+PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value, bool wait)
 {
-	return setValue(clientInfo, channel, valueKey, value, false);
+	return setValue(clientInfo, channel, valueKey, value, false, wait);
 }
 
-PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value, bool noSending)
+PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value, bool noSending, bool wait)
 {
 	try
 	{
-		Peer::setValue(clientInfo, channel, valueKey, value); //Ignore result, otherwise setHomegerValue might not be executed
+		Peer::setValue(clientInfo, channel, valueKey, value, wait); //Ignore result, otherwise setHomegerValue might not be executed
 		if(_disposing) return Variable::createError(-32500, "Peer is disposing.");
 		if(!_centralFeatures) return Variable::createError(-2, "Not a central peer.");
 		if(valueKey.empty()) return Variable::createError(-5, "Value key is empty.");
@@ -809,16 +809,16 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 			PVariable result;
 			uint8_t brightness = std::lround(hsv.getBrightness() * 255.0);
-			if(brightness < 10) result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(false)), true);
-			else result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(true)), true);
+			if(brightness < 10) result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(false)), true, wait);
+			else result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(true)), true, wait);
 			if(result->errorStruct) return result;
-			result = setValue(clientInfo, channel, "BRIGHTNESS", PVariable(new Variable((int32_t)brightness)), true);
+			result = setValue(clientInfo, channel, "BRIGHTNESS", PVariable(new Variable((int32_t)brightness)), true, wait);
 			if(result->errorStruct) return result;
 			int32_t hue = std::lround(hsv.getHue() * getHueFactor(hsv.getHue()));
-			result = setValue(clientInfo, channel, "HUE", PVariable(new Variable(hue)), true);
+			result = setValue(clientInfo, channel, "HUE", PVariable(new Variable(hue)), true, wait);
 			if(result->errorStruct) return result;
 			uint8_t saturation = std::lround(hsv.getSaturation() * 255.0);
-			result = setValue(clientInfo, channel, "SATURATION", PVariable(new Variable((int32_t)saturation)), false);
+			result = setValue(clientInfo, channel, "SATURATION", PVariable(new Variable((int32_t)saturation)), false, wait);
 			if(result->errorStruct) return result;
 
 			//Convert back, because the value might be different than the passed one.
