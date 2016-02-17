@@ -194,7 +194,7 @@ void HueBridge::startListening()
 	try
 	{
 		stopListening();
-		_client = std::unique_ptr<BaseLib::HTTPClient>(new BaseLib::HTTPClient(_bl, _hostname, _port, false, _settings->ssl, _settings->caFile, _settings->verifyCertificate));
+		_client = std::unique_ptr<BaseLib::HttpClient>(new BaseLib::HttpClient(_bl, _hostname, _port, false, _settings->ssl, _settings->caFile, _settings->verifyCertificate));
 		if(_settings->listenThreadPriority > -1) _bl->threadManager.start(_listenThread, true, _settings->listenThreadPriority, _settings->listenThreadPolicy, &HueBridge::listen, this);
 		else _bl->threadManager.start(_listenThread, true, &HueBridge::listen, this);
 		IPhysicalInterface::startListening();
