@@ -104,7 +104,7 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
     	{
 			try
 			{
-				if(_stopCallbackThread) return;
+				if(_stopCallbackThread || GD::bl->shuttingDown) return;
 				_client->sendRequest(data, response);
 				exception = Exception("");
 				break;
