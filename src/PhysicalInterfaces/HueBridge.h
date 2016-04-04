@@ -53,7 +53,7 @@ class HueBridge  : public IPhilipsHueInterface
     protected:
         int64_t _lastAction = 0;
         std::string _hostname;
-        int32_t _port;
+        int32_t _port = 80;
         std::unique_ptr<BaseLib::HttpClient> _client;
         std::unique_ptr<BaseLib::RPC::JsonEncoder> _jsonEncoder;
         std::unique_ptr<BaseLib::RPC::JsonDecoder> _jsonDecoder;
