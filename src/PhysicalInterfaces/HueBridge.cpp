@@ -130,7 +130,7 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 			else _out.printError("Unknown error sending packet. Response was: " + response);
 		}
 
-		std::string getData = "GET /api/homegear" + _settings->id + "/lights/" + std::to_string(packet->destinationAddress()) + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
+		/*std::string getData = "GET /api/homegear" + _settings->id + "/lights/" + std::to_string(packet->destinationAddress()) + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
 		for(int i = 0; i < 5; i++)
     	{
 			try
@@ -171,7 +171,7 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 		{
 			std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(huePacket->destinationAddress(), 0, 1, json, BaseLib::HelperFunctions::getTime()));
 			raisePacketReceived(packet);
-		}
+		}*/
 
 		_lastPacketSent = BaseLib::HelperFunctions::getTime();
 	}
