@@ -59,6 +59,7 @@ HueBridge::~HueBridge()
 	{
 		_stopCallbackThread = true;
 		_bl->threadManager.join(_listenThread);
+		_client.reset();
 	}
     catch(const std::exception& ex)
     {
@@ -220,11 +221,7 @@ void HueBridge::stopListening()
 		_stopCallbackThread = true;
 		_bl->threadManager.join(_listenThread);
 		_stopCallbackThread = false;
-		if(_client)
-		{
-			_client->disconnect();
-			_client.reset();
-		}
+		if(_client) _client->disconnect();
 		IPhysicalInterface::stopListening();
 	}
 	catch(const std::exception& ex)
