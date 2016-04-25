@@ -92,6 +92,8 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 		PVariable json = huePacket->getJson();
 		if(!json) return;
 
+		_nextPoll = BaseLib::HelperFunctions::getTime() + 2000; // No polling now
+
 		std::string data;
 		_jsonEncoder->encode(json, data);
     	std::string header = "PUT /api/homegear" + _settings->id + "/lights/" + std::to_string(packet->destinationAddress()) + "/state HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: " + std::to_string(data.size()) + "\r\nConnection: Keep-Alive\r\n\r\n";
@@ -130,6 +132,8 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 			if(json->structValue->find("description") != json->structValue->end()) _out.printError("Error: " + json->structValue->at("description")->stringValue);
 			else _out.printError("Unknown error sending packet. Response was: " + response);
 		}
+
+		_nextPoll = BaseLib::HelperFunctions::getTime() + 2000; // Poll in 2 seconds
 
 		/*std::string getData = "GET /api/homegear" + _settings->id + "/lights/" + std::to_string(packet->destinationAddress()) + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
 		for(int i = 0; i < 5; i++)
@@ -411,11 +415,12 @@ void HueBridge::listen()
         {
         	try
         	{
-				for(int32_t i = 0; i < 30; i++)
+				while(BaseLib::HelperFunctions::getTime() < _nextPoll)
 				{
 					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 					if(_stopCallbackThread) return;
 				}
+				_nextPoll = BaseLib::HelperFunctions::getTime() + 30000;
 				for(int32_t i = 0; i < 5; i++)
 				{
 					try

@@ -52,6 +52,7 @@ class HueBridge  : public IPhilipsHueInterface
         virtual std::vector<std::shared_ptr<PhilipsHuePacket>> getPeerInfo();
     protected:
         int64_t _lastAction = 0;
+        int64_t _nextPoll = 0;
         std::string _hostname;
         int32_t _port = 80;
         std::unique_ptr<BaseLib::HttpClient> _client;
