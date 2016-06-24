@@ -30,7 +30,7 @@
 #ifndef FACTORY_H
 #define FACTORY_H
 
-#include "homegear-base/BaseLib.h"
+#include <homegear-base/BaseLib.h>
 #include "PhilipsHue.h"
 
 class PhilipsHueFactory : BaseLib::Systems::SystemFactory

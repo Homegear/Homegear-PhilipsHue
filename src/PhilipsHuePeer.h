@@ -30,7 +30,7 @@
 #ifndef PHILIPSHUEPEER_H_
 #define PHILIPSHUEPEER_H_
 
-#include "homegear-base/BaseLib.h"
+#include <homegear-base/BaseLib.h>
 #include "PhilipsHuePacket.h"
 
 #include <list>

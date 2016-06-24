@@ -30,7 +30,7 @@
 #ifndef PHILIPSHUEPACKET_H_
 #define PHILIPSHUEPACKET_H_
 
-#include "homegear-base/BaseLib.h"
+#include <homegear-base/BaseLib.h>
 
 #include <map>
 

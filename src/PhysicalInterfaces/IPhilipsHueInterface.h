@@ -30,7 +30,7 @@
 #ifndef IPHILIPSHUEINTERFACE_H_
 #define IPHILIPSHUEINTERFACE_H_
 
-#include "homegear-base/BaseLib.h"
+#include <homegear-base/BaseLib.h>
 #include "../PhilipsHuePacket.h"
 
 namespace PhilipsHue {
