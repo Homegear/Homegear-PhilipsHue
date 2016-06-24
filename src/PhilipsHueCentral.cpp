@@ -34,12 +34,12 @@ namespace PhilipsHue {
 
 PhilipsHueCentral::PhilipsHueCentral(ICentralEventSink* eventHandler) : BaseLib::Systems::ICentral(HUE_FAMILY_ID, GD::bl, eventHandler)
 {
-	_physicalInterfaceEventhandler = GD::physicalInterface->addEventHandler((IPhysicalInterface::IPhysicalInterfaceEventSink*)this);
+	_physicalInterfaceEventhandlers[GD::physicalInterface->getID()] = GD::physicalInterface->addEventHandler((IPhysicalInterface::IPhysicalInterfaceEventSink*)this);
 }
 
 PhilipsHueCentral::PhilipsHueCentral(uint32_t deviceID, std::string serialNumber, int32_t address, ICentralEventSink* eventHandler) : BaseLib::Systems::ICentral(HUE_FAMILY_ID, GD::bl, deviceID, serialNumber, address, eventHandler)
 {
-	_physicalInterfaceEventhandler = GD::physicalInterface->addEventHandler((IPhysicalInterface::IPhysicalInterfaceEventSink*)this);
+	_physicalInterfaceEventhandlers[GD::physicalInterface->getID()] = GD::physicalInterface->addEventHandler((IPhysicalInterface::IPhysicalInterfaceEventSink*)this);
 }
 
 PhilipsHueCentral::~PhilipsHueCentral()
@@ -54,7 +54,7 @@ void PhilipsHueCentral::dispose(bool wait)
 		if(_disposing) return;
 		_disposing = true;
 		GD::out.printDebug("Removing device " + std::to_string(_deviceId) + " from physical device's event queue...");
-		GD::physicalInterface->removeEventHandler(_physicalInterfaceEventhandler);
+		GD::physicalInterface->removeEventHandler(_physicalInterfaceEventhandlers[GD::physicalInterface->getID()]);
 	}
     catch(const std::exception& ex)
     {
