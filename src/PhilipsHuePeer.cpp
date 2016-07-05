@@ -123,12 +123,55 @@ void PhilipsHuePeer::save(bool savePeer, bool variables, bool centralConfig)
     }
 }
 
+void PhilipsHuePeer::setPhysicalInterfaceId(std::string id)
+{
+	if(id.empty() || (GD::physicalInterfaces.find(id) != GD::physicalInterfaces.end() && GD::physicalInterfaces.at(id)))
+	{
+		_physicalInterfaceId = id;
+		setPhysicalInterface(id.empty() ? GD::defaultPhysicalInterface : GD::physicalInterfaces.at(_physicalInterfaceId));
+		saveVariable(19, _physicalInterfaceId);
+	}
+}
+
+void PhilipsHuePeer::setPhysicalInterface(std::shared_ptr<IPhilipsHueInterface> interface)
+{
+	try
+	{
+		if(!interface) return;
+		_physicalInterface = interface;
+	}
+	catch(const std::exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(BaseLib::Exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(...)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+    }
+}
+
 void PhilipsHuePeer::loadVariables(BaseLib::Systems::ICentral* central, std::shared_ptr<BaseLib::Database::DataTable>& rows)
 {
 	try
 	{
 		if(!rows) rows = _bl->db->getPeerVariables(_peerID);
 		Peer::loadVariables(central, rows);
+
+		for(BaseLib::Database::DataTable::iterator row = rows->begin(); row != rows->end(); ++row)
+		{
+			switch(row->second.at(2)->intValue)
+			{
+			case 19:
+				_physicalInterfaceId = row->second.at(4)->textValue;
+				if(!_physicalInterfaceId.empty() && GD::physicalInterfaces.find(_physicalInterfaceId) != GD::physicalInterfaces.end()) setPhysicalInterface(GD::physicalInterfaces.at(_physicalInterfaceId));
+				break;
+			}
+		}
+		if(!_physicalInterface) _physicalInterface = GD::defaultPhysicalInterface;
 	}
 	catch(const std::exception& ex)
     {
@@ -188,6 +231,8 @@ void PhilipsHuePeer::saveVariables()
 	{
 		if(_peerID == 0) return;
 		Peer::saveVariables();
+
+		saveVariable(19, _physicalInterfaceId);
 	}
 	catch(const std::exception& ex)
     {
@@ -636,7 +681,7 @@ PVariable PhilipsHuePeer::getDeviceInfo(BaseLib::PRpcClientInfo clientInfo, std:
 		PVariable info(Peer::getDeviceInfo(clientInfo, fields));
 		if(info->errorStruct) return info;
 
-		if(fields.empty() || fields.find("INTERFACE") != fields.end()) info->structValue->insert(StructElement("INTERFACE", PVariable(new Variable(GD::physicalInterface->getID()))));
+		if(fields.empty() || fields.find("INTERFACE") != fields.end()) info->structValue->insert(StructElement("INTERFACE", PVariable(new Variable(_physicalInterface->getID()))));
 
 		return info;
 	}
@@ -915,7 +960,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 			std::shared_ptr<PhilipsHueCentral> central = std::dynamic_pointer_cast<PhilipsHueCentral>(getCentral());
 			std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(central->getAddress(), _address, frame->type, json));
-			if(central) central->sendPacket(packet);
+			if(central) central->sendPacket(_physicalInterface, packet);
 		}
 
 		if(!valueKeys->empty())

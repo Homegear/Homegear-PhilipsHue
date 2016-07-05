@@ -55,7 +55,8 @@ void PhilipsHue::dispose()
 	if(_disposed) return;
 	DeviceFamily::dispose();
 
-	GD::physicalInterface.reset();
+	GD::defaultPhysicalInterface.reset();
+	GD::physicalInterfaces.clear();
 }
 
 std::shared_ptr<BaseLib::Systems::ICentral> PhilipsHue::initializeCentral(uint32_t deviceId, int32_t address, std::string serialNumber)
