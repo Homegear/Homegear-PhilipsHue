@@ -50,7 +50,8 @@ public:
 
 	static BaseLib::Obj* bl;
 	static PhilipsHue* family;
-	static std::shared_ptr<IPhilipsHueInterface> physicalInterface;
+	static std::map<std::string, std::shared_ptr<IPhilipsHueInterface>> physicalInterfaces;
+	static std::shared_ptr<IPhilipsHueInterface> defaultPhysicalInterface;
 	static BaseLib::Output out;
 private:
 	GD();

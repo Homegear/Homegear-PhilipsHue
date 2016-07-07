@@ -30,8 +30,11 @@
 #ifndef PHILIPSHUEPEER_H_
 #define PHILIPSHUEPEER_H_
 
-#include <homegear-base/BaseLib.h>
 #include "PhilipsHuePacket.h"
+#include "PhysicalInterfaces/IPhilipsHueInterface.h"
+
+#include <homegear-base/BaseLib.h>
+
 
 #include <list>
 
@@ -69,6 +72,13 @@ public:
 	//Features
 	virtual bool wireless() { return true; }
 	//End features
+
+	//{{{ In table variables
+	std::string getPhysicalInterfaceId() { return _physicalInterfaceId; }
+	void setPhysicalInterfaceId(std::string);
+	//}}}
+
+	std::shared_ptr<IPhilipsHueInterface>& getPhysicalInterface() { return _physicalInterface; }
 
 	virtual std::string handleCliCommand(std::string command);
 
@@ -109,6 +119,12 @@ public:
 	virtual PVariable setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value, bool wait);
 	//End RPC methods
 protected:
+	//In table variables:
+	std::string _physicalInterfaceId;
+	//End
+
+	std::shared_ptr<IPhilipsHueInterface> _physicalInterface;
+
 	std::shared_ptr<BaseLib::RPC::RPCEncoder> _binaryEncoder;
 	std::shared_ptr<BaseLib::RPC::RPCDecoder> _binaryDecoder;
 
@@ -116,6 +132,8 @@ protected:
 	double _gamma = 2.2;
 	BaseLib::Math::Matrix3x3 _rgbXyzConversionMatrix;
 	BaseLib::Math::Matrix3x3 _xyzRgbConversionMatrix;
+
+	virtual void setPhysicalInterface(std::shared_ptr<IPhilipsHueInterface> interface);
 
 	virtual std::shared_ptr<BaseLib::Systems::ICentral> getCentral();
 	void getValuesFromPacket(std::shared_ptr<PhilipsHuePacket> packet, std::vector<FrameValues>& frameValue);

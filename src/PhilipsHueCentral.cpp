@@ -34,12 +34,18 @@ namespace PhilipsHue {
 
 PhilipsHueCentral::PhilipsHueCentral(ICentralEventSink* eventHandler) : BaseLib::Systems::ICentral(HUE_FAMILY_ID, GD::bl, eventHandler)
 {
-	_physicalInterfaceEventhandlers[GD::physicalInterface->getID()] = GD::physicalInterface->addEventHandler((IPhysicalInterface::IPhysicalInterfaceEventSink*)this);
+	for(std::map<std::string, std::shared_ptr<IPhilipsHueInterface>>::iterator i = GD::physicalInterfaces.begin(); i != GD::physicalInterfaces.end(); ++i)
+	{
+		_physicalInterfaceEventhandlers[i->first] = i->second->addEventHandler((BaseLib::Systems::IPhysicalInterface::IPhysicalInterfaceEventSink*)this);
+	}
 }
 
 PhilipsHueCentral::PhilipsHueCentral(uint32_t deviceID, std::string serialNumber, int32_t address, ICentralEventSink* eventHandler) : BaseLib::Systems::ICentral(HUE_FAMILY_ID, GD::bl, deviceID, serialNumber, address, eventHandler)
 {
-	_physicalInterfaceEventhandlers[GD::physicalInterface->getID()] = GD::physicalInterface->addEventHandler((IPhysicalInterface::IPhysicalInterfaceEventSink*)this);
+	for(std::map<std::string, std::shared_ptr<IPhilipsHueInterface>>::iterator i = GD::physicalInterfaces.begin(); i != GD::physicalInterfaces.end(); ++i)
+	{
+		_physicalInterfaceEventhandlers[i->first] = i->second->addEventHandler((BaseLib::Systems::IPhysicalInterface::IPhysicalInterfaceEventSink*)this);
+	}
 }
 
 PhilipsHueCentral::~PhilipsHueCentral()
@@ -54,7 +60,11 @@ void PhilipsHueCentral::dispose(bool wait)
 		if(_disposing) return;
 		_disposing = true;
 		GD::out.printDebug("Removing device " + std::to_string(_deviceId) + " from physical device's event queue...");
-		GD::physicalInterface->removeEventHandler(_physicalInterfaceEventhandlers[GD::physicalInterface->getID()]);
+		for(std::map<std::string, std::shared_ptr<IPhilipsHueInterface>>::iterator i = GD::physicalInterfaces.begin(); i != GD::physicalInterfaces.end(); ++i)
+		{
+			//Just to make sure cycle through all physical devices. If event handler is not removed => segfault
+			i->second->removeEventHandler(_physicalInterfaceEventhandlers[i->first]);
+		}
 	}
     catch(const std::exception& ex)
     {
@@ -96,14 +106,14 @@ bool PhilipsHueCentral::onPacketReceived(std::string& senderID, std::shared_ptr<
     return false;
 }
 
-void PhilipsHueCentral::sendPacket(std::shared_ptr<PhilipsHuePacket> packet)
+void PhilipsHueCentral::sendPacket(std::shared_ptr<IPhilipsHueInterface>& interface, std::shared_ptr<PhilipsHuePacket> packet)
 {
 	try
 	{
 		if(!packet) return;
-		uint32_t responseDelay = GD::physicalInterface->responseDelay();
-		std::shared_ptr<PhilipsHuePacketInfo> packetInfo = _sentPackets.getInfo(packet->destinationAddress());
-		_sentPackets.set(packet->destinationAddress(), packet);
+		uint32_t responseDelay = interface->responseDelay();
+		std::shared_ptr<PhilipsHuePacketInfo> packetInfo = _sentPackets[interface->getID()].getInfo(packet->destinationAddress());
+		_sentPackets[interface->getID()].set(packet->destinationAddress(), packet);
 		if(packetInfo)
 		{
 			int64_t timeDifference = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - packetInfo->time;
@@ -113,8 +123,8 @@ void PhilipsHueCentral::sendPacket(std::shared_ptr<PhilipsHuePacket> packet)
 				std::this_thread::sleep_for(std::chrono::milliseconds(responseDelay - timeDifference));
 			}
 		}
-		_sentPackets.keepAlive(packet->destinationAddress());
-		GD::physicalInterface->sendPacket(packet);
+		_sentPackets[interface->getID()].keepAlive(packet->destinationAddress());
+		interface->sendPacket(packet);
 	}
 	catch(const std::exception& ex)
     {
@@ -825,7 +835,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
     return "Error executing command. See log file for more details.\n";
 }
 
-std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createPeer(int32_t address, int32_t firmwareVersion, BaseLib::Systems::LogicalDeviceType deviceType, std::string serialNumber, bool save)
+std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createPeer(int32_t address, int32_t firmwareVersion, BaseLib::Systems::LogicalDeviceType deviceType, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save)
 {
 	try
 	{
@@ -837,6 +847,7 @@ std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createPeer(int32_t address, i
 		peer->setRpcDevice(GD::family->getRpcDevices()->find(deviceType, firmwareVersion, -1));
 		if(!peer->getRpcDevice()) return std::shared_ptr<PhilipsHuePeer>();
 		if(save) peer->save(true, true, false); //Save and create peerID
+		peer->setPhysicalInterfaceId(interface->getID());
 		return peer;
 	}
     catch(const std::exception& ex)
@@ -1024,75 +1035,78 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 {
 	try
 	{
-		GD::physicalInterface->searchLights();
-		std::vector<std::shared_ptr<PhilipsHuePacket>> peerInfo = GD::physicalInterface->getPeerInfo();
-		_peerInitMutex.lock();
 		std::vector<std::shared_ptr<PhilipsHuePeer>> newPeers;
-		for(std::vector<std::shared_ptr<PhilipsHuePacket>>::iterator i = peerInfo.begin(); i != peerInfo.end(); ++i)
+		for(std::map<std::string, std::shared_ptr<IPhilipsHueInterface>>::iterator interface = GD::physicalInterfaces.begin(); interface != GD::physicalInterfaces.end(); ++interface)
 		{
-			PVariable info = (*i)->getJson();
-			if(info->structValue->find("modelid") == info->structValue->end() || info->structValue->find("swversion") == info->structValue->end()) continue;
-			std::string manufacturer;
-			if(info->structValue->find("manufacturername") != info->structValue->end()) manufacturer = info->structValue->at("manufacturername")->stringValue;
-			DeviceType type = deviceTypeFromString(manufacturer, info->structValue->at("modelid")->stringValue);
+			interface->second->searchLights();
+			std::vector<std::shared_ptr<PhilipsHuePacket>> peerInfo = interface->second->getPeerInfo();
+			_peerInitMutex.lock();
+			for(std::vector<std::shared_ptr<PhilipsHuePacket>>::iterator i = peerInfo.begin(); i != peerInfo.end(); ++i)
+			{
+				PVariable info = (*i)->getJson();
+				if(info->structValue->find("modelid") == info->structValue->end() || info->structValue->find("swversion") == info->structValue->end()) continue;
+				std::string manufacturer;
+				if(info->structValue->find("manufacturername") != info->structValue->end()) manufacturer = info->structValue->at("manufacturername")->stringValue;
+				DeviceType type = deviceTypeFromString(manufacturer, info->structValue->at("modelid")->stringValue);
 
-			std::shared_ptr<PhilipsHuePeer> peer = getPeer((*i)->senderAddress());
-			if(peer)
-			{
-				if((DeviceType)peer->getDeviceType().type() == type) continue;
-				deletePeer(peer->getID());
-				peer.reset();
-			}
-			std::string swversion = info->structValue->at("swversion")->stringValue;
-			int32_t pos = swversion.find_first_of('.');
-			if(pos > 0) pos = swversion.find_first_of('.', pos + 1);
-			if(pos > 0) swversion = swversion.substr(0, pos);
-			BaseLib::HelperFunctions::stringReplace(swversion, ".", "");
-			if(swversion.size() > 4) swversion = swversion.substr(0, 4);
-			LogicalDeviceType deviceType(HUE_FAMILY_ID, (uint32_t)type);
+				std::shared_ptr<PhilipsHuePeer> peer = getPeer((*i)->senderAddress());
+				if(peer)
+				{
+					if((DeviceType)peer->getDeviceType().type() == type) continue;
+					deletePeer(peer->getID());
+					peer.reset();
+				}
+				std::string swversion = info->structValue->at("swversion")->stringValue;
+				int32_t pos = swversion.find_first_of('.');
+				if(pos > 0) pos = swversion.find_first_of('.', pos + 1);
+				if(pos > 0) swversion = swversion.substr(0, pos);
+				BaseLib::HelperFunctions::stringReplace(swversion, ".", "");
+				if(swversion.size() > 4) swversion = swversion.substr(0, 4);
+				LogicalDeviceType deviceType(HUE_FAMILY_ID, (uint32_t)type);
 
-			std::string serialNumber = "HUE";
-			std::string addressString = std::to_string((*i)->senderAddress());
-			if(addressString.size() > 7)
-			{
-				GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)type, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". Address string is too long.");
-				continue;
-			}
-			if(addressString.size() < 10) serialNumber.resize(10 - addressString.size(), '0');
-			serialNumber.append(addressString);
-			peer = createPeer((*i)->senderAddress(), BaseLib::Math::getNumber(swversion, true), deviceType, serialNumber, true);
-			if(!peer)
-			{
-				GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)type, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". No matching XML file was found.");
-				continue;
-			}
+				std::string serialNumber = "HUE";
+				std::string addressString = std::to_string((*i)->senderAddress());
+				if(addressString.size() > 7)
+				{
+					GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)type, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". Address string is too long.");
+					continue;
+				}
+				if(addressString.size() < 10) serialNumber.resize(10 - addressString.size(), '0');
+				serialNumber.append(addressString);
+				peer = createPeer((*i)->senderAddress(), BaseLib::Math::getNumber(swversion, true), deviceType, serialNumber, interface->second, true);
+				if(!peer)
+				{
+					GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)type, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". No matching XML file was found.");
+					continue;
+				}
 
-			peer->initializeCentralConfig();
-			if(info->structValue->find("name") != info->structValue->end()) peer->setName(info->structValue->at("name")->stringValue);
+				peer->initializeCentralConfig();
+				if(info->structValue->find("name") != info->structValue->end()) peer->setName(info->structValue->at("name")->stringValue);
 
-			_peersMutex.lock();
-			try
-			{
-				_peers[peer->getAddress()] = peer;
-				if(!peer->getSerialNumber().empty()) _peersBySerial[peer->getSerialNumber()] = peer;
-				_peersById[peer->getID()] = peer;
+				_peersMutex.lock();
+				try
+				{
+					_peers[peer->getAddress()] = peer;
+					if(!peer->getSerialNumber().empty()) _peersBySerial[peer->getSerialNumber()] = peer;
+					_peersById[peer->getID()] = peer;
+				}
+				catch(const std::exception& ex)
+				{
+					GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+				}
+				catch(BaseLib::Exception& ex)
+				{
+					GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+				}
+				catch(...)
+				{
+					GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+				}
+				_peersMutex.unlock();
+				newPeers.push_back(peer);
 			}
-			catch(const std::exception& ex)
-			{
-				GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-			}
-			catch(BaseLib::Exception& ex)
-			{
-				GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-			}
-			catch(...)
-			{
-				GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-			}
-			_peersMutex.unlock();
-			newPeers.push_back(peer);
+			_peerInitMutex.unlock();
 		}
-		_peerInitMutex.unlock();
 
 		if(newPeers.size() > 0)
 		{

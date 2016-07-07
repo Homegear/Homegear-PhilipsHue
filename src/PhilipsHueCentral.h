@@ -64,7 +64,7 @@ public:
 	virtual bool onPacketReceived(std::string& senderID, std::shared_ptr<BaseLib::Systems::Packet> packet);
 	virtual std::string handleCliCommand(std::string command);
 	virtual uint64_t getPeerIdFromSerial(std::string serialNumber) { std::shared_ptr<PhilipsHuePeer> peer = getPeer(serialNumber); if(peer) return peer->getID(); else return 0; }
-	virtual void sendPacket(std::shared_ptr<PhilipsHuePacket> packet);
+	virtual void sendPacket(std::shared_ptr<IPhilipsHueInterface>& interface, std::shared_ptr<PhilipsHuePacket> packet);
 	DeviceType deviceTypeFromString(std::string& manufacturer, std::string& deviceType);
 
 	std::shared_ptr<PhilipsHuePeer> getPeer(int32_t address);
@@ -82,7 +82,7 @@ protected:
 	int32_t _firmwareVersion = 0;
 	//End
 
-	PacketManager _sentPackets;
+	std::map<std::string, PacketManager> _sentPackets;
 
 	std::mutex _peerInitMutex;
 
@@ -96,7 +96,7 @@ protected:
 	 * @param save (default true) Set to "true" to save the peer in the database.
 	 * @return Returns a pointer to the newly created peer on success. If the creation was not successful, a nullptr is returned.
 	 */
-	std::shared_ptr<PhilipsHuePeer> createPeer(int32_t address, int32_t firmwareVersion, BaseLib::Systems::LogicalDeviceType deviceType, std::string serialNumber, bool save = true);
+	std::shared_ptr<PhilipsHuePeer> createPeer(int32_t address, int32_t firmwareVersion, BaseLib::Systems::LogicalDeviceType deviceType, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save = true);
 	void deletePeer(uint64_t id);
 };
 

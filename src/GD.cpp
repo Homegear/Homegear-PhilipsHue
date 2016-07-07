@@ -33,6 +33,7 @@ namespace PhilipsHue
 {
 	BaseLib::Obj* GD::bl = nullptr;
 	PhilipsHue* GD::family = nullptr;
-	std::shared_ptr<IPhilipsHueInterface> GD::physicalInterface;
+	std::map<std::string, std::shared_ptr<IPhilipsHueInterface>> GD::physicalInterfaces;
+	std::shared_ptr<IPhilipsHueInterface> GD::defaultPhysicalInterface;
 	BaseLib::Output GD::out;
 }

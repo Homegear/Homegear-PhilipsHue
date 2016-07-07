@@ -58,7 +58,8 @@ void Interfaces::create()
 			{
 				if(_physicalInterfaces.find((*i)->id) != _physicalInterfaces.end()) GD::out.printError("Error: id used for two devices: " + (*i)->id);
 				_physicalInterfaces[(*i)->id] = device;
-				GD::physicalInterface = device;
+				GD::physicalInterfaces[(*i)->id] = device;
+				if((*i)->isDefault || !GD::defaultPhysicalInterface) GD::defaultPhysicalInterface = device;
 			}
 		}
 	}
