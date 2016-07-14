@@ -1,5 +1,40 @@
 <homegearDevice version="1">
 	<supportedDevices>
+		<device id="LCT001">
+			<description>Philips hue A19</description>
+			<typeNumber>0x1</typeNumber>
+			<minFirmwareVersion>0x10</minFirmwareVersion>
+		</device>
+		<device id="LCT007">
+			<description>Philips hue A60</description>
+			<typeNumber>0x7</typeNumber>
+			<minFirmwareVersion>0x10</minFirmwareVersion>
+		</device>
+		<device id="LIGHTIFY Classic A60 RGBW">
+			<description>OSRAM LIGHTIFY Classic A60 RGBW</description>
+			<typeNumber>0x401</typeNumber>
+			<minFirmwareVersion>0x10</minFirmwareVersion>
+		</device>
+		<device id="LLC001">
+			<description>Philips LivingColors</description>
+			<typeNumber>0x101</typeNumber>
+			<minFirmwareVersion>0x10</minFirmwareVersion>
+		</device>
+		<device id="LLC006">
+			<description>Philips LivingColors</description>
+			<typeNumber>0x106</typeNumber>
+			<minFirmwareVersion>0x10</minFirmwareVersion>
+		</device>
+		<device id="LLC007">
+			<description>Philips LivingColors</description>
+			<typeNumber>0x107</typeNumber>
+			<minFirmwareVersion>0x10</minFirmwareVersion>
+		</device>
+		<device id="LLC011">
+			<description>Philips LivingColors Bloom</description>
+			<typeNumber>0x111</typeNumber>
+			<minFirmwareVersion>0x10</minFirmwareVersion>
+		</device>
 		<device id="LST001">
 			<description>Philips LightStrip</description>
 			<typeNumber>0x201</typeNumber>
@@ -41,6 +76,28 @@
 			<type>0x2</type>
 			<jsonPayload>
 				<element>
+					<key>transitiontime</key>
+					<parameterId>TRANSITION_TIME</parameterId>
+				</element>
+				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+				</element>
+				<element>
+					<key>bri</key>
+					<parameterId>BRIGHTNESS</parameterId>
+				</element>
+			</jsonPayload>
+		</packet>
+		<packet id="FAST_BRIGHTNESS_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>transitiontime</key>
+					<constValueInteger>0</constValueInteger>
+				</element>
+				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
 				</element>
@@ -54,6 +111,10 @@
 			<direction>fromCentral</direction>
 			<type>0x2</type>
 			<jsonPayload>
+				<element>
+					<key>transitiontime</key>
+					<parameterId>TRANSITION_TIME</parameterId>
+				</element>
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
@@ -82,6 +143,10 @@
 			<direction>fromCentral</direction>
 			<type>0x2</type>
 			<jsonPayload>
+				<element>
+					<key>transitiontime</key>
+					<parameterId>TRANSITION_TIME</parameterId>
+				</element>
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
@@ -166,6 +231,10 @@
 			<type>0x2</type>
 			<jsonPayload>
 				<element>
+					<key>transitiontime</key>
+					<parameterId>TRANSITION_TIME</parameterId>
+				</element>
+				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
 				</element>
@@ -192,6 +261,24 @@
 			<type>0x2</type>
 			<jsonPayload>
 				<element>
+					<key>transitiontime</key>
+					<parameterId>TRANSITION_TIME</parameterId>
+				</element>
+				<element>
+					<key>on</key>
+					<parameterId>STATE</parameterId>
+				</element>
+			</jsonPayload>
+		</packet>
+		<packet id="FAST_STATE_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>transitiontime</key>
+					<constValueInteger>0</constValueInteger>
+				</element>
+				<element>
 					<key>on</key>
 					<parameterId>STATE</parameterId>
 				</element>
@@ -201,6 +288,10 @@
 			<direction>fromCentral</direction>
 			<type>0x2</type>
 			<jsonPayload>
+				<element>
+					<key>transitiontime</key>
+					<parameterId>TRANSITION_TIME</parameterId>
+				</element>
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
@@ -285,6 +376,40 @@
 					</packet>
 				</packets>
 			</parameter>
+			<parameter id="FAST_STATE">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="STATE">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="FAST_STATE_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="TRANSITION_TIME">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger>
+					<defaultValue>5</defaultValue>
+					<minimumValue>0</minimumValue>
+					<maximumValue>65535</maximumValue>
+				</logicalInteger>
+				<physicalNone groupId="TRANSITION_TIME">
+					<operationType>store</operationType>
+				</physicalNone>
+			</parameter>
 			<parameter id="BRIGHTNESS">
 				<properties>
 					<casts>
@@ -300,6 +425,28 @@
 				</physicalInteger>
 				<packets>
 					<packet id="BRIGHTNESS_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="FAST_BRIGHTNESS">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger>
+					<minimumValue>1</minimumValue>
+					<maximumValue>255</maximumValue>
+				</logicalInteger>
+				<physicalInteger groupId="BRIGHTNESS">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="FAST_BRIGHTNESS_SET">
 						<type>set</type>
 					</packet>
 					<packet id="INFO">

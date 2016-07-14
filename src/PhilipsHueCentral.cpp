@@ -158,7 +158,7 @@ DeviceType PhilipsHueCentral::deviceTypeFromString(std::string& manufacturer, st
 		else if(deviceType.compare(0, 3, "LLC") == 0) return DeviceType::LLC001;
 		else if(deviceType.compare(0, 3, "LST") == 0) return DeviceType::LST001;
 		else if(deviceType.compare(0, 3, "LWB") == 0) return DeviceType::LWB004;
-		return DeviceType::LLC001; //default
+		return DeviceType::LCT001; //default
 	}
 	catch(const std::exception& ex)
     {
