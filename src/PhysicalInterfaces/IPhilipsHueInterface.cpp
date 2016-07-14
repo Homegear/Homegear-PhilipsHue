@@ -33,7 +33,7 @@
 namespace PhilipsHue
 {
 
-IPhilipsHueInterface::IPhilipsHueInterface(std::shared_ptr<BaseLib::Systems::PhysicalInterfaceSettings> settings) : IPhysicalInterface(GD::bl, settings)
+IPhilipsHueInterface::IPhilipsHueInterface(std::shared_ptr<BaseLib::Systems::PhysicalInterfaceSettings> settings) : IPhysicalInterface(GD::bl, GD::family->getFamily(), settings)
 {
 	_maxPacketProcessingTime = 15000;
 	if(settings->listenThreadPriority == -1)

@@ -48,6 +48,7 @@ HueBridge::HueBridge(std::shared_ptr<BaseLib::Systems::PhysicalInterfaceSettings
 	_hostname = settings->host;
 	_port = BaseLib::Math::getNumber(settings->port);
 	if(_port < 1 || _port > 65535) _port = 80;
+	_username = settings->user;
 
 	_jsonEncoder.reset(new BaseLib::RPC::JsonEncoder(GD::bl));
 	_jsonDecoder.reset(new BaseLib::RPC::JsonDecoder(GD::bl));
@@ -257,7 +258,6 @@ void HueBridge::createUser()
 
     	PVariable json = getJson(response);
 		if(!json) return;
-		json->print(false, true);
 
 		if(!json->arrayValue->empty())
 		{
@@ -275,7 +275,12 @@ void HueBridge::createUser()
 			else if(json->arrayValue->at(0)->structValue->find("success") != json->arrayValue->at(0)->structValue->end())
 			{
 				json = json->arrayValue->at(0)->structValue->at("success");
-				if(json->structValue->find("username") != json->structValue->end()) _username = json->structValue->at("username")->stringValue;
+				if(json->structValue->find("username") != json->structValue->end())
+				{
+					_username = json->structValue->at("username")->stringValue;
+					_settings->user = _username;
+					saveSettingToDatabase("user", _username);
+				}
 			}
 		}
 		else _out.printError("Error: Returned JSON is empty.");
