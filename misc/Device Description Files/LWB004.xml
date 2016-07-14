@@ -41,6 +41,28 @@
 			<type>0x2</type>
 			<jsonPayload>
 				<element>
+					<key>transitiontime</key>
+					<parameterId>TRANSITION_TIME</parameterId>
+				</element>
+				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+				</element>
+				<element>
+					<key>bri</key>
+					<parameterId>BRIGHTNESS</parameterId>
+				</element>
+			</jsonPayload>
+		</packet>
+		<packet id="FAST_BRIGHTNESS_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>transitiontime</key>
+					<constValueInteger>0</constValueInteger>
+				</element>
+				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
 				</element>
@@ -86,6 +108,24 @@
 			<direction>fromCentral</direction>
 			<type>0x2</type>
 			<jsonPayload>
+				<element>
+					<key>transitiontime</key>
+					<parameterId>TRANSITION_TIME</parameterId>
+				</element>
+				<element>
+					<key>on</key>
+					<parameterId>STATE</parameterId>
+				</element>
+			</jsonPayload>
+		</packet>
+		<packet id="FAST_STATE_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>transitiontime</key>
+					<constValueInteger>0</constValueInteger>
+				</element>
 				<element>
 					<key>on</key>
 					<parameterId>STATE</parameterId>
@@ -166,6 +206,40 @@
 					</packet>
 				</packets>
 			</parameter>
+			<parameter id="FAST_STATE">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="STATE">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="FAST_STATE_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="TRANSITION_TIME">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger>
+					<defaultValue>5</defaultValue>
+					<minimumValue>0</minimumValue>
+					<maximumValue>65535</maximumValue>
+				</logicalInteger>
+				<physicalNone groupId="TRANSITION_TIME">
+					<operationType>store</operationType>
+				</physicalNone>
+			</parameter>
 			<parameter id="BRIGHTNESS">
 				<properties>
 					<casts>
@@ -174,13 +248,35 @@
 				</properties>
 				<logicalInteger>
 					<minimumValue>1</minimumValue>
-					<maximumValue>255</maximumValue>
+					<maximumValue>254</maximumValue>
 				</logicalInteger>
 				<physicalInteger groupId="BRIGHTNESS">
 					<operationType>command</operationType>
 				</physicalInteger>
 				<packets>
 					<packet id="BRIGHTNESS_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="FAST_BRIGHTNESS">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger>
+					<minimumValue>1</minimumValue>
+					<maximumValue>254</maximumValue>
+				</logicalInteger>
+				<physicalInteger groupId="BRIGHTNESS">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="FAST_BRIGHTNESS_SET">
 						<type>set</type>
 					</packet>
 					<packet id="INFO">

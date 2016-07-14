@@ -48,6 +48,7 @@ HueBridge::HueBridge(std::shared_ptr<BaseLib::Systems::PhysicalInterfaceSettings
 	_hostname = settings->host;
 	_port = BaseLib::Math::getNumber(settings->port);
 	if(_port < 1 || _port > 65535) _port = 80;
+	_username = settings->user;
 
 	_jsonEncoder.reset(new BaseLib::RPC::JsonEncoder(GD::bl));
 	_jsonDecoder.reset(new BaseLib::RPC::JsonDecoder(GD::bl));
@@ -96,7 +97,7 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 
 		std::string data;
 		_jsonEncoder->encode(json, data);
-    	std::string header = "PUT /api/homegear" + _settings->id + "/lights/" + std::to_string(packet->destinationAddress()) + "/state HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: " + std::to_string(data.size()) + "\r\nConnection: Keep-Alive\r\n\r\n";
+    	std::string header = "PUT /api/" + _username + "/lights/" + std::to_string(packet->destinationAddress()) + "/state HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: " + std::to_string(data.size()) + "\r\nConnection: Keep-Alive\r\n\r\n";
     	data.insert(data.begin(), header.begin(), header.end());
 		data.push_back('\r');
 		data.push_back('\n');
@@ -246,7 +247,7 @@ void HueBridge::createUser()
 {
 	try
     {
-		std::string data = "{\"devicetype\":\"Homegear\",\"username\":\"homegear" + _settings->id + "\"}";
+		std::string data = "{\"devicetype\":\"Homegear" + _settings->id + "\"}";
     	std::string header = "POST /api HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: " + std::to_string(data.size()) + "\r\nConnection: Keep-Alive\r\n\r\n";
     	data.insert(data.begin(), header.begin(), header.end());
 		data.push_back('\r');
@@ -258,17 +259,31 @@ void HueBridge::createUser()
     	PVariable json = getJson(response);
 		if(!json) return;
 
-		if(!json->arrayValue->empty() && json->arrayValue->at(0)->structValue->find("error") != json->arrayValue->at(0)->structValue->end())
+		if(!json->arrayValue->empty())
 		{
-			json = json->arrayValue->at(0)->structValue->at("error");
-			if(json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 101) _out.printError("Please press the link button on your hue bridge to initialize the connection to Homegear.");
-			else if(json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 7) _out.printError("Error: Please change the bridge's id in philipshue.conf to only contain alphanumerical characters and \"-\".");
-			else
+			if(json->arrayValue->at(0)->structValue->find("error") != json->arrayValue->at(0)->structValue->end())
 			{
-				if(json->structValue->find("description") != json->structValue->end()) _out.printError("Error: " + json->structValue->at("description")->stringValue);
-				else _out.printError("Unknown error during user creation. Response was: " + response);
+				json = json->arrayValue->at(0)->structValue->at("error");
+				if(json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 101) _out.printError("Please press the link button on your hue bridge to initialize the connection to Homegear.");
+				else if(json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 7) _out.printError("Error: Please change the bridge's id in philipshue.conf to only contain alphanumerical characters and \"-\".");
+				else
+				{
+					if(json->structValue->find("description") != json->structValue->end()) _out.printError("Error: " + json->structValue->at("description")->stringValue);
+					else _out.printError("Unknown error during user creation. Response was: " + response);
+				}
+			}
+			else if(json->arrayValue->at(0)->structValue->find("success") != json->arrayValue->at(0)->structValue->end())
+			{
+				json = json->arrayValue->at(0)->structValue->at("success");
+				if(json->structValue->find("username") != json->structValue->end())
+				{
+					_username = json->structValue->at("username")->stringValue;
+					_settings->user = _username;
+					saveSettingToDatabase("user", _username);
+				}
 			}
 		}
+		else _out.printError("Error: Returned JSON is empty.");
 	}
 	catch(const std::exception& ex)
     {
@@ -288,7 +303,7 @@ void HueBridge::searchLights()
 {
 	try
     {
-    	std::string header = "POST /api/homegear" + _settings->id + "/lights HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: 0\r\nConnection: Keep-Alive\r\n\r\n";
+    	std::string header = "POST /api/" + _username + "/lights HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: 0\r\nConnection: Keep-Alive\r\n\r\n";
     	std::string response;
 
     	_client->sendRequest(header, response);
@@ -303,7 +318,7 @@ void HueBridge::searchLights()
 			else _out.printError("Unknown error during user creation. Response was: " + response);
 		}
 
-		header = "GET /api/homegear" + _settings->id + "/lights/new HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
+		header = "GET /api/" + _username + "/lights/new HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
 
     	_client->sendRequest(header, response);
 
@@ -335,7 +350,7 @@ std::vector<std::shared_ptr<PhilipsHuePacket>> HueBridge::getPeerInfo()
 {
 	try
 	{
-		std::string getAllData = "GET /api/homegear" + _settings->id + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
+		std::string getAllData = "GET /api/" + _username + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
 		std::string response;
 		_client->sendRequest(getAllData, response);
 
@@ -407,7 +422,7 @@ void HueBridge::listen()
 {
     try
     {
-    	std::string getAllData = "GET /api/homegear" + _settings->id + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
+    	std::string getAllData = "GET /api/" + _username + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
     	std::string response;
     	Exception exception("");
 
@@ -421,6 +436,12 @@ void HueBridge::listen()
 					if(_stopCallbackThread) return;
 				}
 				_nextPoll = BaseLib::HelperFunctions::getTime() + 30000;
+				if(_username.empty())
+				{
+					createUser();
+					getAllData = "GET /api/" + _username + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
+					continue;
+				}
 				for(int32_t i = 0; i < 5; i++)
 				{
 					try
