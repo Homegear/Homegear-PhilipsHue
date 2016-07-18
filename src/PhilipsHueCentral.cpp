@@ -112,8 +112,14 @@ void PhilipsHueCentral::sendPacket(std::shared_ptr<IPhilipsHueInterface>& interf
 	{
 		if(!packet) return;
 		uint32_t responseDelay = interface->responseDelay();
-		std::shared_ptr<PhilipsHuePacketInfo> packetInfo = _sentPackets[interface->getID()].getInfo(packet->destinationAddress());
-		_sentPackets[interface->getID()].set(packet->destinationAddress(), packet);
+		std::shared_ptr<PacketManager> packetManager = _sentPackets[interface->getID()];
+		if(!packetManager)
+		{
+			packetManager.reset(new PacketManager());
+			_sentPackets[interface->getID()] = packetManager;
+		}
+		std::shared_ptr<PhilipsHuePacketInfo> packetInfo = packetManager->getInfo(packet->destinationAddress());
+		packetManager->set(packet->destinationAddress(), packet);
 		if(packetInfo)
 		{
 			int64_t timeDifference = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - packetInfo->time;
@@ -123,7 +129,7 @@ void PhilipsHueCentral::sendPacket(std::shared_ptr<IPhilipsHueInterface>& interf
 				std::this_thread::sleep_for(std::chrono::milliseconds(responseDelay - timeDifference));
 			}
 		}
-		_sentPackets[interface->getID()].keepAlive(packet->destinationAddress());
+		packetManager->keepAlive(packet->destinationAddress());
 		interface->sendPacket(packet);
 	}
 	catch(const std::exception& ex)

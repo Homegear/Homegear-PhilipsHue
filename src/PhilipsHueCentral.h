@@ -82,7 +82,7 @@ protected:
 	int32_t _firmwareVersion = 0;
 	//End
 
-	std::map<std::string, PacketManager> _sentPackets;
+	std::map<std::string, std::shared_ptr<PacketManager>> _sentPackets;
 
 	std::mutex _peerInitMutex;
 
