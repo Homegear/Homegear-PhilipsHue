@@ -248,7 +248,7 @@
 				</properties>
 				<logicalInteger>
 					<minimumValue>1</minimumValue>
-					<maximumValue>255</maximumValue>
+					<maximumValue>254</maximumValue>
 				</logicalInteger>
 				<physicalInteger groupId="BRIGHTNESS">
 					<operationType>command</operationType>
@@ -270,7 +270,7 @@
 				</properties>
 				<logicalInteger>
 					<minimumValue>1</minimumValue>
-					<maximumValue>255</maximumValue>
+					<maximumValue>254</maximumValue>
 				</logicalInteger>
 				<physicalInteger groupId="BRIGHTNESS">
 					<operationType>command</operationType>
