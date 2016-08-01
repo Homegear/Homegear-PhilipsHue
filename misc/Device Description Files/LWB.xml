@@ -116,6 +116,10 @@
 					<key>on</key>
 					<parameterId>STATE</parameterId>
 				</element>
+				<element>
+					<key>bri</key>
+					<parameterId>BRIGHTNESS</parameterId>
+				</element>
 			</jsonPayload>
 		</packet>
 		<packet id="FAST_STATE_SET">
@@ -129,6 +133,10 @@
 				<element>
 					<key>on</key>
 					<parameterId>STATE</parameterId>
+				</element>
+				<element>
+					<key>bri</key>
+					<parameterId>BRIGHTNESS</parameterId>
 				</element>
 			</jsonPayload>
 		</packet>

@@ -128,6 +128,7 @@ protected:
 	std::shared_ptr<BaseLib::RPC::RPCEncoder> _binaryEncoder;
 	std::shared_ptr<BaseLib::RPC::RPCDecoder> _binaryDecoder;
 
+	bool _state = false;
 	BaseLib::Math::Triangle _rgbGamut;
 	double _gamma = 2.2;
 	BaseLib::Math::Matrix3x3 _rgbXyzConversionMatrix;
