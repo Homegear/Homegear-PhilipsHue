@@ -412,6 +412,12 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 						rpcValues[*j].reset(new std::vector<PVariable>());
 					}
 
+					if(!_state && (i->first == "BRIGHTNESS" || i->first == "FAST_BRIGHTNESS"))
+					{
+						GD::out.printInfo("Info: Ignoring BRIGHTNESS.");
+						continue;
+					}
+
 					parameter->data = i->second.value;
 					if(parameter->databaseID > 0) saveParameter(parameter->databaseID, parameter->data);
 					else saveParameter(0, ParameterGroup::Type::Enum::variables, *j, i->first, parameter->data);
@@ -439,6 +445,8 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 
 						valueKeys[*j]->push_back(i->first);
 						rpcValues[*j]->push_back(parameter->rpcParameter->convertFromPacket(i->second.value, true));
+
+						if(i->first == "STATE" || i->first == "FAST_STATE") _state = rpcValues[*j]->back()->booleanValue;
 					}
 				}
 			}
@@ -879,6 +887,8 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 			return PVariable(new Variable(VariableType::tVoid));
 		}
 
+		if(valueKey == "STATE" || valueKey == "FAST_STATE") _state = value->booleanValue;
+
 		if(rpcParameter->physical->operationType == IPhysical::OperationType::Enum::store)
 		{
 			rpcParameter->convertToPacket(value, parameter->data);
@@ -959,6 +969,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 			}
 
 			std::shared_ptr<PhilipsHueCentral> central = std::dynamic_pointer_cast<PhilipsHueCentral>(getCentral());
+			json->print(false, true);
 			std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(central->getAddress(), _address, frame->type, json));
 			if(central) central->sendPacket(_physicalInterface, packet);
 		}

@@ -49,6 +49,7 @@ HueBridge::HueBridge(std::shared_ptr<BaseLib::Systems::PhysicalInterfaceSettings
 	_port = BaseLib::Math::getNumber(settings->port);
 	if(_port < 1 || _port > 65535) _port = 80;
 	_username = settings->user;
+	if(settings->interval < 15000) settings->interval = 15000;
 
 	_jsonEncoder.reset(new BaseLib::RPC::JsonEncoder(GD::bl));
 	_jsonDecoder.reset(new BaseLib::RPC::JsonDecoder(GD::bl));
@@ -435,7 +436,7 @@ void HueBridge::listen()
 					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 					if(_stopCallbackThread) return;
 				}
-				_nextPoll = BaseLib::HelperFunctions::getTime() + 30000;
+				_nextPoll = BaseLib::HelperFunctions::getTime() + _settings->interval;
 				if(_username.empty())
 				{
 					createUser();
