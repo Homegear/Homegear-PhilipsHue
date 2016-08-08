@@ -51,8 +51,8 @@ HueBridge::HueBridge(std::shared_ptr<BaseLib::Systems::PhysicalInterfaceSettings
 	_username = settings->user;
 	if(settings->interval < 15000) settings->interval = 15000;
 
-	_jsonEncoder.reset(new BaseLib::RPC::JsonEncoder(GD::bl));
-	_jsonDecoder.reset(new BaseLib::RPC::JsonDecoder(GD::bl));
+	_jsonEncoder.reset(new BaseLib::Rpc::JsonEncoder(GD::bl));
+	_jsonDecoder.reset(new BaseLib::Rpc::JsonDecoder(GD::bl));
 }
 
 HueBridge::~HueBridge()
@@ -400,7 +400,7 @@ PVariable HueBridge::getJson(std::string& jsonString)
 	{
 		return _jsonDecoder->decode(jsonString);
 	}
-	catch(const BaseLib::RPC::JsonDecoderException& ex)
+	catch(const BaseLib::Rpc::JsonDecoderException& ex)
 	{
 		_out.printError("Error parsing json: " + ex.what() + ". Data was: " + jsonString);
 	}
