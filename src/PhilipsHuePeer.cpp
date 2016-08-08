@@ -58,14 +58,14 @@ std::shared_ptr<BaseLib::Systems::ICentral> PhilipsHuePeer::getCentral()
 
 PhilipsHuePeer::PhilipsHuePeer(uint32_t parentID, IPeerEventSink* eventHandler) : Peer(GD::bl, parentID, eventHandler)
 {
-	_binaryEncoder.reset(new BaseLib::RPC::RPCEncoder(GD::bl));
-	_binaryDecoder.reset(new BaseLib::RPC::RPCDecoder(GD::bl));
+	_binaryEncoder.reset(new BaseLib::Rpc::RpcEncoder(GD::bl));
+	_binaryDecoder.reset(new BaseLib::Rpc::RpcDecoder(GD::bl));
 }
 
 PhilipsHuePeer::PhilipsHuePeer(int32_t id, int32_t address, std::string serialNumber, uint32_t parentID, IPeerEventSink* eventHandler) : Peer(GD::bl, id, address, serialNumber, parentID, eventHandler)
 {
-	_binaryEncoder.reset(new BaseLib::RPC::RPCEncoder(GD::bl));
-	_binaryDecoder.reset(new BaseLib::RPC::RPCDecoder(GD::bl));
+	_binaryEncoder.reset(new BaseLib::Rpc::RpcEncoder(GD::bl));
+	_binaryDecoder.reset(new BaseLib::Rpc::RpcDecoder(GD::bl));
 }
 
 PhilipsHuePeer::~PhilipsHuePeer()

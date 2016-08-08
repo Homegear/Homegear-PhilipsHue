@@ -56,8 +56,8 @@ class HueBridge  : public IPhilipsHueInterface
         std::string _hostname;
         int32_t _port = 80;
         std::unique_ptr<BaseLib::HttpClient> _client;
-        std::unique_ptr<BaseLib::RPC::JsonEncoder> _jsonEncoder;
-        std::unique_ptr<BaseLib::RPC::JsonDecoder> _jsonDecoder;
+        std::unique_ptr<BaseLib::Rpc::JsonEncoder> _jsonEncoder;
+        std::unique_ptr<BaseLib::Rpc::JsonDecoder> _jsonDecoder;
         std::string _username;
 
         void listen();

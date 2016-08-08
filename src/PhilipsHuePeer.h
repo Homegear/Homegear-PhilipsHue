@@ -125,8 +125,8 @@ protected:
 
 	std::shared_ptr<IPhilipsHueInterface> _physicalInterface;
 
-	std::shared_ptr<BaseLib::RPC::RPCEncoder> _binaryEncoder;
-	std::shared_ptr<BaseLib::RPC::RPCDecoder> _binaryDecoder;
+	std::shared_ptr<BaseLib::Rpc::RpcEncoder> _binaryEncoder;
+	std::shared_ptr<BaseLib::Rpc::RpcDecoder> _binaryDecoder;
 
 	bool _state = false;
 	BaseLib::Math::Triangle _rgbGamut;
