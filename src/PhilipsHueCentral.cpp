@@ -160,6 +160,8 @@ DeviceType PhilipsHueCentral::deviceTypeFromString(std::string& manufacturer, st
 		else if(deviceType == "LST001") return DeviceType::LST001;
 		else if(deviceType == "LWB004") return DeviceType::LWB004;
 		else if(deviceType == "Classic A60 RGBW" && manufacturer == "OSRAM") return DeviceType::LightifyClassicA60Rgbw;
+		else if(deviceType == "Gardenspot RGB" && manufacturer == "OSRAM") return DeviceType::GardenspotRgb;
+		else if(deviceType == "Classic B40 TW - LIGHTIFY" && manufacturer == "OSRAM") return DeviceType::LightifyClassicB40Tw;
 		else if(deviceType.compare(0, 3, "LCT") == 0) return DeviceType::LCT001;
 		else if(deviceType.compare(0, 3, "LLC") == 0) return DeviceType::LLC001;
 		else if(deviceType.compare(0, 3, "LST") == 0) return DeviceType::LST001;
@@ -1067,6 +1069,7 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 				if(pos > 0) pos = swversion.find_first_of('.', pos + 1);
 				if(pos > 0) swversion = swversion.substr(0, pos);
 				BaseLib::HelperFunctions::stringReplace(swversion, ".", "");
+				BaseLib::HelperFunctions::stringReplace(swversion, "V", "");
 				if(swversion.size() > 4) swversion = swversion.substr(0, 4);
 				LogicalDeviceType deviceType(HUE_FAMILY_ID, (uint32_t)type);
 

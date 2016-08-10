@@ -3,42 +3,52 @@
 		<device id="LCT001">
 			<description>Philips hue A19</description>
 			<typeNumber>0x1</typeNumber>
-			<minFirmwareVersion>0x10</minFirmwareVersion>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
 		<device id="LCT007">
 			<description>Philips hue A60</description>
 			<typeNumber>0x7</typeNumber>
-			<minFirmwareVersion>0x10</minFirmwareVersion>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
 		<device id="LIGHTIFY Classic A60 RGBW">
 			<description>OSRAM LIGHTIFY Classic A60 RGBW</description>
 			<typeNumber>0x401</typeNumber>
-			<minFirmwareVersion>0x10</minFirmwareVersion>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
+		<device id="Gardenspot RGB">
+			<description>OSRAM Gardenspot RGB</description>
+			<typeNumber>0x402</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
+		<device id="LIGHTIFY Classic B40 TW">
+			<description>Classic B40 TW</description>
+			<typeNumber>0x403</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
 		<device id="LLC001">
 			<description>Philips LivingColors</description>
 			<typeNumber>0x101</typeNumber>
-			<minFirmwareVersion>0x10</minFirmwareVersion>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
 		<device id="LLC006">
 			<description>Philips LivingColors</description>
 			<typeNumber>0x106</typeNumber>
-			<minFirmwareVersion>0x10</minFirmwareVersion>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
 		<device id="LLC007">
 			<description>Philips LivingColors</description>
 			<typeNumber>0x107</typeNumber>
-			<minFirmwareVersion>0x10</minFirmwareVersion>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
 		<device id="LLC011">
 			<description>Philips LivingColors Bloom</description>
 			<typeNumber>0x111</typeNumber>
-			<minFirmwareVersion>0x10</minFirmwareVersion>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
 		<device id="LST001">
 			<description>Philips LightStrip</description>
 			<typeNumber>0x201</typeNumber>
-			<minFirmwareVersion>0x10</minFirmwareVersion>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
 	</supportedDevices>
 	<properties/>
