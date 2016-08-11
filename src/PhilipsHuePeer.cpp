@@ -969,7 +969,6 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 			}
 
 			std::shared_ptr<PhilipsHueCentral> central = std::dynamic_pointer_cast<PhilipsHueCentral>(getCentral());
-			json->print(false, true);
 			std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(central->getAddress(), _address, frame->type, json));
 			if(central) central->sendPacket(_physicalInterface, packet);
 		}
