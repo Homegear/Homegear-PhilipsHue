@@ -45,7 +45,9 @@ namespace PhilipsHue
 		LLC011 =					0x0111,
 		LST001 =					0x0201,
 		LWB004 =					0x0304,
-		LightifyClassicA60Rgbw =	0x0401
+		LightifyClassicA60Rgbw =	0x0401,
+		GardenspotRgb =				0x0402,
+		LightifyClassicB40Tw =		0x0403
 	};
 }
 #endif
