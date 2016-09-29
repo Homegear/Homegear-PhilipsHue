@@ -158,6 +158,7 @@ DeviceType PhilipsHueCentral::deviceTypeFromString(std::string& manufacturer, st
 		else if(deviceType == "LLC007") return DeviceType::LLC007;
 		else if(deviceType == "LLC011") return DeviceType::LLC011;
 		else if(deviceType == "LST001") return DeviceType::LST001;
+		else if(deviceType == "LST002") return DeviceType::LST002;
 		else if(deviceType == "LWB004") return DeviceType::LWB004;
 		else if(deviceType == "Classic A60 RGBW" && manufacturer == "OSRAM") return DeviceType::LightifyClassicA60Rgbw;
 		else if(deviceType == "Gardenspot RGB" && manufacturer == "OSRAM") return DeviceType::GardenspotRgb;

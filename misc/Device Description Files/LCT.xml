@@ -50,6 +50,11 @@
 			<typeNumber>0x201</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
+		<device id="LST002">
+			<description>Philips LightStrip Plus</description>
+			<typeNumber>0x202</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
 	</supportedDevices>
 	<properties/>
 	<functions>
