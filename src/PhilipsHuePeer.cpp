@@ -171,7 +171,11 @@ void PhilipsHuePeer::loadVariables(BaseLib::Systems::ICentral* central, std::sha
 				break;
 			}
 		}
-		if(!_physicalInterface) _physicalInterface = GD::defaultPhysicalInterface;
+		if(!_physicalInterface)
+		{
+			GD::out.printError("Error: Could not find correct physical interface for peer " + std::to_string(_peerID) + ". The peer might not work correctly.");
+			_physicalInterface = GD::defaultPhysicalInterface;
+		}
 	}
 	catch(const std::exception& ex)
     {

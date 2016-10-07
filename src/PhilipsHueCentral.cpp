@@ -146,28 +146,26 @@ void PhilipsHueCentral::sendPacket(std::shared_ptr<IPhilipsHueInterface>& interf
     }
 }
 
-DeviceType PhilipsHueCentral::deviceTypeFromString(std::string& manufacturer, std::string& deviceType)
+uint32_t PhilipsHueCentral::getDeviceType(const std::string& manufacturer, const std::string& modelId)
 {
 	try
 	{
-		if(deviceType.length() < 4) return DeviceType::none;
-		if(deviceType == "LCT001") return DeviceType::LCT001;
-		else if (deviceType == "LCT007") return DeviceType::LCT007;
-		else if(deviceType == "LLC001") return DeviceType::LLC001;
-		else if(deviceType == "LLC006") return DeviceType::LLC006;
-		else if(deviceType == "LLC007") return DeviceType::LLC007;
-		else if(deviceType == "LLC011") return DeviceType::LLC011;
-		else if(deviceType == "LST001") return DeviceType::LST001;
-		else if(deviceType == "LST002") return DeviceType::LST002;
-		else if(deviceType == "LWB004") return DeviceType::LWB004;
-		else if(deviceType == "Classic A60 RGBW" && manufacturer == "OSRAM") return DeviceType::LightifyClassicA60Rgbw;
-		else if(deviceType == "Gardenspot RGB" && manufacturer == "OSRAM") return DeviceType::GardenspotRgb;
-		else if(deviceType == "Classic B40 TW - LIGHTIFY" && manufacturer == "OSRAM") return DeviceType::LightifyClassicB40Tw;
-		else if(deviceType.compare(0, 3, "LCT") == 0) return DeviceType::LCT001;
-		else if(deviceType.compare(0, 3, "LLC") == 0) return DeviceType::LLC001;
-		else if(deviceType.compare(0, 3, "LST") == 0) return DeviceType::LST001;
-		else if(deviceType.compare(0, 3, "LWB") == 0) return DeviceType::LWB004;
-		return DeviceType::LCT001; //default
+		if(modelId.length() < 4) return (uint32_t)DeviceType::none;
+		std::string typeId = manufacturer.empty() ? modelId : manufacturer + ' ' + modelId;
+		uint32_t typeNumber = GD::family->getRpcDevices()->getTypeNumberFromTypeId(typeId);
+		if(typeNumber == 0)
+		{
+			if(modelId.compare(0, 3, "LCT") == 0) return (uint32_t)DeviceType::LCT001;
+			else if(modelId.compare(0, 3, "LLC") == 0) return (uint32_t)DeviceType::LLC001;
+			else if(modelId.compare(0, 3, "LST") == 0) return (uint32_t)DeviceType::LST001;
+			else if(modelId.compare(0, 3, "LWB") == 0) return (uint32_t)DeviceType::LWB004;
+			else
+			{
+				GD::out.printInfo("Info: Device type for ID \"" + typeId + "\" not found. Setting device type to LCT001.");
+				return (uint32_t)DeviceType::LCT001; //default
+			}
+		}
+		return typeNumber;
 	}
 	catch(const std::exception& ex)
     {
@@ -181,7 +179,7 @@ DeviceType PhilipsHueCentral::deviceTypeFromString(std::string& manufacturer, st
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
-    return DeviceType::none;
+    return (uint32_t)DeviceType::none;
 }
 
 void PhilipsHueCentral::loadPeers()
@@ -657,7 +655,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 					}
 					else name.resize(nameWidth + (name.size() - nameSize), ' ');
 					stringStream << name << bar
-						<< std::setw(addressWidth) << BaseLib::HelperFunctions::getHexString(i->second->getAddress(), 6) << bar
+						<< std::setw(addressWidth) << BaseLib::HelperFunctions::getHexString(i->second->getAddress(), 8) << bar
 						<< std::setw(serialWidth) << i->second->getSerialNumber() << bar
 						<< std::setw(typeWidth1) << BaseLib::HelperFunctions::getHexString(i->second->getDeviceType(), 4) << bar;
 					if(i->second->getRpcDevice())
@@ -1056,12 +1054,12 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 				if(info->structValue->find("modelid") == info->structValue->end() || info->structValue->find("swversion") == info->structValue->end()) continue;
 				std::string manufacturer;
 				if(info->structValue->find("manufacturername") != info->structValue->end()) manufacturer = info->structValue->at("manufacturername")->stringValue;
-				DeviceType deviceType = deviceTypeFromString(manufacturer, info->structValue->at("modelid")->stringValue);
+				uint32_t deviceType = getDeviceType(manufacturer, info->structValue->at("modelid")->stringValue);
 
 				std::shared_ptr<PhilipsHuePeer> peer = getPeer((*i)->senderAddress());
 				if(peer)
 				{
-					if((DeviceType)peer->getDeviceType() == deviceType) continue;
+					if(peer->getDeviceType() == deviceType) continue;
 					deletePeer(peer->getID());
 					peer.reset();
 				}
@@ -1075,9 +1073,9 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 
 				std::string serialNumber = "HUE";
 				std::string addressString = std::to_string((*i)->senderAddress());
-				if(addressString.size() > 7)
+				if(addressString.size() > 8)
 				{
-					GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)deviceType, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". Address string is too long.");
+					GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 8) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)deviceType, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". Address string is too long.");
 					continue;
 				}
 				if(addressString.size() < 10) serialNumber.resize(10 - addressString.size(), '0');
@@ -1085,7 +1083,7 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 				peer = createPeer((*i)->senderAddress(), BaseLib::Math::getNumber(swversion, true), (uint32_t)deviceType, serialNumber, interface->second, true);
 				if(!peer)
 				{
-					GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)deviceType, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". No matching XML file was found.");
+					GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 8) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)deviceType, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". No matching XML file was found.");
 					continue;
 				}
 

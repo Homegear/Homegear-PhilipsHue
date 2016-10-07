@@ -1,6 +1,6 @@
 <homegearDevice version="1">
 	<supportedDevices>
-		<device id="LWB004">
+		<device id="Philips LWB004">
 			<description>Philips hue lux</description>
 			<typeNumber>0x304</typeNumber>
 			<minFirmwareVersion>0</minFirmwareVersion>

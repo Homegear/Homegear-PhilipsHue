@@ -47,12 +47,22 @@ void Interfaces::create()
 {
 	try
 	{
+		std::set<uint32_t> usedAddresses;
 		for(std::map<std::string, Systems::PPhysicalInterfaceSettings>::iterator i = _physicalInterfaceSettings.begin(); i != _physicalInterfaceSettings.end(); ++i)
 		{
 			std::shared_ptr<IPhilipsHueInterface> device;
-			if(!i->second) continue;
+			if(!i->second || i->second->type.empty()) continue;
 			GD::out.printDebug("Debug: Creating physical device. Type defined in philipshue.conf is: " + i->second->type);
-			if(i->second->type == "huebridge") device.reset(new HueBridge(i->second));
+			if(i->second->type == "huebridge")
+			{
+				if(usedAddresses.find(i->second->address) != usedAddresses.end())
+				{
+					GD::out.printError("Error loading interface \"" + i->second->id + "\": Address " + std::to_string(i->second->address) + " is used already. Please specify a valid and unique address for this interface in \"philipshue.conf\".");
+					continue;
+				}
+				usedAddresses.insert(i->second->address);
+				device.reset(new HueBridge(i->second));
+			}
 			else GD::out.printError("Error: Unsupported physical device type: " + i->second->type);
 			if(device)
 			{

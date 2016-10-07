@@ -1,56 +1,56 @@
 <homegearDevice version="1">
 	<supportedDevices>
-		<device id="LCT001">
+		<device id="Philips LCT001">
 			<description>Philips hue A19</description>
 			<typeNumber>0x1</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
-		<device id="LCT007">
+		<device id="Philips LCT007">
 			<description>Philips hue A60</description>
 			<typeNumber>0x7</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
-		<device id="LIGHTIFY Classic A60 RGBW">
+		<device id="OSRAM Classic A60 RGBW">
 			<description>OSRAM LIGHTIFY Classic A60 RGBW</description>
 			<typeNumber>0x401</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
-		<device id="Gardenspot RGB">
+		<device id="OSRAM Gardenspot RGB">
 			<description>OSRAM Gardenspot RGB</description>
 			<typeNumber>0x402</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
-		<device id="LIGHTIFY Classic B40 TW">
+		<device id="OSRAM Classic B40 TW - LIGHTIFY">
 			<description>Classic B40 TW</description>
 			<typeNumber>0x403</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
-		<device id="LLC001">
+		<device id="Philips LLC001">
 			<description>Philips LivingColors</description>
 			<typeNumber>0x101</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
-		<device id="LLC006">
+		<device id="Philips LLC006">
 			<description>Philips LivingColors</description>
 			<typeNumber>0x106</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
-		<device id="LLC007">
+		<device id="Philips LLC007">
 			<description>Philips LivingColors</description>
 			<typeNumber>0x107</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
-		<device id="LLC011">
+		<device id="Philips LLC011">
 			<description>Philips LivingColors Bloom</description>
 			<typeNumber>0x111</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
-		<device id="LST001">
+		<device id="Philips LST001">
 			<description>Philips LightStrip</description>
 			<typeNumber>0x201</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
-		<device id="LST002">
+		<device id="Philips LST002">
 			<description>Philips LightStrip Plus</description>
 			<typeNumber>0x202</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
