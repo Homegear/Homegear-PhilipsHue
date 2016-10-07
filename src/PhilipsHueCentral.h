@@ -96,7 +96,7 @@ protected:
 	 * @param save (default true) Set to "true" to save the peer in the database.
 	 * @return Returns a pointer to the newly created peer on success. If the creation was not successful, a nullptr is returned.
 	 */
-	std::shared_ptr<PhilipsHuePeer> createPeer(int32_t address, int32_t firmwareVersion, BaseLib::Systems::LogicalDeviceType deviceType, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save = true);
+	std::shared_ptr<PhilipsHuePeer> createPeer(int32_t address, int32_t firmwareVersion, uint32_t deviceType, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save = true);
 	void deletePeer(uint64_t id);
 };
 

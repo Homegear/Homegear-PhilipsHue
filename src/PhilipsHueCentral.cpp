@@ -628,7 +628,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 					else if(filterType == "type")
 					{
 						int32_t deviceType = BaseLib::Math::getNumber(filterValue, true);
-						if((int32_t)i->second->getDeviceType().type() != deviceType) continue;
+						if((int32_t)i->second->getDeviceType() != deviceType) continue;
 					}
 					else if(filterType == "configpending")
 					{
@@ -659,7 +659,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 					stringStream << name << bar
 						<< std::setw(addressWidth) << BaseLib::HelperFunctions::getHexString(i->second->getAddress(), 6) << bar
 						<< std::setw(serialWidth) << i->second->getSerialNumber() << bar
-						<< std::setw(typeWidth1) << BaseLib::HelperFunctions::getHexString(i->second->getDeviceType().type(), 4) << bar;
+						<< std::setw(typeWidth1) << BaseLib::HelperFunctions::getHexString(i->second->getDeviceType(), 4) << bar;
 					if(i->second->getRpcDevice())
 					{
 						PSupportedDevice type = i->second->getRpcDevice()->getType(i->second->getDeviceType(), i->second->getFirmwareVersion());
@@ -790,7 +790,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 			if(!_currentPeer) stringStream << "This peer is not paired to this central." << std::endl;
 			else
 			{
-				stringStream << "Peer with id " << std::hex << std::to_string(id) << " and device type 0x" << (int32_t)_currentPeer->getDeviceType().type() << " selected." << std::dec << std::endl;
+				stringStream << "Peer with id " << std::hex << std::to_string(id) << " and device type 0x" << (int32_t)_currentPeer->getDeviceType() << " selected." << std::dec << std::endl;
 				stringStream << "For information about the peer's commands type: \"help\"" << std::endl;
 			}
 			return stringStream.str();
@@ -844,7 +844,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
     return "Error executing command. See log file for more details.\n";
 }
 
-std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createPeer(int32_t address, int32_t firmwareVersion, BaseLib::Systems::LogicalDeviceType deviceType, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save)
+std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createPeer(int32_t address, int32_t firmwareVersion, uint32_t deviceType, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save)
 {
 	try
 	{
@@ -1056,12 +1056,12 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 				if(info->structValue->find("modelid") == info->structValue->end() || info->structValue->find("swversion") == info->structValue->end()) continue;
 				std::string manufacturer;
 				if(info->structValue->find("manufacturername") != info->structValue->end()) manufacturer = info->structValue->at("manufacturername")->stringValue;
-				DeviceType type = deviceTypeFromString(manufacturer, info->structValue->at("modelid")->stringValue);
+				DeviceType deviceType = deviceTypeFromString(manufacturer, info->structValue->at("modelid")->stringValue);
 
 				std::shared_ptr<PhilipsHuePeer> peer = getPeer((*i)->senderAddress());
 				if(peer)
 				{
-					if((DeviceType)peer->getDeviceType().type() == type) continue;
+					if((DeviceType)peer->getDeviceType() == deviceType) continue;
 					deletePeer(peer->getID());
 					peer.reset();
 				}
@@ -1072,21 +1072,20 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 				BaseLib::HelperFunctions::stringReplace(swversion, ".", "");
 				BaseLib::HelperFunctions::stringReplace(swversion, "V", "");
 				if(swversion.size() > 4) swversion = swversion.substr(0, 4);
-				LogicalDeviceType deviceType(HUE_FAMILY_ID, (uint32_t)type);
 
 				std::string serialNumber = "HUE";
 				std::string addressString = std::to_string((*i)->senderAddress());
 				if(addressString.size() > 7)
 				{
-					GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)type, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". Address string is too long.");
+					GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)deviceType, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". Address string is too long.");
 					continue;
 				}
 				if(addressString.size() < 10) serialNumber.resize(10 - addressString.size(), '0');
 				serialNumber.append(addressString);
-				peer = createPeer((*i)->senderAddress(), BaseLib::Math::getNumber(swversion, true), deviceType, serialNumber, interface->second, true);
+				peer = createPeer((*i)->senderAddress(), BaseLib::Math::getNumber(swversion, true), (uint32_t)deviceType, serialNumber, interface->second, true);
 				if(!peer)
 				{
-					GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)type, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". No matching XML file was found.");
+					GD::out.printError("Error: Could not pair device with address " + BaseLib::HelperFunctions::getHexString((*i)->senderAddress(), 6) + ", type " + BaseLib::HelperFunctions::getHexString((uint32_t)deviceType, 4) + " and firmware version " + std::to_string(BaseLib::Math::getNumber(swversion)) + ". No matching XML file was found.");
 					continue;
 				}
 
