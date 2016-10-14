@@ -171,7 +171,11 @@ void PhilipsHuePeer::loadVariables(BaseLib::Systems::ICentral* central, std::sha
 				break;
 			}
 		}
-		if(!_physicalInterface) _physicalInterface = GD::defaultPhysicalInterface;
+		if(!_physicalInterface)
+		{
+			GD::out.printError("Error: Could not find correct physical interface for peer " + std::to_string(_peerID) + ". The peer might not work correctly.");
+			_physicalInterface = GD::defaultPhysicalInterface;
+		}
 	}
 	catch(const std::exception& ex)
     {
@@ -197,7 +201,7 @@ bool PhilipsHuePeer::load(BaseLib::Systems::ICentral* central)
 		_rpcDevice = GD::family->getRpcDevices()->find(_deviceType, _firmwareVersion, -1);
 		if(!_rpcDevice)
 		{
-			GD::out.printError("Error loading peer " + std::to_string(_peerID) + ": Device type not found: 0x" + BaseLib::HelperFunctions::getHexString((uint32_t)_deviceType.type()) + " Firmware version: " + std::to_string(_firmwareVersion));
+			GD::out.printError("Error loading peer " + std::to_string(_peerID) + ": Device type not found: 0x" + BaseLib::HelperFunctions::getHexString(_deviceType) + " Firmware version: " + std::to_string(_firmwareVersion));
 			return false;
 		}
 		initializeTypeString();
@@ -528,7 +532,7 @@ void PhilipsHuePeer::initializeConversionMatrix()
 	{
 		if(_rgbGamut.getA().x == 0)
 		{
-			if(_deviceType.type() == (uint32_t)DeviceType::LCT001)
+			if(_deviceType == (uint32_t)DeviceType::LCT001)
 			{
 				_rgbGamut.setA(BaseLib::Math::Point2D(0.675, 0.322));
 				_rgbGamut.setB(BaseLib::Math::Point2D(0.4091, 0.518));
