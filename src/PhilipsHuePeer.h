@@ -89,10 +89,20 @@ public:
 	virtual int32_t getNewFirmwareVersion() { return 0; }
 	virtual std::string getFirmwareVersionString(int32_t firmwareVersion);
     virtual bool firmwareUpdateAvailable() { return false; }
+    bool hasTeam() { return !_teamSerialNumber.empty(); }
+    virtual bool isTeam() { return _serialNumber.front() == '*'; }
+    void setTeamName(std::string& value) { _name = value; }
+    void addTeamPeer(uint64_t id) { std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex); _teamPeers.insert(id); }
+    void removeTeamPeer(uint64_t id) { std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex); _teamPeers.erase(id); }
 
 	void packetReceived(std::shared_ptr<PhilipsHuePacket> packet);
 
 	//RPC methods
+	/**
+	 * {@inheritDoc}
+	 */
+	virtual PVariable getDeviceDescription(BaseLib::PRpcClientInfo clientInfo, int32_t channel, std::map<std::string, bool> fields);
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -120,8 +130,14 @@ public:
 	//End RPC methods
 protected:
 	//In table variables:
+	int32_t _teamAddress = 0;
+	std::string _teamSerialNumber;
+	uint64_t _teamId = 0;
 	std::string _physicalInterfaceId;
 	//End
+
+	std::mutex _teamPeersMutex;
+	std::set<uint64_t> _teamPeers;
 
 	std::shared_ptr<IPhilipsHueInterface> _physicalInterface;
 

@@ -61,6 +61,8 @@ public:
 	virtual void loadPeers();
 	virtual void savePeers(bool full);
 
+	virtual void homegearShuttingDown();
+
 	virtual bool onPacketReceived(std::string& senderID, std::shared_ptr<BaseLib::Systems::Packet> packet);
 	virtual std::string handleCliCommand(std::string command);
 	virtual uint64_t getPeerIdFromSerial(std::string serialNumber) { std::shared_ptr<PhilipsHuePeer> peer = getPeer(serialNumber); if(peer) return peer->getID(); else return 0; }
@@ -84,7 +86,15 @@ protected:
 
 	std::map<std::string, std::shared_ptr<PacketManager>> _sentPackets;
 
+	std::atomic_bool _shuttingDown;
+
+	std::atomic_bool _stopWorkerThread;
+	std::thread _workerThread;
+
 	std::mutex _peerInitMutex;
+	std::mutex _searchHueBridgesMutex;
+	std::mutex _searchDevicesMutex;
+	std::thread _searchDevicesThread;
 
 	/**
 	 * Creates a new peer. The method does not add the peer to the peer arrays.
@@ -97,7 +107,14 @@ protected:
 	 * @return Returns a pointer to the newly created peer on success. If the creation was not successful, a nullptr is returned.
 	 */
 	std::shared_ptr<PhilipsHuePeer> createPeer(int32_t address, int32_t firmwareVersion, uint32_t deviceType, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save = true);
+	std::shared_ptr<PhilipsHuePeer> createTeam(int32_t address, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save);
 	void deletePeer(uint64_t id);
+	void searchDevicesThread();
+	std::vector<std::shared_ptr<PhilipsHuePeer>> searchTeams();
+	void searchHueBridges();
+
+	void init();
+	void worker();
 };
 
 }

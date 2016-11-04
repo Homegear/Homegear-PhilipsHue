@@ -30,6 +30,8 @@
 #ifndef INTERFACES_H_
 #define INTERFACES_H_
 
+#include "PhysicalInterfaces/IPhilipsHueInterface.h"
+
 #include <homegear-base/BaseLib.h>
 
 namespace PhilipsHue
@@ -40,10 +42,24 @@ using namespace BaseLib;
 class Interfaces : public BaseLib::Systems::PhysicalInterfaces
 {
 public:
-	Interfaces(BaseLib::Obj* bl, std::map<std::string, Systems::PPhysicalInterfaceSettings> physicalInterfaceSettings);
+	Interfaces(BaseLib::SharedObjects* bl, std::map<std::string, Systems::PPhysicalInterfaceSettings> physicalInterfaceSettings);
 	virtual ~Interfaces();
 
+	void addEventHandlers(BaseLib::Systems::IPhysicalInterface::IPhysicalInterfaceEventSink* central);
+	void removeEventHandlers();
+	std::shared_ptr<IPhilipsHueInterface> addInterface(Systems::PPhysicalInterfaceSettings settings, bool storeInDatabase);
+	void removeUnknownInterfaces(std::set<std::string>& knownInterfaces);
+	std::shared_ptr<IPhilipsHueInterface> getDefaultInterface();
+	std::shared_ptr<IPhilipsHueInterface> getInterface(std::string& name);
+	std::shared_ptr<IPhilipsHueInterface> getInterfaceByIp(std::string& ipAddress);
+	std::vector<std::shared_ptr<IPhilipsHueInterface>> getInterfaces();
+	uint32_t getFreeAddress();
+	void removeUsedAddress(uint32_t address);
 protected:
+	std::shared_ptr<IPhilipsHueInterface> _defaultPhysicalInterface;
+	std::map<std::string, PEventHandler> _physicalInterfaceEventhandlers;
+	std::set<uint32_t> _usedAddresses;
+
 	virtual void create();
 };
 

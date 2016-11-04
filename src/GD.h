@@ -35,7 +35,7 @@
 
 #include <homegear-base/BaseLib.h>
 #include "PhilipsHue.h"
-#include "PhysicalInterfaces/IPhilipsHueInterface.h"
+#include "Interfaces.h"
 
 using namespace BaseLib;
 using namespace BaseLib::DeviceDescription;
@@ -48,11 +48,10 @@ class GD
 public:
 	virtual ~GD();
 
-	static BaseLib::Obj* bl;
+	static BaseLib::SharedObjects* bl;
 	static PhilipsHue* family;
-	static std::map<std::string, std::shared_ptr<IPhilipsHueInterface>> physicalInterfaces;
-	static std::shared_ptr<IPhilipsHueInterface> defaultPhysicalInterface;
 	static BaseLib::Output out;
+	static std::shared_ptr<Interfaces> interfaces;
 private:
 	GD();
 };

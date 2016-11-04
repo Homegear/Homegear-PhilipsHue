@@ -1,5 +1,10 @@
 <homegearDevice version="1">
 	<supportedDevices>
+		<device id="Philips Hue Team">
+			<description>Philips Hue Team</description>
+			<typeNumber>0x1000</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
 		<device id="Philips LCT001">
 			<description>Philips hue A19</description>
 			<typeNumber>0x1</typeNumber>
@@ -283,10 +288,6 @@
 					<key>on</key>
 					<parameterId>STATE</parameterId>
 				</element>
-				<element>
-					<key>bri</key>
-					<parameterId>BRIGHTNESS</parameterId>
-				</element>
 			</jsonPayload>
 		</packet>
 		<packet id="FAST_STATE_SET">
@@ -300,10 +301,6 @@
 				<element>
 					<key>on</key>
 					<parameterId>STATE</parameterId>
-				</element>
-				<element>
-					<key>bri</key>
-					<parameterId>BRIGHTNESS</parameterId>
 				</element>
 			</jsonPayload>
 		</packet>

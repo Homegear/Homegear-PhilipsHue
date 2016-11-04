@@ -41,10 +41,11 @@ class PhilipsHueCentral;
 class PhilipsHue : public BaseLib::Systems::DeviceFamily
 {
 public:
-	PhilipsHue(BaseLib::Obj* bl, BaseLib::Systems::DeviceFamily::IFamilyEventSink* eventHandler);
+	PhilipsHue(BaseLib::SharedObjects* bl, BaseLib::Systems::DeviceFamily::IFamilyEventSink* eventHandler);
 	virtual ~PhilipsHue();
 	virtual void dispose();
 
+	virtual bool hasPhysicalInterface() { return false; }
 	virtual PVariable getPairingMethods();
 protected:
 	PhilipsHue(const PhilipsHue&);

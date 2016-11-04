@@ -34,43 +34,260 @@
 namespace PhilipsHue
 {
 
-Interfaces::Interfaces(BaseLib::Obj* bl, std::map<std::string, Systems::PPhysicalInterfaceSettings> physicalInterfaceSettings) : Systems::PhysicalInterfaces(bl, GD::family->getFamily(), physicalInterfaceSettings)
+Interfaces::Interfaces(BaseLib::SharedObjects* bl, std::map<std::string, Systems::PPhysicalInterfaceSettings> physicalInterfaceSettings) : Systems::PhysicalInterfaces(bl, GD::family->getFamily(), physicalInterfaceSettings)
 {
 	create();
 }
 
 Interfaces::~Interfaces()
 {
+	_physicalInterfaces.clear();
+	_defaultPhysicalInterface.reset();
+}
+
+void Interfaces::addEventHandlers(BaseLib::Systems::IPhysicalInterface::IPhysicalInterfaceEventSink* central)
+{
+	try
+	{
+		std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
+		for(auto interface : _physicalInterfaces)
+		{
+			if(_physicalInterfaceEventhandlers.find(interface.first) != _physicalInterfaceEventhandlers.end()) continue;
+			_physicalInterfaceEventhandlers[interface.first] = interface.second->addEventHandler((BaseLib::Systems::IPhysicalInterface::IPhysicalInterfaceEventSink*)central);
+		}
+	}
+	catch(const std::exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(BaseLib::Exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(...)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+	}
+}
+
+void Interfaces::removeEventHandlers()
+{
+	try
+	{
+		std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
+		for(auto interface : _physicalInterfaces)
+		{
+			auto physicalInterfaceEventhandler = _physicalInterfaceEventhandlers.find(interface.first);
+			if(physicalInterfaceEventhandler == _physicalInterfaceEventhandlers.end()) continue;
+			interface.second->removeEventHandler(physicalInterfaceEventhandler->second);
+			_physicalInterfaceEventhandlers.erase(physicalInterfaceEventhandler);
+		}
+	}
+	catch(const std::exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(BaseLib::Exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(...)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+	}
+}
+
+uint32_t Interfaces::getFreeAddress()
+{
+	uint32_t i = 256;
+	while(_usedAddresses.find(i) != _usedAddresses.end()) i++;
+	return i;
+}
+
+void Interfaces::removeUsedAddress(uint32_t address)
+{
+	if(_usedAddresses.find(address) != _usedAddresses.end()) _usedAddresses.erase(address);
+}
+
+std::vector<std::shared_ptr<IPhilipsHueInterface>> Interfaces::getInterfaces()
+{
+	std::vector<std::shared_ptr<IPhilipsHueInterface>> interfaces;
+	try
+	{
+		std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
+		for(auto interfaceBase : _physicalInterfaces)
+		{
+			std::shared_ptr<IPhilipsHueInterface> interface(std::dynamic_pointer_cast<IPhilipsHueInterface>(interfaceBase.second));
+			if(!interface) continue;
+			if(interface->isOpen()) interfaces.push_back(interface);
+		}
+	}
+	catch(const std::exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(BaseLib::Exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(...)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+	}
+	return interfaces;
+}
+
+std::shared_ptr<IPhilipsHueInterface> Interfaces::getDefaultInterface()
+{
+	std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
+	return _defaultPhysicalInterface;
+}
+
+std::shared_ptr<IPhilipsHueInterface> Interfaces::getInterface(std::string& name)
+{
+	std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
+	auto interfaceBase = _physicalInterfaces.find(name);
+	if(interfaceBase == _physicalInterfaces.end()) return std::shared_ptr<IPhilipsHueInterface>();
+	std::shared_ptr<IPhilipsHueInterface> interface(std::dynamic_pointer_cast<IPhilipsHueInterface>(interfaceBase->second));
+	return interface;
+}
+
+std::shared_ptr<IPhilipsHueInterface> Interfaces::getInterfaceByIp(std::string& ipAddress)
+{
+	std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
+	for(auto interfaceBase : _physicalInterfaces)
+	{
+		std::shared_ptr<IPhilipsHueInterface> interface(std::dynamic_pointer_cast<IPhilipsHueInterface>(interfaceBase.second));
+		if(!interface) continue;
+		if(interface->getHostname() == ipAddress) return interface;
+	}
+	return std::shared_ptr<IPhilipsHueInterface>();
+}
+
+void Interfaces::removeUnknownInterfaces(std::set<std::string>& knownInterfaces)
+{
+	try
+	{
+		std::vector<std::string> interfacesToDelete;
+		std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
+		for(auto interfaceBase : _physicalInterfaces)
+		{
+			std::shared_ptr<IPhilipsHueInterface> interface(std::dynamic_pointer_cast<IPhilipsHueInterface>(interfaceBase.second));
+			if(!interface) continue;
+			if(interface->getType() != "huebridge-auto" || knownInterfaces.find(interfaceBase.first) != knownInterfaces.end()) continue;
+			{
+				GD::out.printInfo("Removing Hue Bridge with serial number " + interfaceBase.first + " and IP address " + interface->getHostname() + ".");
+				std::string name = interfaceBase.first + ".devicetype";
+				GD::family->deleteFamilySettingFromDatabase(name);
+				name = interfaceBase.first + ".host";
+				GD::family->deleteFamilySettingFromDatabase(name);
+				name = interfaceBase.first + ".port";
+				GD::family->deleteFamilySettingFromDatabase(name);
+				name = interfaceBase.first + ".responsedelay";
+				GD::family->deleteFamilySettingFromDatabase(name);
+				name = interfaceBase.first + ".interval";
+				GD::family->deleteFamilySettingFromDatabase(name);
+				//Don't delete address
+
+				interfacesToDelete.push_back(interfaceBase.first);
+			}
+		}
+
+		for(auto interface : interfacesToDelete)
+		{
+			_physicalInterfaces.erase(interface);
+		}
+	}
+	catch(const std::exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(BaseLib::Exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(...)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+	}
+}
+
+std::shared_ptr<IPhilipsHueInterface> Interfaces::addInterface(Systems::PPhysicalInterfaceSettings settings, bool storeInDatabase)
+{
+	try
+	{
+		std::shared_ptr<IPhilipsHueInterface> device;
+		if(!settings || settings->type.empty()) return device;
+		GD::out.printDebug("Debug: Creating physical device. Type defined in philipshue.conf is: " + settings->type);
+
+		if(settings->type == "huebridge" || settings->type == "huebridge-auto")
+		{
+			if(_usedAddresses.find(settings->address) != _usedAddresses.end())
+			{
+				GD::out.printError("Error loading interface \"" + settings->id + "\": Address " + std::to_string(settings->address) + " is used already. Please specify a valid and unique address for this interface in \"philipshue.conf\".");
+				return device;
+			}
+			_usedAddresses.insert(settings->address);
+			device.reset(new HueBridge(settings));
+		}
+		else if(settings->type.empty()) //Deleted device
+		{
+			_usedAddresses.insert(settings->address);
+			return device;
+		}
+		else GD::out.printError("Error: Unsupported physical device type: " + settings->type);
+		if(device)
+		{
+			std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
+			_physicalInterfaces[settings->id] = device;
+			if(settings->isDefault || !_defaultPhysicalInterface || _defaultPhysicalInterface->getType() == "huebridge-temp") _defaultPhysicalInterface = device;
+			if(storeInDatabase)
+			{
+				std::string name = settings->id + ".devicetype";
+				GD::family->setFamilySetting(name, settings->type);
+				name = settings->id + ".host";
+				GD::family->setFamilySetting(name, settings->host);
+				name = settings->id + ".port";
+				GD::family->setFamilySetting(name, settings->port);
+				name = settings->id + ".address";
+				GD::family->setFamilySetting(name, settings->address);
+				name = settings->id + ".responsedelay";
+				GD::family->setFamilySetting(name, settings->responseDelay);
+				name = settings->id + ".interval";
+				GD::family->setFamilySetting(name, settings->interval);
+			}
+		}
+		return device;
+	}
+	catch(const std::exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(BaseLib::Exception& ex)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+	}
+	catch(...)
+	{
+		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+	}
+	return std::shared_ptr<IPhilipsHueInterface>();
 }
 
 void Interfaces::create()
 {
 	try
 	{
-		std::set<uint32_t> usedAddresses;
-		for(std::map<std::string, Systems::PPhysicalInterfaceSettings>::iterator i = _physicalInterfaceSettings.begin(); i != _physicalInterfaceSettings.end(); ++i)
+		for(auto settings : _physicalInterfaceSettings)
 		{
-			std::shared_ptr<IPhilipsHueInterface> device;
-			if(!i->second || i->second->type.empty()) continue;
-			GD::out.printDebug("Debug: Creating physical device. Type defined in philipshue.conf is: " + i->second->type);
-			if(i->second->type == "huebridge")
-			{
-				if(usedAddresses.find(i->second->address) != usedAddresses.end())
-				{
-					GD::out.printError("Error loading interface \"" + i->second->id + "\": Address " + std::to_string(i->second->address) + " is used already. Please specify a valid and unique address for this interface in \"philipshue.conf\".");
-					continue;
-				}
-				usedAddresses.insert(i->second->address);
-				device.reset(new HueBridge(i->second));
-			}
-			else GD::out.printError("Error: Unsupported physical device type: " + i->second->type);
-			if(device)
-			{
-				if(_physicalInterfaces.find(i->second->id) != _physicalInterfaces.end()) GD::out.printError("Error: id used for two devices: " + i->second->id);
-				_physicalInterfaces[i->second->id] = device;
-				GD::physicalInterfaces[i->second->id] = device;
-				if(i->second->isDefault || !GD::defaultPhysicalInterface) GD::defaultPhysicalInterface = device;
-			}
+			if(settings.second->type == "huebridge" && settings.second->address > 255) settings.second->address = 255;
+			addInterface(settings.second, false);
+		}
+		if(!_defaultPhysicalInterface)
+		{
+			Systems::PPhysicalInterfaceSettings settings(new Systems::PhysicalInterfaceSettings());
+			settings->type = "huebridge-temp";
+			_defaultPhysicalInterface.reset(new HueBridge(settings));
 		}
 	}
 	catch(const std::exception& ex)
