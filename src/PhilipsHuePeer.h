@@ -91,7 +91,6 @@ public:
     virtual bool firmwareUpdateAvailable() { return false; }
     bool hasTeam() { return !_teamSerialNumber.empty(); }
     virtual bool isTeam() { return _serialNumber.front() == '*'; }
-    void setTeamName(std::string& value) { _name = value; }
     void addTeamPeer(uint64_t id) { std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex); _teamPeers.insert(id); }
     void removeTeamPeer(uint64_t id) { std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex); _teamPeers.erase(id); }
 

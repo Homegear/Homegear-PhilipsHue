@@ -1006,7 +1006,7 @@ std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams()
 						if(team)
 						{
 							auto name = info->structValue->find("name");
-							if(name != info->structValue->end()) team->setTeamName(name->second->stringValue);
+							if(name != info->structValue->end()) team->setName(name->second->stringValue);
 							team->initializeCentralConfig();
 
 							{
