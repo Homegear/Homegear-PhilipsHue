@@ -199,6 +199,7 @@ void PhilipsHueCentral::loadPeers()
 	try
 	{
 		std::shared_ptr<BaseLib::Database::DataTable> rows = _bl->db->getPeers(_deviceId);
+		std::vector<std::shared_ptr<PhilipsHuePeer>> teams;
 		for(BaseLib::Database::DataTable::iterator row = rows->begin(); row != rows->end(); ++row)
 		{
 			int32_t peerID = row->second.at(0)->intValue;
@@ -209,9 +210,23 @@ void PhilipsHueCentral::loadPeers()
 			if(!peer->getRpcDevice()) continue;
 			_peersMutex.lock();
 			if(!peer->isTeam()) _peers[peer->getAddress()] = peer;
+			else teams.push_back(peer);
 			if(!peer->getSerialNumber().empty()) _peersBySerial[peer->getSerialNumber()] = peer;
 			_peersById[peerID] = peer;
 			_peersMutex.unlock();
+		}
+
+		for(auto team : teams)
+		{
+			std::set<uint64_t> teamPeers = team->getTeamPeers();
+			for(auto teamPeer : teamPeers)
+			{
+				std::shared_ptr<PhilipsHuePeer> peer = getPeer(teamPeer);
+				if(!peer) continue;
+				peer->setTeamId(team->getID());
+				peer->setTeamSerialNumber(team->getSerialNumber());
+				peer->setTeamAddress(team->getAddress());
+			}
 		}
 	}
 	catch(const std::exception& ex)
@@ -382,6 +397,29 @@ void PhilipsHueCentral::deletePeer(uint64_t id)
 	{
 		std::shared_ptr<PhilipsHuePeer> peer(getPeer(id));
 		if(!peer) return;
+
+		if(peer->isTeam())
+		{
+			std::set<uint64_t> teamPeers = peer->getTeamPeers();
+			for(auto teamPeerId : teamPeers)
+			{
+				std::shared_ptr<PhilipsHuePeer> teamPeer = getPeer(teamPeerId);
+				if(!teamPeer) continue;
+				teamPeer->setTeamAddress(0);
+				teamPeer->setTeamId(0);
+				teamPeer->setTeamSerialNumber("");
+			}
+		}
+		else if(peer->hasTeam())
+		{
+			std::shared_ptr<PhilipsHuePeer> team(getPeer(peer->getTeamId()));
+			if(team)
+			{
+				team->removeTeamPeer(peer->getID());
+				team->saveTeamPeers();
+			}
+		}
+
 		peer->deleting = true;
 		PVariable deviceAddresses(new Variable(VariableType::tArray));
 		deviceAddresses->arrayValue->push_back(PVariable(new Variable(peer->getSerialNumber())));
@@ -403,7 +441,7 @@ void PhilipsHueCentral::deletePeer(uint64_t id)
 			std::lock_guard<std::mutex> peersGuard(_peersMutex);
 			if(_peersBySerial.find(peer->getSerialNumber()) != _peersBySerial.end()) _peersBySerial.erase(peer->getSerialNumber());
 			if(_peersById.find(id) != _peersById.end()) _peersById.erase(id);
-			if(_peers.find(peer->getAddress()) != _peers.end()) _peers.erase(peer->getAddress());
+			if(!peer->isTeam() && _peers.find(peer->getAddress()) != _peers.end()) _peers.erase(peer->getAddress());
 		}
 		peer->deleteFromDatabase();
 		GD::out.printMessage("Removed peer " + std::to_string(peer->getID()));
@@ -908,6 +946,7 @@ void PhilipsHueCentral::searchHueBridges()
 		}
 		searchResult.clear();
 		ssdp.searchDevices(stHeader, 5000, searchResult);
+		if(_shuttingDown) return;
 		for(auto device : searchResult)
 		{
 			if(devices.find(device.ip()) == devices.end()) devices.insert(std::pair<std::string, BaseLib::SsdpInfo>(device.ip(), device));
@@ -978,7 +1017,7 @@ void PhilipsHueCentral::searchHueBridges()
     }
 }
 
-std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams()
+std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams(bool findNew)
 {
 	try
 	{
@@ -1000,7 +1039,53 @@ std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams()
 					serialNumber.append(addressString);
 
 					std::shared_ptr<PhilipsHuePeer> team = getPeer(serialNumber);
-					if(!team)
+					if(team)
+					{
+						auto peers = info->structValue->find("lights");
+						if(peers != info->structValue->end())
+						{
+							std::set<uint64_t> newIds;
+							for(auto peerEntry : *peers->second->arrayValue)
+							{
+								int32_t address = BaseLib::Math::getNumber(peerEntry->stringValue, false);
+								if(address == 0) continue;
+								address |= (team->getInterfaceAddress() << 20);
+
+								std::shared_ptr<PhilipsHuePeer> peer = getPeer(address);
+								if(peer) newIds.insert(peer->getID());
+							}
+
+							std::set<uint64_t> teamPeers = team->getTeamPeers();
+							for(auto teamPeer : teamPeers)
+							{
+								if(newIds.find(teamPeer) == newIds.end())
+								{
+									team->removeTeamPeer(teamPeer);
+
+									std::shared_ptr<PhilipsHuePeer> peer = getPeer(teamPeer);
+									if(peer)
+									{
+										peer->setTeamAddress(0);
+										peer->setTeamId(0);
+										peer->setTeamSerialNumber("");
+									}
+								}
+							}
+
+							for(auto newTeamPeer : newIds)
+							{
+								if(teamPeers.find(newTeamPeer) != teamPeers.end()) continue;
+								team->addTeamPeer(newTeamPeer);
+
+								std::shared_ptr<PhilipsHuePeer> peer = getPeer(newTeamPeer);
+								if(!peer) continue;
+								peer->setTeamAddress(team->getAddress());
+								peer->setTeamId(team->getID());
+								peer->setTeamSerialNumber(team->getSerialNumber());
+							}
+						}
+					}
+					else if(findNew)
 					{
 						team = createTeam(groupInfo->senderAddress(), serialNumber, interface, true);
 						if(team)
@@ -1013,6 +1098,27 @@ std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams()
 								std::lock_guard<std::mutex> peersGuard(_peersMutex);
 								_peersBySerial[team->getSerialNumber()] = team;
 								_peersById[team->getID()] = team;
+							}
+
+							auto peers = info->structValue->find("lights");
+							if(peers != info->structValue->end())
+							{
+								for(auto peerEntry : *peers->second->arrayValue)
+								{
+									int32_t address = BaseLib::Math::getNumber(peerEntry->stringValue, false);
+									if(address == 0) continue;
+									address |= (team->getInterfaceAddress() << 20);
+
+									std::shared_ptr<PhilipsHuePeer> peer = getPeer(address);
+									if(!peer) continue;
+
+									peer->setTeamAddress(team->getAddress());
+									peer->setTeamId(team->getID());
+									peer->setTeamSerialNumber(team->getSerialNumber());
+
+									team->addTeamPeer(peer->getID());
+								}
+								team->saveTeamPeers();
 							}
 
 							newPeers.push_back(team);
@@ -1171,6 +1277,7 @@ void PhilipsHueCentral::worker()
 					countsPer10Minutes = 600;
 					counter = 0;
 					searchHueBridges();
+					searchTeams(false);
 				}
 				counter++;
 			}

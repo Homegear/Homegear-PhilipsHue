@@ -177,6 +177,9 @@ void PhilipsHuePeer::loadVariables(BaseLib::Systems::ICentral* central, std::sha
 			case 10:
 				_teamSerialNumber = row->second.at(4)->textValue;
 				break;
+			case 11:
+				unserializeTeamPeers(row->second.at(5)->binaryValue);
+				break;
 			case 19:
 				_physicalInterfaceId = row->second.at(4)->textValue;
 				auto interface = GD::interfaces->getInterface(_physicalInterfaceId);
@@ -252,7 +255,65 @@ void PhilipsHuePeer::saveVariables()
 		saveVariable(8, _teamAddress);
 		saveVariable(9, (int32_t)_teamId);
 		saveVariable(10, _teamSerialNumber);
+		std::vector<uint8_t> serializedData = serializeTeamPeers();
+		saveVariable(11, serializedData);
 		saveVariable(19, _physicalInterfaceId);
+	}
+	catch(const std::exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(BaseLib::Exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(...)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+    }
+}
+
+std::vector<uint8_t> PhilipsHuePeer::serializeTeamPeers()
+{
+	std::vector<uint8_t> serializedData;
+	try
+	{
+		BaseLib::BinaryEncoder encoder(_bl);
+		std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex);
+		encoder.encodeInteger(serializedData, _teamPeers.size());
+		for(auto teamPeer : _teamPeers)
+		{
+			encoder.encodeInteger64(serializedData, teamPeer);
+		}
+	}
+	catch(const std::exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(BaseLib::Exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(...)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+    }
+    return serializedData;
+}
+
+void PhilipsHuePeer::unserializeTeamPeers(std::shared_ptr<std::vector<char>>& serializedData)
+{
+	try
+	{
+		BaseLib::BinaryDecoder decoder(_bl);
+		uint32_t position = 0;
+		std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex);
+		_teamPeers.clear();
+		uint32_t teamPeersSize = decoder.decodeInteger(*serializedData, position);
+		for(uint32_t i = 0; i < teamPeersSize; i++)
+		{
+			_teamPeers.insert(decoder.decodeInteger64(*serializedData, position));
+		}
 	}
 	catch(const std::exception& ex)
     {
@@ -705,7 +766,7 @@ PVariable PhilipsHuePeer::getDeviceDescription(BaseLib::PRpcClientInfo clientInf
 		PVariable description(Peer::getDeviceDescription(clientInfo, channel, fields));
 		if(description->errorStruct || description->structValue->empty()) return description;
 
-		if(channel > -1)
+		if(channel == -1)
 		{
 			if(fields.empty() || fields.find("TEAM_CHANNELS") != fields.end())
 			{

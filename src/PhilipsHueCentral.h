@@ -110,7 +110,7 @@ protected:
 	std::shared_ptr<PhilipsHuePeer> createTeam(int32_t address, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save);
 	void deletePeer(uint64_t id);
 	void searchDevicesThread();
-	std::vector<std::shared_ptr<PhilipsHuePeer>> searchTeams();
+	std::vector<std::shared_ptr<PhilipsHuePeer>> searchTeams(bool findNew = true);
 	void searchHueBridges();
 
 	void init();
