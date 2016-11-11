@@ -76,8 +76,6 @@ public:
 	//{{{ In table variables
 	std::string getPhysicalInterfaceId() { return _physicalInterfaceId; }
 	void setPhysicalInterfaceId(std::string);
-	int32_t getTeamAddress() { return _teamAddress; }
-	void setTeamAddress(int32_t value) { _teamAddress = value; saveVariable(8, _teamAddress); }
 	std::string getTeamSerialNumber() { return _teamSerialNumber; }
 	void setTeamSerialNumber(std::string value) { _teamSerialNumber = value; saveVariable(10, _teamSerialNumber); }
 	uint64_t getTeamId() { return _teamId; }
@@ -138,7 +136,6 @@ public:
 	//End RPC methods
 protected:
 	//In table variables:
-	int32_t _teamAddress = 0;
 	std::string _teamSerialNumber;
 	uint64_t _teamId = 0;
 	std::string _physicalInterfaceId;

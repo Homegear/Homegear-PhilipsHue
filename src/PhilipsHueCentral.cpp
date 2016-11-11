@@ -225,7 +225,6 @@ void PhilipsHueCentral::loadPeers()
 				if(!peer) continue;
 				peer->setTeamId(team->getID());
 				peer->setTeamSerialNumber(team->getSerialNumber());
-				peer->setTeamAddress(team->getAddress());
 			}
 		}
 	}
@@ -405,7 +404,6 @@ void PhilipsHueCentral::deletePeer(uint64_t id)
 			{
 				std::shared_ptr<PhilipsHuePeer> teamPeer = getPeer(teamPeerId);
 				if(!teamPeer) continue;
-				teamPeer->setTeamAddress(0);
 				teamPeer->setTeamId(0);
 				teamPeer->setTeamSerialNumber("");
 			}
@@ -1065,7 +1063,6 @@ std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams(bool
 									std::shared_ptr<PhilipsHuePeer> peer = getPeer(teamPeer);
 									if(peer)
 									{
-										peer->setTeamAddress(0);
 										peer->setTeamId(0);
 										peer->setTeamSerialNumber("");
 									}
@@ -1079,7 +1076,6 @@ std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams(bool
 
 								std::shared_ptr<PhilipsHuePeer> peer = getPeer(newTeamPeer);
 								if(!peer) continue;
-								peer->setTeamAddress(team->getAddress());
 								peer->setTeamId(team->getID());
 								peer->setTeamSerialNumber(team->getSerialNumber());
 							}
@@ -1112,7 +1108,6 @@ std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams(bool
 									std::shared_ptr<PhilipsHuePeer> peer = getPeer(address);
 									if(!peer) continue;
 
-									peer->setTeamAddress(team->getAddress());
 									peer->setTeamId(team->getID());
 									peer->setTeamSerialNumber(team->getSerialNumber());
 

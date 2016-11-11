@@ -168,9 +168,6 @@ void PhilipsHuePeer::loadVariables(BaseLib::Systems::ICentral* central, std::sha
 		{
 			switch(row->second.at(2)->intValue)
 			{
-			case 8:
-				_teamAddress = row->second.at(3)->intValue;
-				break;
 			case 9:
 				_teamId = row->second.at(3)->intValue;
 				break;
@@ -252,7 +249,6 @@ void PhilipsHuePeer::saveVariables()
 		if(_peerID == 0) return;
 		Peer::saveVariables();
 
-		saveVariable(8, _teamAddress);
 		saveVariable(9, (int32_t)_teamId);
 		saveVariable(10, _teamSerialNumber);
 		std::vector<uint8_t> serializedData = serializeTeamPeers();
@@ -431,6 +427,7 @@ void PhilipsHuePeer::getValuesFromPacket(std::shared_ptr<PhilipsHuePacket> packe
 
 					if(setValues)
 					{
+						if((*k)->id == "STATE") _state = json->booleanValue;
 						//This is a little nasty and costs a lot of resources, but we need to run the data through the packet converter
 						std::vector<uint8_t> encodedData;
 						_binaryEncoder->encodeResponse(json, encodedData);
@@ -478,6 +475,9 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 			PPacket frame;
 			if(!a->frameID.empty()) frame = _rpcDevice->packetsById.at(a->frameID);
 
+			auto stateIterator = a->values.find("STATE");
+			if(stateIterator != a->values.end()) _state = (stateIterator->second.value.back() != 0);
+
 			for(std::map<std::string, FrameValue>::iterator i = a->values.begin(); i != a->values.end(); ++i)
 			{
 				for(std::list<uint32_t>::const_iterator j = a->paramsetChannels.begin(); j != a->paramsetChannels.end(); ++j)
@@ -522,8 +522,6 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 
 						valueKeys[*j]->push_back(i->first);
 						rpcValues[*j]->push_back(parameter->rpcParameter->convertFromPacket(i->second.value, true));
-
-						if(i->first == "STATE" || i->first == "FAST_STATE") _state = rpcValues[*j]->back()->booleanValue;
 					}
 				}
 			}

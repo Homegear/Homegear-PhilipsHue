@@ -136,56 +136,61 @@
 		</packet>
 		<packet id="INFO">
 			<direction>toCentral</direction>
-			<type>0x1</type>
+			<type>0x80</type>
 			<channel>1</channel>
 			<jsonPayload>
 				<element>
 					<key>state</key>
+					<subkey>all_on</subkey>
+					<parameterId>ALL_ON</parameterId>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>any_on</subkey>
+					<parameterId>ANY_ON</parameterId>
+				</element>
+				<element>
+					<key>action</key>
 					<subkey>on</subkey>
 					<parameterId>STATE</parameterId>
 				</element>
 				<element>
-					<key>state</key>
+					<key>action</key>
 					<subkey>bri</subkey>
 					<parameterId>BRIGHTNESS</parameterId>
 				</element>
 				<element>
-					<key>state</key>
+					<key>action</key>
 					<subkey>hue</subkey>
 					<parameterId>HUE</parameterId>
 				</element>
 				<element>
-					<key>state</key>
+					<key>action</key>
 					<subkey>sat</subkey>
 					<parameterId>SATURATION</parameterId>
 				</element>
 				<element>
-					<key>state</key>
+					<key>action</key>
 					<subkey>ct</subkey>
 					<parameterId>COLOR_TEMPERATURE</parameterId>
 				</element>
 				<element>
-					<key>state</key>
+					<key>action</key>
 					<subkey>alert</subkey>
 					<parameterId>ALERT</parameterId>
 				</element>
 				<element>
-					<key>state</key>
+					<key>action</key>
 					<subkey>effect</subkey>
 					<parameterId>EFFECT</parameterId>
 				</element>
 				<element>
-					<key>state</key>
+					<key>action</key>
 					<subkey>colormode</subkey>
 					<parameterId>COLORMODE</parameterId>
 				</element>
 				<element>
-					<key>state</key>
-					<subkey>reachable</subkey>
-					<parameterId>REACHABLE</parameterId>
-				</element>
-				<element>
-					<key>state</key>
+					<key>action</key>
 					<subkey>xy</subkey>
 					<parameterId>XY</parameterId>
 				</element>
@@ -330,6 +335,40 @@
 			</parameter>
 		</variables>
 		<variables id="switch_valueset--1">
+			<parameter id="ALL_ON">
+				<properties>
+					<writeable>false</writeable>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="ALL_ON">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="ANY_ON">
+				<properties>
+					<writeable>false</writeable>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="ANY_ON">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
 			<parameter id="STATE">
 				<properties>
 					<casts>

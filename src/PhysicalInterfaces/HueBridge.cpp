@@ -211,6 +211,7 @@ void HueBridge::startListening()
 		stopListening();
 		_client = std::unique_ptr<BaseLib::HttpClient>(new BaseLib::HttpClient(_bl, _hostname, _port, false, _settings->ssl, _settings->caFile, _settings->verifyCertificate));
 		_ipAddress = _client->getIpAddress();
+		_myAddress = _settings->address;
 		_noHost = _hostname.empty();
 		if(!_noHost)
 		{
@@ -583,7 +584,7 @@ void HueBridge::listen()
 					for(auto group : *groups->structValue)
 					{
 						std::string address = group.first;
-						std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(PhilipsHuePacket::Category::group, (_settings->address << 20) | BaseLib::Math::getNumber(address), 0, 1, group.second, BaseLib::HelperFunctions::getTime()));
+						std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(PhilipsHuePacket::Category::group, (_settings->address << 20) | BaseLib::Math::getNumber(address), 0, 0x80, group.second, BaseLib::HelperFunctions::getTime()));
 						raisePacketReceived(packet);
 					}
 				}
