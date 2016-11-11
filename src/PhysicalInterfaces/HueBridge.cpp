@@ -210,6 +210,7 @@ void HueBridge::startListening()
 	{
 		stopListening();
 		_client = std::unique_ptr<BaseLib::HttpClient>(new BaseLib::HttpClient(_bl, _hostname, _port, false, _settings->ssl, _settings->caFile, _settings->verifyCertificate));
+		_ipAddress = _client->getIpAddress();
 		_noHost = _hostname.empty();
 		if(!_noHost)
 		{
