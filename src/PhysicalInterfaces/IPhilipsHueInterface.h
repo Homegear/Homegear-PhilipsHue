@@ -43,6 +43,7 @@ public:
 
 	virtual void searchLights() = 0;
 	virtual std::vector<std::shared_ptr<PhilipsHuePacket>> getPeerInfo() = 0;
+	virtual std::vector<std::shared_ptr<PhilipsHuePacket>> getGroupInfo() = 0;
 protected:
 	BaseLib::Output _out;
 };

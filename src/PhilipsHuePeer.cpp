@@ -60,12 +60,14 @@ PhilipsHuePeer::PhilipsHuePeer(uint32_t parentID, IPeerEventSink* eventHandler) 
 {
 	_binaryEncoder.reset(new BaseLib::Rpc::RpcEncoder(GD::bl));
 	_binaryDecoder.reset(new BaseLib::Rpc::RpcDecoder(GD::bl));
+	_saveTeam = true;
 }
 
 PhilipsHuePeer::PhilipsHuePeer(int32_t id, int32_t address, std::string serialNumber, uint32_t parentID, IPeerEventSink* eventHandler) : Peer(GD::bl, id, address, serialNumber, parentID, eventHandler)
 {
 	_binaryEncoder.reset(new BaseLib::Rpc::RpcEncoder(GD::bl));
 	_binaryDecoder.reset(new BaseLib::Rpc::RpcDecoder(GD::bl));
+	_saveTeam = true;
 }
 
 PhilipsHuePeer::~PhilipsHuePeer()
@@ -125,10 +127,11 @@ void PhilipsHuePeer::save(bool savePeer, bool variables, bool centralConfig)
 
 void PhilipsHuePeer::setPhysicalInterfaceId(std::string id)
 {
-	if(id.empty() || (GD::physicalInterfaces.find(id) != GD::physicalInterfaces.end() && GD::physicalInterfaces.at(id)))
+	auto interface = GD::interfaces->getInterface(id);
+	if(id.empty() || interface)
 	{
 		_physicalInterfaceId = id;
-		setPhysicalInterface(id.empty() ? GD::defaultPhysicalInterface : GD::physicalInterfaces.at(_physicalInterfaceId));
+		setPhysicalInterface(id.empty() ? GD::interfaces->getDefaultInterface() : interface);
 		saveVariable(19, _physicalInterfaceId);
 	}
 }
@@ -165,16 +168,26 @@ void PhilipsHuePeer::loadVariables(BaseLib::Systems::ICentral* central, std::sha
 		{
 			switch(row->second.at(2)->intValue)
 			{
+			case 9:
+				_teamId = row->second.at(3)->intValue;
+				break;
+			case 10:
+				_teamSerialNumber = row->second.at(4)->textValue;
+				break;
+			case 11:
+				unserializeTeamPeers(row->second.at(5)->binaryValue);
+				break;
 			case 19:
 				_physicalInterfaceId = row->second.at(4)->textValue;
-				if(!_physicalInterfaceId.empty() && GD::physicalInterfaces.find(_physicalInterfaceId) != GD::physicalInterfaces.end()) setPhysicalInterface(GD::physicalInterfaces.at(_physicalInterfaceId));
+				auto interface = GD::interfaces->getInterface(_physicalInterfaceId);
+				if(!_physicalInterfaceId.empty() && interface) setPhysicalInterface(interface);
 				break;
 			}
 		}
 		if(!_physicalInterface)
 		{
 			GD::out.printError("Error: Could not find correct physical interface for peer " + std::to_string(_peerID) + ". The peer might not work correctly.");
-			_physicalInterface = GD::defaultPhysicalInterface;
+			_physicalInterface = GD::interfaces->getDefaultInterface();
 		}
 	}
 	catch(const std::exception& ex)
@@ -236,7 +249,67 @@ void PhilipsHuePeer::saveVariables()
 		if(_peerID == 0) return;
 		Peer::saveVariables();
 
+		saveVariable(9, (int32_t)_teamId);
+		saveVariable(10, _teamSerialNumber);
+		std::vector<uint8_t> serializedData = serializeTeamPeers();
+		saveVariable(11, serializedData);
 		saveVariable(19, _physicalInterfaceId);
+	}
+	catch(const std::exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(BaseLib::Exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(...)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+    }
+}
+
+std::vector<uint8_t> PhilipsHuePeer::serializeTeamPeers()
+{
+	std::vector<uint8_t> serializedData;
+	try
+	{
+		BaseLib::BinaryEncoder encoder(_bl);
+		std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex);
+		encoder.encodeInteger(serializedData, _teamPeers.size());
+		for(auto teamPeer : _teamPeers)
+		{
+			encoder.encodeInteger64(serializedData, teamPeer);
+		}
+	}
+	catch(const std::exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(BaseLib::Exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(...)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+    }
+    return serializedData;
+}
+
+void PhilipsHuePeer::unserializeTeamPeers(std::shared_ptr<std::vector<char>>& serializedData)
+{
+	try
+	{
+		BaseLib::BinaryDecoder decoder(_bl);
+		uint32_t position = 0;
+		std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex);
+		_teamPeers.clear();
+		uint32_t teamPeersSize = decoder.decodeInteger(*serializedData, position);
+		for(uint32_t i = 0; i < teamPeersSize; i++)
+		{
+			_teamPeers.insert(decoder.decodeInteger64(*serializedData, position));
+		}
 	}
 	catch(const std::exception& ex)
     {
@@ -285,8 +358,8 @@ void PhilipsHuePeer::getValuesFromPacket(std::shared_ptr<PhilipsHuePacket> packe
 	{
 		if(!_rpcDevice) return;
 		//equal_range returns all elements with "0" or an unknown element as argument
-		if(_rpcDevice->packetsByMessageType.find(packet->messageType()) == _rpcDevice->packetsByMessageType.end()) return;
-		std::pair<PacketsByMessageType::iterator, PacketsByMessageType::iterator> range = _rpcDevice->packetsByMessageType.equal_range((uint32_t)packet->messageType());
+		if(_rpcDevice->packetsByMessageType.find(packet->getMessageType()) == _rpcDevice->packetsByMessageType.end()) return;
+		std::pair<PacketsByMessageType::iterator, PacketsByMessageType::iterator> range = _rpcDevice->packetsByMessageType.equal_range((uint32_t)packet->getMessageType());
 		if(range.first == _rpcDevice->packetsByMessageType.end()) return;
 		PacketsByMessageType::iterator i = range.first;
 		do
@@ -354,6 +427,7 @@ void PhilipsHuePeer::getValuesFromPacket(std::shared_ptr<PhilipsHuePacket> packe
 
 					if(setValues)
 					{
+						if((*k)->id == "STATE") _state = json->booleanValue;
 						//This is a little nasty and costs a lot of resources, but we need to run the data through the packet converter
 						std::vector<uint8_t> encodedData;
 						_binaryEncoder->encodeResponse(json, encodedData);
@@ -401,6 +475,9 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 			PPacket frame;
 			if(!a->frameID.empty()) frame = _rpcDevice->packetsById.at(a->frameID);
 
+			auto stateIterator = a->values.find("STATE");
+			if(stateIterator != a->values.end()) _state = (stateIterator->second.value.back() != 0);
+
 			for(std::map<std::string, FrameValue>::iterator i = a->values.begin(); i != a->values.end(); ++i)
 			{
 				for(std::list<uint32_t>::const_iterator j = a->paramsetChannels.begin(); j != a->paramsetChannels.end(); ++j)
@@ -416,11 +493,7 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 						rpcValues[*j].reset(new std::vector<PVariable>());
 					}
 
-					if(!_state && (i->first == "BRIGHTNESS" || i->first == "FAST_BRIGHTNESS"))
-					{
-						GD::out.printInfo("Info: Ignoring BRIGHTNESS.");
-						continue;
-					}
+					if(!_state && (i->first == "BRIGHTNESS" || i->first == "FAST_BRIGHTNESS")) continue;
 
 					parameter->data = i->second.value;
 					if(parameter->databaseID > 0) saveParameter(parameter->databaseID, parameter->data);
@@ -449,8 +522,6 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 
 						valueKeys[*j]->push_back(i->first);
 						rpcValues[*j]->push_back(parameter->rpcParameter->convertFromPacket(i->second.value, true));
-
-						if(i->first == "STATE" || i->first == "FAST_STATE") _state = rpcValues[*j]->back()->booleanValue;
 					}
 				}
 			}
@@ -686,6 +757,64 @@ double PhilipsHuePeer::getHueFactor(const double& hue)
 }
 
 //RPC Methods
+PVariable PhilipsHuePeer::getDeviceDescription(BaseLib::PRpcClientInfo clientInfo, int32_t channel, std::map<std::string, bool> fields)
+{
+	try
+	{
+		PVariable description(Peer::getDeviceDescription(clientInfo, channel, fields));
+		if(description->errorStruct || description->structValue->empty()) return description;
+
+		if(channel == -1)
+		{
+			if(fields.empty() || fields.find("TEAM_CHANNELS") != fields.end())
+			{
+				std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex);
+				if(!_teamPeers.empty())
+				{
+					PVariable arrayIds(new Variable(VariableType::tArray));
+					PVariable arraySerials(new Variable(VariableType::tArray));
+					for(auto peerId : _teamPeers)
+					{
+						arrayIds->arrayValue->push_back(PVariable(new Variable(peerId)));
+						std::shared_ptr<BaseLib::Systems::Peer> peer = getCentral()->getPeer(peerId);
+						if(!peer) continue;
+						arraySerials->arrayValue->push_back(PVariable(new Variable(peer->getSerialNumber() + ":1")));
+					}
+					description->structValue->insert(StructElement("TEAM_PEER_IDS", arrayIds));
+					description->structValue->insert(StructElement("TEAM_CHANNELS", arraySerials));
+				}
+			}
+
+			if(!_teamSerialNumber.empty())
+			{
+				if(fields.empty() || fields.find("TEAM") != fields.end()) description->structValue->insert(StructElement("TEAM", PVariable(new Variable(_teamSerialNumber))));
+				if(fields.empty() || fields.find("TEAM_ID") != fields.end()) description->structValue->insert(StructElement("TEAM_ID", PVariable(new Variable((int32_t)_teamId))));
+				if(fields.empty() || fields.find("TEAM_CHANNEL") != fields.end()) description->structValue->insert(StructElement("TEAM_CHANNEL", PVariable(new Variable(1))));
+
+				if(fields.empty() || fields.find("TEAM_TAG") != fields.end()) description->structValue->insert(StructElement("TEAM_TAG", PVariable(new Variable("Philips Hue"))));
+			}
+			else if(_serialNumber.front() == '*')
+			{
+				if(fields.empty() || fields.find("TEAM_TAG") != fields.end()) description->structValue->insert(StructElement("TEAM_TAG", PVariable(new Variable("Philips Hue"))));
+			}
+		}
+		return description;
+	}
+	catch(const std::exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(BaseLib::Exception& ex)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(...)
+    {
+    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+    }
+    return Variable::createError(-32500, "Unknown application error.");
+}
+
 PVariable PhilipsHuePeer::getDeviceInfo(BaseLib::PRpcClientInfo clientInfo, std::map<std::string, bool> fields)
 {
 	try
@@ -881,6 +1010,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 			_binaryEncoder->encodeResponse(value, parameter->data);
 			if(parameter->databaseID > 0) saveParameter(parameter->databaseID, parameter->data);
 			else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameter->data);
+
 			valueKeys->push_back(valueKey);
 			values->push_back(value);
 			if(!valueKeys->empty())
@@ -898,6 +1028,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 			rpcParameter->convertToPacket(value, parameter->data);
 			if(parameter->databaseID > 0) saveParameter(parameter->databaseID, parameter->data);
 			else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameter->data);
+
 			value = rpcParameter->convertFromPacket(parameter->data, false);
 			if(rpcParameter->readable)
 			{
@@ -916,6 +1047,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		rpcParameter->convertToPacket(value, parameter->data);
 		if(parameter->databaseID > 0) saveParameter(parameter->databaseID, parameter->data);
 		else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameter->data);
+
 		if(_bl->debugLevel > 4) GD::out.printDebug("Debug: " + valueKey + " of peer " + std::to_string(_peerID) + " with serial number " + _serialNumber + ":" + std::to_string(channel) + " was set to " + BaseLib::HelperFunctions::getHexString(parameter->data) + ".");
 
 		value = rpcParameter->convertFromPacket(parameter->data, false);
@@ -973,7 +1105,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 			}
 
 			std::shared_ptr<PhilipsHueCentral> central = std::dynamic_pointer_cast<PhilipsHueCentral>(getCentral());
-			std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(central->getAddress(), _address, frame->type, json));
+			std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket((isTeam() ? PhilipsHuePacket::Category::group : PhilipsHuePacket::Category::light), central->getAddress(), _address, frame->type, json));
 			if(central) central->sendPacket(_physicalInterface, packet);
 		}
 

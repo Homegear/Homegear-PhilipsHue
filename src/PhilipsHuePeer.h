@@ -76,9 +76,18 @@ public:
 	//{{{ In table variables
 	std::string getPhysicalInterfaceId() { return _physicalInterfaceId; }
 	void setPhysicalInterfaceId(std::string);
+	std::string getTeamSerialNumber() { return _teamSerialNumber; }
+	void setTeamSerialNumber(std::string value) { _teamSerialNumber = value; saveVariable(10, _teamSerialNumber); }
+	uint64_t getTeamId() { return _teamId; }
+	void setTeamId(uint64_t value) { _teamId = value; saveVariable(9, (int32_t)_teamId); }
+	std::set<uint64_t> getTeamPeers() { std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex); return _teamPeers; }
+    void addTeamPeer(uint64_t id) { std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex); _teamPeers.insert(id); }
+    void removeTeamPeer(uint64_t id) { std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex); _teamPeers.erase(id); }
+    void saveTeamPeers() { std::vector<uint8_t> serializedData = serializeTeamPeers(); saveVariable(11, serializedData); }
 	//}}}
 
 	std::shared_ptr<IPhilipsHueInterface>& getPhysicalInterface() { return _physicalInterface; }
+	uint32_t getInterfaceAddress() { return _address >> 20; }
 
 	virtual std::string handleCliCommand(std::string command);
 
@@ -89,10 +98,17 @@ public:
 	virtual int32_t getNewFirmwareVersion() { return 0; }
 	virtual std::string getFirmwareVersionString(int32_t firmwareVersion);
     virtual bool firmwareUpdateAvailable() { return false; }
+    bool hasTeam() { return !_teamSerialNumber.empty(); }
+    virtual bool isTeam() { return _serialNumber.front() == '*'; }
 
 	void packetReceived(std::shared_ptr<PhilipsHuePacket> packet);
 
 	//RPC methods
+	/**
+	 * {@inheritDoc}
+	 */
+	virtual PVariable getDeviceDescription(BaseLib::PRpcClientInfo clientInfo, int32_t channel, std::map<std::string, bool> fields);
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -120,8 +136,13 @@ public:
 	//End RPC methods
 protected:
 	//In table variables:
+	std::string _teamSerialNumber;
+	uint64_t _teamId = 0;
 	std::string _physicalInterfaceId;
 	//End
+
+	std::mutex _teamPeersMutex;
+	std::set<uint64_t> _teamPeers;
 
 	std::shared_ptr<IPhilipsHueInterface> _physicalInterface;
 
@@ -151,6 +172,10 @@ protected:
 
 	virtual void loadVariables(BaseLib::Systems::ICentral* central, std::shared_ptr<BaseLib::Database::DataTable>& rows);
     virtual void saveVariables();
+
+    std::vector<uint8_t> serializeTeamPeers();
+    void unserializeTeamPeers(std::shared_ptr<std::vector<char>>& serializedData);
+
 };
 
 }

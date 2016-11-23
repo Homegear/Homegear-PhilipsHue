@@ -41,18 +41,27 @@ namespace PhilipsHue
 class PhilipsHuePacket : public BaseLib::Systems::Packet
 {
     public:
+		enum class Category
+		{
+			light = 0,
+			group = 1
+		};
+
         //Properties
         PhilipsHuePacket();
-        PhilipsHuePacket(int32_t senderAddress, int32_t destinationAddress, uint8_t messageType, PVariable json, int64_t timeReceived = 0);
+        PhilipsHuePacket(Category category, int32_t senderAddress, int32_t destinationAddress, uint8_t messageType, PVariable json, int64_t timeReceived = 0);
         virtual ~PhilipsHuePacket();
 
-        uint8_t messageType() { return _messageType; }
+        Category getCategory() { return _category; }
+
+        uint8_t getMessageType() { return _messageType; }
         void setMessageType(uint8_t type) { _messageType = type; }
 
         virtual PVariable getJson() { return _json; }
         virtual void setJson(PVariable value) { _json = value; }
     protected:
         PVariable _json;
+        Category _category = Category::light;
         uint8_t _messageType = 0;
 };
 

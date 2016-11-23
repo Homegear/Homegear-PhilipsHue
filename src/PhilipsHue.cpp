@@ -35,14 +35,15 @@
 namespace PhilipsHue
 {
 
-PhilipsHue::PhilipsHue(BaseLib::Obj* bl, BaseLib::Systems::DeviceFamily::IFamilyEventSink* eventHandler) : BaseLib::Systems::DeviceFamily(bl, eventHandler, HUE_FAMILY_ID, HUE_FAMILY_NAME)
+PhilipsHue::PhilipsHue(BaseLib::SharedObjects* bl, BaseLib::Systems::DeviceFamily::IFamilyEventSink* eventHandler) : BaseLib::Systems::DeviceFamily(bl, eventHandler, HUE_FAMILY_ID, HUE_FAMILY_NAME)
 {
 	GD::bl = _bl;
 	GD::family = this;
 	GD::out.init(bl);
 	GD::out.setPrefix("Module Philips hue: ");
 	GD::out.printDebug("Debug: Loading module...");
-	_physicalInterfaces.reset(new Interfaces(bl, _settings->getPhysicalInterfaceSettings()));
+	GD::interfaces.reset(new Interfaces(bl, _settings->getPhysicalInterfaceSettings()));
+	_physicalInterfaces = GD::interfaces;
 }
 
 PhilipsHue::~PhilipsHue()
@@ -54,9 +55,8 @@ void PhilipsHue::dispose()
 {
 	if(_disposed) return;
 	DeviceFamily::dispose();
-
-	GD::defaultPhysicalInterface.reset();
-	GD::physicalInterfaces.clear();
+	GD::interfaces.reset();
+	_physicalInterfaces.reset();
 }
 
 std::shared_ptr<BaseLib::Systems::ICentral> PhilipsHue::initializeCentral(uint32_t deviceId, int32_t address, std::string serialNumber)
