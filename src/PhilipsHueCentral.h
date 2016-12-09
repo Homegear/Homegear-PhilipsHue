@@ -65,7 +65,7 @@ public:
 
 	virtual bool onPacketReceived(std::string& senderID, std::shared_ptr<BaseLib::Systems::Packet> packet);
 	virtual std::string handleCliCommand(std::string command);
-	virtual uint64_t getPeerIdFromSerial(std::string serialNumber) { std::shared_ptr<PhilipsHuePeer> peer = getPeer(serialNumber); if(peer) return peer->getID(); else return 0; }
+	virtual uint64_t getPeerIdFromSerial(std::string& serialNumber) { std::shared_ptr<PhilipsHuePeer> peer = getPeer(serialNumber); if(peer) return peer->getID(); else return 0; }
 	virtual void sendPacket(std::shared_ptr<IPhilipsHueInterface>& interface, std::shared_ptr<PhilipsHuePacket> packet);
 	uint32_t getDeviceType(const std::string& manufacturer, const std::string& modelId);
 
