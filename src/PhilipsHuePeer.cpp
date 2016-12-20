@@ -775,7 +775,7 @@ PVariable PhilipsHuePeer::getDeviceDescription(BaseLib::PRpcClientInfo clientInf
 					PVariable arraySerials(new Variable(VariableType::tArray));
 					for(auto peerId : _teamPeers)
 					{
-						arrayIds->arrayValue->push_back(PVariable(new Variable(peerId)));
+						arrayIds->arrayValue->push_back(PVariable(new Variable((int32_t)peerId)));
 						std::shared_ptr<BaseLib::Systems::Peer> peer = getCentral()->getPeer(peerId);
 						if(!peer) continue;
 						arraySerials->arrayValue->push_back(PVariable(new Variable(peer->getSerialNumber() + ":1")));
