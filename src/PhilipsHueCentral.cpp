@@ -46,6 +46,7 @@ void PhilipsHueCentral::init()
 {
 	_stopWorkerThread = false;
 	_shuttingDown = false;
+	_searching = false;
 	GD::interfaces->addEventHandlers((BaseLib::Systems::IPhysicalInterface::IPhysicalInterfaceEventSink*)this);
 
 	GD::bl->threadManager.start(_workerThread, true, _bl->settings.workerThreadPriority(), _bl->settings.workerThreadPolicy(), &PhilipsHueCentral::worker, this);
@@ -1240,6 +1241,7 @@ void PhilipsHueCentral::searchDevicesThread()
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
+    _searching = false;
 }
 
 void PhilipsHueCentral::homegearShuttingDown()
@@ -1473,6 +1475,8 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 {
 	try
 	{
+		if(_searching) return PVariable(new Variable(0));
+		_searching = true;
 		_bl->threadManager.start(_searchDevicesThread, true, &PhilipsHueCentral::searchDevicesThread, this);
 		return PVariable(new Variable(0));
 	}

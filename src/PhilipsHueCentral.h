@@ -93,6 +93,7 @@ protected:
 
 	std::mutex _peerInitMutex;
 	std::mutex _searchHueBridgesMutex;
+	std::atomic_bool _searching;
 	std::mutex _searchDevicesMutex;
 	std::thread _searchDevicesThread;
 
