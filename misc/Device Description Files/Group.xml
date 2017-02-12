@@ -45,10 +45,6 @@
 					<parameterId>TRANSITION_TIME</parameterId>
 				</element>
 				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
-				<element>
 					<key>bri</key>
 					<parameterId>BRIGHTNESS</parameterId>
 				</element>
@@ -61,10 +57,6 @@
 				<element>
 					<key>transitiontime</key>
 					<constValueInteger>0</constValueInteger>
-				</element>
-				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
 				</element>
 				<element>
 					<key>bri</key>
@@ -81,10 +73,6 @@
 					<parameterId>TRANSITION_TIME</parameterId>
 				</element>
 				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
-				<element>
 					<key>ct</key>
 					<parameterId>COLOR_TEMPERATURE</parameterId>
 				</element>
@@ -95,8 +83,8 @@
 			<type>0x2</type>
 			<jsonPayload>
 				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
+					<key>transitiontime</key>
+					<parameterId>TRANSITION_TIME</parameterId>
 				</element>
 				<element>
 					<key>effect</key>
@@ -113,10 +101,6 @@
 					<parameterId>TRANSITION_TIME</parameterId>
 				</element>
 				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
-				<element>
 					<key>bri</key>
 					<parameterId>BRIGHTNESS</parameterId>
 				</element>
@@ -127,10 +111,6 @@
 				<element>
 					<key>sat</key>
 					<parameterId>SATURATION</parameterId>
-				</element>
-				<element>
-					<key>on</key>
-					<parameterId>STATE</parameterId>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -205,10 +185,6 @@
 					<parameterId>TRANSITION_TIME</parameterId>
 				</element>
 				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
-				<element>
 					<key>bri</key>
 					<parameterId>BRIGHTNESS</parameterId>
 				</element>
@@ -219,10 +195,6 @@
 				<element>
 					<key>sat</key>
 					<parameterId>SATURATION</parameterId>
-				</element>
-				<element>
-					<key>on</key>
-					<parameterId>STATE</parameterId>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -269,10 +241,6 @@
 				<element>
 					<key>transitiontime</key>
 					<parameterId>TRANSITION_TIME</parameterId>
-				</element>
-				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
 				</element>
 				<element>
 					<key>xy</key>
