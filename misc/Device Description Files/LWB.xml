@@ -45,10 +45,6 @@
 					<parameterId>TRANSITION_TIME</parameterId>
 				</element>
 				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
-				<element>
 					<key>bri</key>
 					<parameterId>BRIGHTNESS</parameterId>
 				</element>
@@ -61,10 +57,6 @@
 				<element>
 					<key>transitiontime</key>
 					<constValueInteger>0</constValueInteger>
-				</element>
-				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
 				</element>
 				<element>
 					<key>bri</key>

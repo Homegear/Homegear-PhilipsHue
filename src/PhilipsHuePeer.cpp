@@ -1021,7 +1021,18 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 			return PVariable(new Variable(VariableType::tVoid));
 		}
 
-		if(valueKey == "STATE" || valueKey == "FAST_STATE") _state = value->booleanValue;
+		if(valueKey == "STATE" || valueKey == "FAST_STATE")
+		{
+			_state = value->booleanValue;
+			if(!_state)
+			{
+				_setEffect.reset();
+				_setHue.reset();
+				_setSaturation.reset();
+				_setXy.reset();
+				_setColorTemperature.reset();
+			}
+		}
 
 		if(rpcParameter->physical->operationType == IPhysical::OperationType::Enum::store)
 		{
@@ -1055,6 +1066,27 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		{
 			valueKeys->push_back(valueKey);
 			values->push_back(value);
+		}
+
+		if(valueKey == "EFFECT" || valueKey == "HUE" || valueKey == "SATURATION")
+		{
+			_setColorMode = 0;
+			if(!_state)
+			{
+				if(valueKey == "EFFECT") _setEffect = value;
+				else if(valueKey == "HUE") _setHue = value;
+				else if(valueKey == "SATURATION") _setSaturation = value;
+			}
+		}
+		else if(valueKey == "XY")
+		{
+			_setColorMode = 1;
+			if(!_state) _setXy = value;
+		}
+		else if(valueKey == "COLOR_TEMPERATURE")
+		{
+			_setColorMode = 2;
+			if(!_state) _setColorTemperature = value;
 		}
 
 		if(!noSending)
@@ -1101,6 +1133,46 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 						}
 					}
 					if(!paramFound) GD::out.printError("Error constructing packet. param \"" + (*i)->parameterId + "\" not found. Peer: " + std::to_string(_peerID) + " Serial number: " + _serialNumber + " Frame: " + frame->id);
+				}
+			}
+
+			if(valueKey == "STATE" && _state)
+			{
+				if(_setColorMode == 0)
+				{
+					if(_setEffect)
+					{
+						auto iterator = json->structValue->find("effect");
+						if(iterator == json->structValue->end()) json->structValue->operator[]("effect") = _setEffect;
+					}
+
+					if(_setHue)
+					{
+						auto iterator = json->structValue->find("hue");
+						if(iterator == json->structValue->end()) json->structValue->operator[]("hue") = _setHue;
+					}
+
+					if(_setSaturation)
+					{
+						auto iterator = json->structValue->find("sat");
+						if(iterator == json->structValue->end()) json->structValue->operator[]("sat") = _setSaturation;
+					}
+				}
+				else if(_setColorMode == 1)
+				{
+					if(_setXy)
+					{
+						auto iterator = json->structValue->find("xy");
+						if(iterator == json->structValue->end()) json->structValue->operator[]("xy") = _setXy;
+					}
+				}
+				else if(_setColorMode == 2)
+				{
+					if(_setColorTemperature)
+					{
+						auto iterator = json->structValue->find("ct");
+						if(iterator == json->structValue->end()) json->structValue->operator[]("ct") = _setColorTemperature;
+					}
 				}
 			}
 

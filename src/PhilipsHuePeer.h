@@ -150,6 +150,12 @@ protected:
 	std::shared_ptr<BaseLib::Rpc::RpcDecoder> _binaryDecoder;
 
 	bool _state = false;
+	int32_t _setColorMode = 0;
+	PVariable _setEffect;
+	PVariable _setHue;
+	PVariable _setSaturation;
+	PVariable _setXy;
+	PVariable _setColorTemperature;
 	BaseLib::Math::Triangle _rgbGamut;
 	double _gamma = 2.2;
 	BaseLib::Math::Matrix3x3 _rgbXyzConversionMatrix;
