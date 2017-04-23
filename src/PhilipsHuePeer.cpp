@@ -993,9 +993,9 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 			PVariable result;
 			uint8_t brightness = std::lround(hsv.getBrightness() * 255.0);
-			if(brightness < 10) result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(false)), true, wait);
+			/*if(brightness < 10) result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(false)), true, wait);
 			else result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(true)), true, wait);
-			if(result->errorStruct) return result;
+			if(result->errorStruct) return result;*/
 			result = setValue(clientInfo, channel, "BRIGHTNESS", PVariable(new Variable((int32_t)brightness)), true, wait);
 			if(result->errorStruct) return result;
 			int32_t hue = std::lround(hsv.getHue() * getHueFactor(hsv.getHue()));
@@ -1013,11 +1013,8 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 			valueKeys->push_back(valueKey);
 			values->push_back(value);
-			if(!valueKeys->empty())
-			{
-				raiseEvent(_peerID, channel, valueKeys, values);
-				raiseRPCEvent(_peerID, channel, _serialNumber + ":" + std::to_string(channel), valueKeys, values);
-			}
+			raiseEvent(_peerID, channel, valueKeys, values);
+			raiseRPCEvent(_peerID, channel, _serialNumber + ":" + std::to_string(channel), valueKeys, values);
 			return PVariable(new Variable(VariableType::tVoid));
 		}
 
@@ -1059,9 +1056,9 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		if(parameter->databaseID > 0) saveParameter(parameter->databaseID, parameter->data);
 		else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameter->data);
 
-		if(_bl->debugLevel > 4) GD::out.printDebug("Debug: " + valueKey + " of peer " + std::to_string(_peerID) + " with serial number " + _serialNumber + ":" + std::to_string(channel) + " was set to " + BaseLib::HelperFunctions::getHexString(parameter->data) + ".");
-
 		value = rpcParameter->convertFromPacket(parameter->data, false);
+		if(_bl->debugLevel > 4) GD::out.printDebug("Debug: " + valueKey + " of peer " + std::to_string(_peerID) + " with serial number " + _serialNumber + ":" + std::to_string(channel) + " was set to " + BaseLib::HelperFunctions::getHexString(parameter->data) + ", " + value->print(false, false, true) + ".");
+
 		if(rpcParameter->readable)
 		{
 			valueKeys->push_back(valueKey);
@@ -1113,8 +1110,8 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 				if((*i)->parameterId == rpcParameter->physical->groupId)
 				{
 					if((*i)->key.empty()) continue;
-					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = _binaryDecoder->decodeResponse(parameter->data);
-					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = _binaryDecoder->decodeResponse(parameter->data);
+					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = rpcParameter->convertFromPacket(parameter->data, false);
+					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = rpcParameter->convertFromPacket(parameter->data, false);
 				}
 				//Search for all other parameters
 				else
@@ -1126,9 +1123,10 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 						if((*i)->parameterId == j->second.rpcParameter->physical->groupId)
 						{
 							if((*i)->key.empty()) continue;
-							if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = _binaryDecoder->decodeResponse(j->second.data);
-							else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = _binaryDecoder->decodeResponse(j->second.data);
+							if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = j->second.rpcParameter->convertFromPacket(j->second.data, false);
+							else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = j->second.rpcParameter->convertFromPacket(j->second.data, false);
 							paramFound = true;
+							if(GD::bl->settings.devLog()) GD::out.printInfo("Info (dev): " + (*i)->parameterId + " of JSON packet set to " + j->second.rpcParameter->convertFromPacket(j->second.data, false)->print(false, false, true) + ". Raw value: " + BaseLib::HelperFunctions::getHexString(j->second.data));
 							break;
 						}
 					}
