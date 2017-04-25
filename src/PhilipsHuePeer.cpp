@@ -463,6 +463,9 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 		if(!_rpcDevice) return;
 		std::shared_ptr<PhilipsHueCentral> central = std::dynamic_pointer_cast<PhilipsHueCentral>(getCentral());
 		if(!central) return;
+		std::unique_lock<std::timed_mutex> incomingPacketGuard(_incomingPacketMutex, std::defer_lock);
+		if(!incomingPacketGuard.try_lock_for(std::chrono::milliseconds(10))) return;
+		if(_ignorePacketsUntil > BaseLib::HelperFunctions::getTime()) return;
 		setLastPacketReceived();
 		std::vector<FrameValues> frameValues;
 		getValuesFromPacket(packet, frameValues);
@@ -987,6 +990,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 		if(valueKey == "RGB") //Special case, because it sets two parameters (XY and BRIGHTNESS)
 		{
+			std::lock_guard<std::timed_mutex> incomingPacketGuard(_incomingPacketMutex);
 			BaseLib::Color::RGB cRGB(value->stringValue);
 			BaseLib::Color::NormalizedRGB nRGB(cRGB);
 			BaseLib::Color::HSV hsv = nRGB.toHSV();
@@ -1020,6 +1024,36 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 		if(valueKey == "STATE" || valueKey == "FAST_STATE")
 		{
+			{
+				std::lock_guard<std::timed_mutex> incomingPacketGuard(_incomingPacketMutex);
+				auto channelIterator = valuesCentral.find(1);
+				if(channelIterator != valuesCentral.end())
+				{
+					auto variableIterator = channelIterator->second.find("TRANSITION_TIME");
+					if(variableIterator != channelIterator->second.end())
+					{
+						_ignorePacketsUntil = BaseLib::HelperFunctions::getTime() + 1000 + (variableIterator->second.rpcParameter->convertFromPacket(variableIterator->second.data, false)->integerValue * 100);
+						std::shared_ptr<PhilipsHueCentral> central = std::dynamic_pointer_cast<PhilipsHueCentral>(getCentral());
+						if(central)
+						{
+							if(_teamId != 0)
+							{
+								auto teamPeer = central->getPeer(_teamId);
+								if(teamPeer) teamPeer->setIgnorePacketsUntil(_ignorePacketsUntil);
+							}
+							std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex);
+							if(!_teamPeers.empty())
+							{
+								for(uint64_t teamPeerId : _teamPeers)
+								{
+									auto teamPeer = central->getPeer(teamPeerId);
+									if(teamPeer) teamPeer->setIgnorePacketsUntil(_ignorePacketsUntil);
+								}
+							}
+						}
+					}
+				}
+			}
 			_state = value->booleanValue;
 			if(!_state)
 			{

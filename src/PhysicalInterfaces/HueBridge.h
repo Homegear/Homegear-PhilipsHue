@@ -54,6 +54,7 @@ class HueBridge  : public IPhilipsHueInterface
     protected:
         bool _noHost = true;
         int64_t _lastAction = 0;
+        uint32_t _pollingInterval = 3000;
         int64_t _nextPoll = 0;
         int32_t _port = 80;
         std::unique_ptr<BaseLib::HttpClient> _client;
