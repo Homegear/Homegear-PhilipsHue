@@ -1106,11 +1106,8 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		value = rpcParameter->convertFromPacket(parameterData, false);
 		if(_bl->debugLevel > 4) GD::out.printDebug("Debug: " + valueKey + " of peer " + std::to_string(_peerID) + " with serial number " + _serialNumber + ":" + std::to_string(channel) + " was set to " + BaseLib::HelperFunctions::getHexString(parameterData) + ", " + value->print(false, false, true) + ".");
 
-		if(rpcParameter->readable)
-		{
-			valueKeys->push_back(valueKey);
-			values->push_back(value);
-		}
+		valueKeys->push_back(valueKey);
+		values->push_back(value);
 
 		if(valueKey == "EFFECT" || valueKey == "HUE" || valueKey == "SATURATION")
 		{
@@ -1134,7 +1131,18 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		}
 		else if(valueKey == "BRIGHTNESS" || valueKey == "FAST_BRIGHTNESS")
 		{
-			setValue(clientInfo, channel, valueKey == "BRIGHTNESS" ? "FAST_BRIGHTNESS" : "BRIGHTNESS", value, true, wait);
+			std::string brightnessKey = valueKey == "BRIGHTNESS" ? "FAST_BRIGHTNESS" : "BRIGHTNESS";
+			std::unordered_map<std::string, RpcConfigurationParameter>::iterator parameterIterator = channelIterator->second.find(brightnessKey);
+			if(parameterIterator != valuesCentral[channel].end() && parameterIterator->second.rpcParameter)
+			{
+				BaseLib::Systems::RpcConfigurationParameter& brightnessParameter = parameterIterator->second;
+				brightnessParameter.setBinaryData(parameterData);
+				if(brightnessParameter.databaseId > 0) saveParameter(brightnessParameter.databaseId, parameterData);
+				else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, brightnessKey, parameterData);
+				valueKeys->push_back(valueKey);
+				values->push_back(value);
+				if(_bl->debugLevel > 4) GD::out.printDebug("Debug: " + brightnessKey + " of peer " + std::to_string(_peerID) + " with serial number " + _serialNumber + ":" + std::to_string(channel) + " was set to " + BaseLib::HelperFunctions::getHexString(parameterData) + ", " + value->print(false, false, true) + ".");
+			}
 		}
 
 		if(!noSending)
