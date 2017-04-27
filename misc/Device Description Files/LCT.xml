@@ -178,11 +178,11 @@
 					<subkey>on</subkey>
 					<parameterId>STATE</parameterId>
 				</element>
-				<element>
+				<!--<element>
 					<key>state</key>
 					<subkey>bri</subkey>
 					<parameterId>BRIGHTNESS</parameterId>
-				</element>
+				</element>-->
 				<element>
 					<key>state</key>
 					<subkey>hue</subkey>

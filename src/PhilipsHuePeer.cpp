@@ -496,7 +496,7 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 						rpcValues[*j].reset(new std::vector<PVariable>());
 					}
 
-					if(!_state && (i->first == "BRIGHTNESS" || i->first == "FAST_BRIGHTNESS")) continue;
+					if(i->first == "BRIGHTNESS" || i->first == "FAST_BRIGHTNESS") continue;
 
 					parameter.setBinaryData(i->second.value);
 					if(parameter.databaseId > 0) saveParameter(parameter.databaseId, i->second.value);
