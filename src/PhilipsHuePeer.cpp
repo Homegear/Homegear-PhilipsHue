@@ -1008,15 +1008,12 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 			if(result->errorStruct) return result;*/
 			result = setValue(clientInfo, channel, "BRIGHTNESS", PVariable(new Variable((int32_t)brightness)), true, wait);
 			if(result->errorStruct) return result;
-			if(GD::bl->settings.devLog()) GD::out.printInfo("Info (dev, 3): BRIGHTNESS is " + BaseLib::HelperFunctions::getHexString(valuesCentral[channel]["BRIGHTNESS"].getBinaryData()));
 			int32_t hue = std::lround(hsv.getHue() * getHueFactor(hsv.getHue()));
 			result = setValue(clientInfo, channel, "HUE", PVariable(new Variable(hue)), true, wait);
 			if(result->errorStruct) return result;
-			if(GD::bl->settings.devLog()) GD::out.printInfo("Info (dev, 4): BRIGHTNESS is " + BaseLib::HelperFunctions::getHexString(valuesCentral[channel]["BRIGHTNESS"].getBinaryData()));
 			uint8_t saturation = std::lround(hsv.getSaturation() * 255.0);
 			result = setValue(clientInfo, channel, "SATURATION", PVariable(new Variable((int32_t)saturation)), false, wait);
 			if(result->errorStruct) return result;
-			if(GD::bl->settings.devLog()) GD::out.printInfo("Info (dev, 5): BRIGHTNESS is " + BaseLib::HelperFunctions::getHexString(valuesCentral[channel]["BRIGHTNESS"].getBinaryData()));
 
 			//Convert back, because the value might be different than the passed one.
 			value->stringValue = hsv.toRGB().toString();
@@ -1108,7 +1105,6 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 		value = rpcParameter->convertFromPacket(parameterData, false);
 		if(_bl->debugLevel > 4) GD::out.printDebug("Debug: " + valueKey + " of peer " + std::to_string(_peerID) + " with serial number " + _serialNumber + ":" + std::to_string(channel) + " was set to " + BaseLib::HelperFunctions::getHexString(parameterData) + ", " + value->print(false, false, true) + ".");
-		if(GD::bl->settings.devLog()) GD::out.printInfo("Info (dev, 1): BRIGHTNESS is " + BaseLib::HelperFunctions::getHexString(valuesCentral[channel]["BRIGHTNESS"].getBinaryData()));
 
 		if(rpcParameter->readable)
 		{
@@ -1135,6 +1131,10 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		{
 			_setColorMode = 2;
 			if(!_state) _setColorTemperature = value;
+		}
+		else if(valueKey == "BRIGHTNESS" || valueKey == "FAST_BRIGHTNESS")
+		{
+			setValue(clientInfo, channel, valueKey == "BRIGHTNESS" ? "FAST_BRIGHTNESS" : "BRIGHTNESS", value, true, wait);
 		}
 
 		if(!noSending)
@@ -1179,7 +1179,6 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 							if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = j->second.rpcParameter->convertFromPacket(parameterData, false);
 							else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = j->second.rpcParameter->convertFromPacket(parameterData, false);
 							paramFound = true;
-							if(GD::bl->settings.devLog()) GD::out.printInfo("Info (dev, 2): BRIGHTNESS is " + BaseLib::HelperFunctions::getHexString(valuesCentral[channel]["BRIGHTNESS"].getBinaryData()) + " " + BaseLib::HelperFunctions::getHexString(parameterData) + " " + j->second.rpcParameter->convertFromPacket(parameterData, false)->print(false, false, true));
 							break;
 						}
 					}
