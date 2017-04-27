@@ -1178,9 +1178,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 							std::vector<uint8_t> parameterData = j->second.getBinaryData();
 							if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = j->second.rpcParameter->convertFromPacket(parameterData, false);
 							else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = j->second.rpcParameter->convertFromPacket(parameterData, false);
-
 							paramFound = true;
-							if(GD::bl->settings.devLog()) GD::out.printInfo("Info (dev): " + (*i)->parameterId + " of JSON packet set to " + j->second.rpcParameter->convertFromPacket(j->second.data, false)->print(false, false, true) + ". Raw value: " + BaseLib::HelperFunctions::getHexString(j->second.data));
 							break;
 						}
 					}
