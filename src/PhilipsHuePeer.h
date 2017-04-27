@@ -100,6 +100,7 @@ public:
     virtual bool firmwareUpdateAvailable() { return false; }
     bool hasTeam() { return !_teamSerialNumber.empty(); }
     virtual bool isTeam() { return _serialNumber.front() == '*'; }
+    void setIgnorePacketsUntil(int64_t value) { _ignorePacketsUntil = value; }
 
 	void packetReceived(std::shared_ptr<PhilipsHuePacket> packet);
 
@@ -149,6 +150,8 @@ protected:
 	std::shared_ptr<BaseLib::Rpc::RpcEncoder> _binaryEncoder;
 	std::shared_ptr<BaseLib::Rpc::RpcDecoder> _binaryDecoder;
 
+	std::timed_mutex _incomingPacketMutex;
+	int64_t _ignorePacketsUntil = 0;
 	bool _state = false;
 	int32_t _setColorMode = 0;
 	PVariable _setEffect;

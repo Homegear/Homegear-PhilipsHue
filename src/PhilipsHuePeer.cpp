@@ -463,6 +463,9 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 		if(!_rpcDevice) return;
 		std::shared_ptr<PhilipsHueCentral> central = std::dynamic_pointer_cast<PhilipsHueCentral>(getCentral());
 		if(!central) return;
+		std::unique_lock<std::timed_mutex> incomingPacketGuard(_incomingPacketMutex, std::defer_lock);
+		if(!incomingPacketGuard.try_lock_for(std::chrono::milliseconds(10))) return;
+		if(_ignorePacketsUntil > BaseLib::HelperFunctions::getTime()) return;
 		setLastPacketReceived();
 		std::vector<FrameValues> frameValues;
 		getValuesFromPacket(packet, frameValues);
@@ -484,8 +487,8 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 				{
 					if(std::find(i->second.channels.begin(), i->second.channels.end(), *j) == i->second.channels.end()) continue;
 
-					BaseLib::Systems::RPCConfigurationParameter* parameter = &valuesCentral[*j][i->first];
-					if(parameter->data == i->second.value) continue;
+					BaseLib::Systems::RpcConfigurationParameter& parameter = valuesCentral[*j][i->first];
+					if(parameter.equals(i->second.value)) continue;
 
 					if(!valueKeys[*j] || !rpcValues[*j])
 					{
@@ -495,23 +498,23 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 
 					if(!_state && (i->first == "BRIGHTNESS" || i->first == "FAST_BRIGHTNESS")) continue;
 
-					parameter->data = i->second.value;
-					if(parameter->databaseID > 0) saveParameter(parameter->databaseID, parameter->data);
-					else saveParameter(0, ParameterGroup::Type::Enum::variables, *j, i->first, parameter->data);
+					parameter.setBinaryData(i->second.value);
+					if(parameter.databaseId > 0) saveParameter(parameter.databaseId, i->second.value);
+					else saveParameter(0, ParameterGroup::Type::Enum::variables, *j, i->first, i->second.value);
 					if(_bl->debugLevel >= 4) GD::out.printInfo("Info: " + i->first + " of peer " + std::to_string(_peerID) + " with serial number " + _serialNumber + ":" + std::to_string(*j) + " was set to 0x" + BaseLib::HelperFunctions::getHexString(i->second.value) + ".");
 
-					if(parameter->rpcParameter)
+					if(parameter.rpcParameter)
 					{
 						//Process service messages
-						if(parameter->rpcParameter->service && !i->second.value.empty())
+						if(parameter.rpcParameter->service && !i->second.value.empty())
 						{
-							if(parameter->rpcParameter->logical->type == ILogical::Type::Enum::tEnum)
+							if(parameter.rpcParameter->logical->type == ILogical::Type::Enum::tEnum)
 							{
 								serviceMessages->set(i->first, i->second.value.at(i->second.value.size() - 1), *j);
 							}
-							else if(parameter->rpcParameter->logical->type == ILogical::Type::Enum::tBoolean)
+							else if(parameter.rpcParameter->logical->type == ILogical::Type::Enum::tBoolean)
 							{
-								if(parameter->rpcParameter->id == "REACHABLE")
+								if(parameter.rpcParameter->id == "REACHABLE")
 								{
 									bool value = !((bool)i->second.value.at(i->second.value.size() - 1));
 									serviceMessages->setUnreach(value, false);
@@ -521,7 +524,7 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 						}
 
 						valueKeys[*j]->push_back(i->first);
-						rpcValues[*j]->push_back(parameter->rpcParameter->convertFromPacket(i->second.value, true));
+						rpcValues[*j]->push_back(parameter.rpcParameter->convertFromPacket(i->second.value, true));
 					}
 				}
 			}
@@ -538,20 +541,25 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 					if((*i == "HUE" || *i == "SATURATION" || *i == "BRIGHTNESS") //Calculate RGB
 						&& valuesCentral.at(j->first).find("HUE") != valuesCentral.at(j->first).end()) //Does this peer support colors?
 					{
-						uint8_t brightness = _binaryDecoder->decodeResponse(valuesCentral.at(j->first).at("BRIGHTNESS").data)->integerValue;
-						uint8_t saturation = _binaryDecoder->decodeResponse(valuesCentral.at(j->first).at("SATURATION").data)->integerValue;
-						int32_t hue = _binaryDecoder->decodeResponse(valuesCentral.at(j->first).at("HUE").data)->integerValue;
+						std::vector<uint8_t> parameterData = valuesCentral.at(j->first).at("BRIGHTNESS").getBinaryData();
+						uint8_t brightness = _binaryDecoder->decodeResponse(parameterData)->integerValue;
+						parameterData = valuesCentral.at(j->first).at("SATURATION").getBinaryData();
+						uint8_t saturation = _binaryDecoder->decodeResponse(parameterData)->integerValue;
+						parameterData = valuesCentral.at(j->first).at("HUE").getBinaryData();
+						int32_t hue = _binaryDecoder->decodeResponse(parameterData)->integerValue;
 
 						BaseLib::Color::HSV hsv((double)hue / getHueFactor(hue), (double)saturation / 255.0, (double)brightness / 255.0);
 
 						PVariable rpcRGB(new Variable(hsv.toRGB().toString()));
-						RPCConfigurationParameter* rgbParameter = &valuesCentral.at(j->first).at("RGB");
-						_binaryEncoder->encodeResponse(rpcRGB, rgbParameter->data);
-						if(rgbParameter->databaseID > 0) saveParameter(rgbParameter->databaseID, rgbParameter->data);
-						else saveParameter(0, ParameterGroup::Type::Enum::variables, j->first, "RGB", rgbParameter->data);
+						RpcConfigurationParameter& rgbParameter = valuesCentral.at(j->first).at("RGB");
+						parameterData.clear();
+						_binaryEncoder->encodeResponse(rpcRGB, parameterData);
+						rgbParameter.setBinaryData(parameterData);
+						if(rgbParameter.databaseId > 0) saveParameter(rgbParameter.databaseId, parameterData);
+						else saveParameter(0, ParameterGroup::Type::Enum::variables, j->first, "RGB", parameterData);
 
 						j->second->push_back("RGB");
-						rpcValues[j->first]->push_back(rgbParameter->rpcParameter->convertFromPacket(rgbParameter->data, true));
+						rpcValues[j->first]->push_back(rgbParameter.rpcParameter->convertFromPacket(parameterData, true));
 						break;
 					}
 				}
@@ -937,7 +945,8 @@ PVariable PhilipsHuePeer::getParamset(BaseLib::PRpcClientInfo clientInfo, int32_
 				if(!i->second->readable) continue;
 				if(valuesCentral.find(channel) == valuesCentral.end()) continue;
 				if(valuesCentral[channel].find(i->second->id) == valuesCentral[channel].end()) continue;
-				element = i->second->convertFromPacket(valuesCentral[channel][i->second->id].data);
+				std::vector<uint8_t> parameterData = valuesCentral[channel][i->second->id].getBinaryData();
+				element = i->second->convertFromPacket(parameterData);
 			}
 
 			if(!element) continue;
@@ -974,19 +983,20 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		if(_disposing) return Variable::createError(-32500, "Peer is disposing.");
 		if(valueKey.empty()) return Variable::createError(-5, "Value key is empty.");
 		if(channel == 0 && serviceMessages->set(valueKey, value->booleanValue)) return PVariable(new Variable(VariableType::tVoid));
-		std::unordered_map<uint32_t, std::unordered_map<std::string, RPCConfigurationParameter>>::iterator channelIterator = valuesCentral.find(channel);
+		std::unordered_map<uint32_t, std::unordered_map<std::string, RpcConfigurationParameter>>::iterator channelIterator = valuesCentral.find(channel);
 		if(channelIterator == valuesCentral.end()) return Variable::createError(-2, "Unknown channel.");
-		std::unordered_map<std::string, RPCConfigurationParameter>::iterator parameterIterator = channelIterator->second.find(valueKey);
+		std::unordered_map<std::string, RpcConfigurationParameter>::iterator parameterIterator = channelIterator->second.find(valueKey);
 		if(parameterIterator == valuesCentral[channel].end()) return Variable::createError(-5, "Unknown parameter.");
 		PParameter rpcParameter = parameterIterator->second.rpcParameter;
 		if(!rpcParameter) return Variable::createError(-5, "Unknown parameter.");
 		if(rpcParameter->logical->type == ILogical::Type::tAction && !value->booleanValue) return Variable::createError(-5, "Parameter of type action cannot be set to \"false\".");
-		BaseLib::Systems::RPCConfigurationParameter* parameter = &parameterIterator->second;
+		BaseLib::Systems::RpcConfigurationParameter& parameter = parameterIterator->second;
 		std::shared_ptr<std::vector<std::string>> valueKeys(new std::vector<std::string>());
 		std::shared_ptr<std::vector<PVariable>> values(new std::vector<PVariable>());
 
 		if(valueKey == "RGB") //Special case, because it sets two parameters (XY and BRIGHTNESS)
 		{
+			std::lock_guard<std::timed_mutex> incomingPacketGuard(_incomingPacketMutex);
 			BaseLib::Color::RGB cRGB(value->stringValue);
 			BaseLib::Color::NormalizedRGB nRGB(cRGB);
 			BaseLib::Color::HSV hsv = nRGB.toHSV();
@@ -1007,9 +1017,11 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 			//Convert back, because the value might be different than the passed one.
 			value->stringValue = hsv.toRGB().toString();
-			_binaryEncoder->encodeResponse(value, parameter->data);
-			if(parameter->databaseID > 0) saveParameter(parameter->databaseID, parameter->data);
-			else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameter->data);
+			std::vector<uint8_t> parameterData;
+			_binaryEncoder->encodeResponse(value, parameterData);
+			parameter.setBinaryData(parameterData);
+			if(parameter.databaseId > 0) saveParameter(parameter.databaseId, parameterData);
+			else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameterData);
 
 			valueKeys->push_back(valueKey);
 			values->push_back(value);
@@ -1020,6 +1032,37 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 		if(valueKey == "STATE" || valueKey == "FAST_STATE")
 		{
+			{
+				std::lock_guard<std::timed_mutex> incomingPacketGuard(_incomingPacketMutex);
+				auto channelIterator = valuesCentral.find(1);
+				if(channelIterator != valuesCentral.end())
+				{
+					auto variableIterator = channelIterator->second.find("TRANSITION_TIME");
+					if(variableIterator != channelIterator->second.end())
+					{
+						std::vector<uint8_t> parameterData = variableIterator->second.getBinaryData();
+						_ignorePacketsUntil = BaseLib::HelperFunctions::getTime() + 1000 + (variableIterator->second.rpcParameter->convertFromPacket(parameterData, false)->integerValue * 100);
+						std::shared_ptr<PhilipsHueCentral> central = std::dynamic_pointer_cast<PhilipsHueCentral>(getCentral());
+						if(central)
+						{
+							if(_teamId != 0)
+							{
+								auto teamPeer = central->getPeer(_teamId);
+								if(teamPeer) teamPeer->setIgnorePacketsUntil(_ignorePacketsUntil);
+							}
+							std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex);
+							if(!_teamPeers.empty())
+							{
+								for(uint64_t teamPeerId : _teamPeers)
+								{
+									auto teamPeer = central->getPeer(teamPeerId);
+									if(teamPeer) teamPeer->setIgnorePacketsUntil(_ignorePacketsUntil);
+								}
+							}
+						}
+					}
+				}
+			}
 			_state = value->booleanValue;
 			if(!_state)
 			{
@@ -1033,11 +1076,13 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 		if(rpcParameter->physical->operationType == IPhysical::OperationType::Enum::store)
 		{
-			rpcParameter->convertToPacket(value, parameter->data);
-			if(parameter->databaseID > 0) saveParameter(parameter->databaseID, parameter->data);
-			else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameter->data);
+			std::vector<uint8_t> parameterData;
+			rpcParameter->convertToPacket(value, parameterData);
+			parameter.setBinaryData(parameterData);
+			if(parameter.databaseId > 0) saveParameter(parameter.databaseId, parameterData);
+			else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameterData);
 
-			value = rpcParameter->convertFromPacket(parameter->data, false);
+			value = rpcParameter->convertFromPacket(parameterData, false);
 			if(rpcParameter->readable)
 			{
 				valueKeys->push_back(valueKey);
@@ -1052,12 +1097,14 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		PacketsById::iterator packetIterator = _rpcDevice->packetsById.find(setRequest);
 		if(packetIterator == _rpcDevice->packetsById.end()) return Variable::createError(-6, "No frame was found for parameter " + valueKey);
 		PPacket frame = packetIterator->second;
-		rpcParameter->convertToPacket(value, parameter->data);
-		if(parameter->databaseID > 0) saveParameter(parameter->databaseID, parameter->data);
-		else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameter->data);
+		std::vector<uint8_t> parameterData;
+		rpcParameter->convertToPacket(value, parameterData);
+		parameter.setBinaryData(parameterData);
+		if(parameter.databaseId > 0) saveParameter(parameter.databaseId, parameterData);
+		else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameterData);
 
-		value = rpcParameter->convertFromPacket(parameter->data, false);
-		if(_bl->debugLevel > 4) GD::out.printDebug("Debug: " + valueKey + " of peer " + std::to_string(_peerID) + " with serial number " + _serialNumber + ":" + std::to_string(channel) + " was set to " + BaseLib::HelperFunctions::getHexString(parameter->data) + ", " + value->print(false, false, true) + ".");
+		value = rpcParameter->convertFromPacket(parameterData, false);
+		if(_bl->debugLevel > 4) GD::out.printDebug("Debug: " + valueKey + " of peer " + std::to_string(_peerID) + " with serial number " + _serialNumber + ":" + std::to_string(channel) + " was set to " + BaseLib::HelperFunctions::getHexString(parameterData) + ", " + value->print(false, false, true) + ".");
 
 		if(rpcParameter->readable)
 		{
@@ -1085,6 +1132,10 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 			_setColorMode = 2;
 			if(!_state) _setColorTemperature = value;
 		}
+		else if(valueKey == "BRIGHTNESS" || valueKey == "FAST_BRIGHTNESS")
+		{
+			setValue(clientInfo, channel, valueKey == "BRIGHTNESS" ? "FAST_BRIGHTNESS" : "BRIGHTNESS", value, true, wait);
+		}
 
 		if(!noSending)
 		{
@@ -1110,21 +1161,24 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 				if((*i)->parameterId == rpcParameter->physical->groupId)
 				{
 					if((*i)->key.empty()) continue;
-					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = rpcParameter->convertFromPacket(parameter->data, false);
-					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = rpcParameter->convertFromPacket(parameter->data, false);
+					std::vector<uint8_t> parameterData = parameter.getBinaryData();
+					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = rpcParameter->convertFromPacket(parameterData, false);
+					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = rpcParameter->convertFromPacket(parameterData, false);
 				}
 				//Search for all other parameters
 				else
 				{
 					bool paramFound = false;
-					for(std::unordered_map<std::string, BaseLib::Systems::RPCConfigurationParameter>::iterator j = valuesCentral[channel].begin(); j != valuesCentral[channel].end(); ++j)
+					for(std::unordered_map<std::string, BaseLib::Systems::RpcConfigurationParameter>::iterator j = valuesCentral[channel].begin(); j != valuesCentral[channel].end(); ++j)
 					{
 						if(!j->second.rpcParameter) continue;
 						if((*i)->parameterId == j->second.rpcParameter->physical->groupId)
 						{
 							if((*i)->key.empty()) continue;
-							if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = j->second.rpcParameter->convertFromPacket(j->second.data, false);
-							else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = j->second.rpcParameter->convertFromPacket(j->second.data, false);
+							std::vector<uint8_t> parameterData = j->second.getBinaryData();
+							if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = j->second.rpcParameter->convertFromPacket(parameterData, false);
+							else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = j->second.rpcParameter->convertFromPacket(parameterData, false);
+
 							paramFound = true;
 							if(GD::bl->settings.devLog()) GD::out.printInfo("Info (dev): " + (*i)->parameterId + " of JSON packet set to " + j->second.rpcParameter->convertFromPacket(j->second.data, false)->print(false, false, true) + ". Raw value: " + BaseLib::HelperFunctions::getHexString(j->second.data));
 							break;
