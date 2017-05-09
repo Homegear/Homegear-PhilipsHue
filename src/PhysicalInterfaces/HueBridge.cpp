@@ -324,13 +324,14 @@ void HueBridge::searchLights()
 	try
     {
 		if(_noHost) return;
-		if(_username.empty())
+		for(int32_t i = 0; i < 12; i++)
 		{
-			createUser();
 			if(_username.empty())
 			{
-				_out.printInfo("Info: Not searching for lights, because username is empty. Please press the link button on your Hue Bridge.");
-				return;
+				_out.printWarning("Warning: Not searching for lights, because username is empty. Please press the link button on your Hue Bridge.");
+				createUser();
+				std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+				continue;
 			}
 		}
 
