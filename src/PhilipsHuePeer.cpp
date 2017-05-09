@@ -1170,8 +1170,8 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 				{
 					if((*i)->key.empty()) continue;
 					std::vector<uint8_t> parameterData = parameter.getBinaryData();
-					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = rpcParameter->convertFromPacket(parameterData, false);
-					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = rpcParameter->convertFromPacket(parameterData, false);
+					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = _binaryDecoder->decodeResponse(parameterData); //Parameter already is in packet format. Just convert it from RPC to BaseLib::Variable.
+					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = _binaryDecoder->decodeResponse(parameterData);
 				}
 				//Search for all other parameters
 				else
@@ -1184,8 +1184,8 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 						{
 							if((*i)->key.empty()) continue;
 							std::vector<uint8_t> parameterData = j->second.getBinaryData();
-							if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = j->second.rpcParameter->convertFromPacket(parameterData, false);
-							else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = j->second.rpcParameter->convertFromPacket(parameterData, false);
+							if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = _binaryDecoder->decodeResponse(parameterData); //Parameter already is in packet format. Just convert it from RPC to BaseLib::Variable.
+							else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = _binaryDecoder->decodeResponse(parameterData);
 							paramFound = true;
 							break;
 						}
