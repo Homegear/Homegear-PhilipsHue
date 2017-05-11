@@ -86,11 +86,6 @@
 				</element>
 				<element>
 					<key>state</key>
-					<subkey>effect</subkey>
-					<parameterId>EFFECT</parameterId>
-				</element>
-				<element>
-					<key>state</key>
 					<subkey>reachable</subkey>
 					<parameterId>REACHABLE</parameterId>
 				</element>
@@ -339,4 +334,3 @@
 		</variables>
 	</parameterGroups>
 </homegearDevice>
-
