@@ -61,7 +61,7 @@
 				<element>
 					<key>on</key>
 					<constValueBoolean>true</constValueBoolean>
-				</element>nnano 
+				</element> 
 				<element>
 					<key>transitiontime</key>
 					<constValueInteger>0</constValueInteger>
