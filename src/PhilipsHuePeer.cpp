@@ -352,6 +352,35 @@ PParameterGroup PhilipsHuePeer::getParameterSet(int32_t channel, ParameterGroup:
 	return PParameterGroup();
 }
 
+bool PhilipsHuePeer::getAllValuesHook2(PRpcClientInfo clientInfo, PParameter parameter, uint32_t channel, PVariable parameters)
+{
+	try
+	{
+		if(channel == 1)
+		{
+			if(parameter->id == "PEER_ID")
+			{
+				std::vector<uint8_t> parameterData;
+				parameter->convertToPacket(PVariable(new Variable((int32_t)_peerID)), parameterData);
+				valuesCentral[channel][parameter->id].setBinaryData(parameterData);
+			}
+		}
+	}
+	catch(const std::exception& ex)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(BaseLib::Exception& ex)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(...)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+    }
+    return false;
+}
+
 void PhilipsHuePeer::getValuesFromPacket(std::shared_ptr<PhilipsHuePacket> packet, std::vector<FrameValues>& frameValues)
 {
 	try
