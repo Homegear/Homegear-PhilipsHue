@@ -311,6 +311,16 @@
 			</parameter>
 		</variables>
 		<variables id="switch_valueset--1">
+			<parameter id="PEER_ID">
+				<properties>
+					<!-- Needed for the CCU2. Must be writeable, otherwise it can't be used in the CCU. -->
+					<control>EASYPHILIPSHUE.PEERID</control>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger/>
+			</parameter>
 			<parameter id="ALL_ON">
 				<properties>
 					<writeable>false</writeable>

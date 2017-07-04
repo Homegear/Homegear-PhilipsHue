@@ -185,6 +185,12 @@ protected:
     std::vector<uint8_t> serializeTeamPeers();
     void unserializeTeamPeers(std::shared_ptr<std::vector<char>>& serializedData);
 
+    // {{{ Hooks
+		/**
+		 * {@inheritDoc}
+		 */
+		virtual bool getAllValuesHook2(PRpcClientInfo clientInfo, PParameter parameter, uint32_t channel, PVariable parameters);
+	// }}}
 };
 
 }
