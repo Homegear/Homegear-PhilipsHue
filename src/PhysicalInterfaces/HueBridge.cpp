@@ -137,7 +137,7 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 			}
     	}
 
-    	std::string responseString(response.getContent(), response.getContentSize());
+    	std::string responseString(response.getContent().data(), response.getContentSize());
     	if(!exception.what().empty())
     	{
     		_out.printError("Error: Command was not send to Hue Bridge: " + exception.what() + " Response was: " + responseString);
@@ -150,7 +150,7 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 		{
 			json = json->arrayValue->at(0)->structValue->at("error");
 			if(json->structValue->find("description") != json->structValue->end()) _out.printError("Error: " + json->structValue->at("description")->stringValue);
-			else _out.printError("Unknown error sending packet. Response was: " + response);
+			else _out.printError("Unknown error sending packet. Response was: " + responseString);
 		}
 
 		_nextPoll = BaseLib::HelperFunctions::getTime() + 2000; // Poll in 2 seconds
