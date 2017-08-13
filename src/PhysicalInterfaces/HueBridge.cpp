@@ -113,7 +113,7 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
     	data.insert(data.begin(), header.begin(), header.end());
 		data.push_back('\r');
 		data.push_back('\n');
-    	std::string response;
+    	BaseLib::Http response;
 
     	Exception exception("");
     	for(int i = 0; i < 5; i++)
@@ -122,7 +122,12 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 			{
 				if(_stopCallbackThread || GD::bl->shuttingDown) return;
 				_client->sendRequest(data, response);
-				exception = Exception("");
+				if(response.getHeader().responseCode < 200 || response.getHeader().responseCode > 299)
+				{
+					exception = Exception("Error sending command to Hue Bridge. Response code was: " + std::to_string(response.getHeader().responseCode));
+					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+				}
+				else exception = Exception("");
 				break;
 			}
 			catch(Exception& ex)
@@ -131,12 +136,14 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			}
     	}
+
+    	std::string responseString(response.getContent(), response.getContentSize());
     	if(!exception.what().empty())
     	{
-    		_out.printError("Error: Command was not send to Hue Bridge: " + exception.what());
+    		_out.printError("Error: Command was not send to Hue Bridge: " + exception.what() + " Response was: " + responseString);
     	}
 
-    	json = getJson(response);
+    	json = getJson(responseString);
 		if(!json) return;
 
 		if(!json->arrayValue->empty() && json->arrayValue->at(0)->structValue->find("error") != json->arrayValue->at(0)->structValue->end())
