@@ -1478,7 +1478,7 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 		if(_searching) return PVariable(new Variable(0));
 		_searching = true;
 		_bl->threadManager.start(_searchDevicesThread, true, &PhilipsHueCentral::searchDevicesThread, this);
-		return PVariable(new Variable(0));
+		return PVariable(new Variable(-2));
 	}
 	catch(const std::exception& ex)
 	{
