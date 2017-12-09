@@ -696,7 +696,8 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 							typeID.resize(typeWidth2 - 3);
 							typeID += "...";
 						}
-						stringStream << std::setw(typeWidth2) << typeID << bar;
+						else typeID.resize(typeWidth2, ' ');
+						stringStream << typeID << bar;
 					}
 					else stringStream << std::setw(typeWidth2) << " " << bar;
 					if(i->second->getFirmwareVersion() == 0) stringStream << std::setfill(' ') << std::setw(firmwareWidth) << "?" << bar;
@@ -1160,8 +1161,8 @@ void PhilipsHueCentral::searchDevicesThread()
 					PVariable info = peerInfo->getJson();
 					if(info->structValue->find("modelid") == info->structValue->end() || info->structValue->find("swversion") == info->structValue->end()) continue;
 					std::string manufacturer;
-					if(info->structValue->find("manufacturername") != info->structValue->end()) manufacturer = info->structValue->at("manufacturername")->stringValue;
-					uint32_t deviceType = getDeviceType(manufacturer, info->structValue->at("modelid")->stringValue);
+					if(info->structValue->find("manufacturername") != info->structValue->end()) manufacturer = BaseLib::HelperFunctions::trim(info->structValue->at("manufacturername")->stringValue);
+					uint32_t deviceType = getDeviceType(manufacturer, BaseLib::HelperFunctions::trim(info->structValue->at("modelid")->stringValue));
 
 					std::shared_ptr<PhilipsHuePeer> peer = getPeer(peerInfo->senderAddress());
 					if(peer)

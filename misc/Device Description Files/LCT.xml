@@ -55,6 +55,11 @@
 			<typeNumber>0x202</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
+		<device id="NLG-RGBW light">
+			<description>Neuhaus RGBW Light</description>
+			<typeNumber>0x600</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
 	</supportedDevices>
 	<properties/>
 	<functions>
