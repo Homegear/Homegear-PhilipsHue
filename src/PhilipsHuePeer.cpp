@@ -1184,14 +1184,24 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 					if((*i)->key.empty()) continue;
 					PVariable fieldElement;
 					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = PVariable(new Variable((*i)->constValueInteger));
-					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = PVariable(new Variable((*i)->constValueInteger));
+					else
+					{
+						auto keyIterator = json->structValue->find((*i)->key);
+						if(keyIterator == json->structValue->end()) keyIterator = json->structValue->emplace((*i)->key, std::make_shared<Variable>(VariableType::tStruct)).first;
+						keyIterator->second->structValue->emplace((*i)->subkey, std::make_shared<Variable>((*i)->constValueInteger));
+					}
 					continue;
 				}
 				if((*i)->constValueBooleanSet)
 				{
 					if((*i)->key.empty()) continue;
 					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = PVariable(new Variable((*i)->constValueBoolean));
-					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = PVariable(new Variable((*i)->constValueBoolean));
+					else
+					{
+						auto keyIterator = json->structValue->find((*i)->key);
+						if(keyIterator == json->structValue->end()) keyIterator = json->structValue->emplace((*i)->key, std::make_shared<Variable>(VariableType::tStruct)).first;
+						keyIterator->second->structValue->emplace((*i)->subkey, std::make_shared<Variable>((*i)->constValueBoolean));
+					}
 					continue;
 				}
 				//We can't just search for param, because it is ambiguous (see for example LEVEL for HM-CC-TC).
@@ -1200,7 +1210,12 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 					if((*i)->key.empty()) continue;
 					std::vector<uint8_t> parameterData = parameter.getBinaryData();
 					if((*i)->subkey.empty()) json->structValue->operator[]((*i)->key) = _binaryDecoder->decodeResponse(parameterData); //Parameter already is in packet format. Just convert it from RPC to BaseLib::Variable.
-					else  json->structValue->operator[]((*i)->key)->structValue->operator[]((*i)->subkey) = _binaryDecoder->decodeResponse(parameterData);
+					else
+					{
+						auto keyIterator = json->structValue->find((*i)->key);
+						if(keyIterator == json->structValue->end()) keyIterator = json->structValue->emplace((*i)->key, std::make_shared<Variable>(VariableType::tStruct)).first;
+						keyIterator->second->structValue->emplace((*i)->subkey, _binaryDecoder->decodeResponse(parameterData));
+					}
 				}
 				//Search for all other parameters
 				else
