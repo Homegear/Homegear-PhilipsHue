@@ -442,6 +442,12 @@ void PhilipsHueCentral::deletePeer(uint64_t id)
 			if(_peersById.find(id) != _peersById.end()) _peersById.erase(id);
 			if(!peer->isTeam() && _peers.find(peer->getAddress()) != _peers.end()) _peers.erase(peer->getAddress());
 		}
+
+        while(peer.use_count() > 1)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+
 		peer->deleteFromDatabase();
 		GD::out.printMessage("Removed peer " + std::to_string(peer->getID()));
 	}
