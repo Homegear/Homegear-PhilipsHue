@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<homegearDeviceTranslation lang="en-US">
+	<supportedDevices>
+		<device id="Philips LCT001">
+			<description>Philips hue A19</description>
+		</device>
+		<device id="Philips LCT007">
+			<description>Philips hue A60</description>
+		</device>
+		<device id="OSRAM Classic A60 RGBW">
+			<description>OSRAM LIGHTIFY Classic A60 RGBW</description>
+		</device>
+		<device id="OSRAM Gardenspot RGB">
+			<description>OSRAM Gardenspot RGB</description>
+		</device>
+		<device id="OSRAM Classic B40 TW - LIGHTIFY">
+			<description>Classic B40 TW</description>
+		</device>
+		<device id="Philips LLC001">
+			<description>Philips LivingColors</description>
+		</device>
+		<device id="Philips LLC006">
+			<description>Philips LivingColors</description>
+		</device>
+		<device id="Philips LLC007">
+			<description>Philips LivingColors</description>
+		</device>
+		<device id="Philips LLC011">
+			<description>Philips LivingColors Bloom</description>
+		</device>
+		<device id="Philips LST001">
+			<description>Philips LightStrip</description>
+		</device>
+		<device id="Philips LST002">
+			<description>Philips LightStrip Plus</description>
+		</device>
+		<device id="NLG-RGBW light">
+			<description>Neuhaus RGBW Light</description>
+		</device>
+	</supportedDevices>
+	<parameterGroups>
+		<configParameters id="maint_ch_master--0"/>
+		<variables id="maint_ch_values--0">
+			<parameter id="UNREACH">
+				<label>Unreachable</label>
+				<description>Set to "true" when the device is unreachable.</description>
+			</parameter>
+			<parameter id="STICKY_UNREACH">
+				<label>Sticky unreachable</label>
+				<description>Set to "true" when the device is unreachable. It stays "true" until reset manually.</description>
+			</parameter>
+			<parameter id="RSSI_DEVICE">
+				<label>RSSI</label>
+				<description>The RSSI of the device in dBm. It is not set for Philips hue lamps.</description>
+			</parameter>
+		</variables>
+		<variables id="switch_valueset--1">
+			<parameter id="PEER_ID">
+				<label>Peer ID</label>
+				<description>The ID of the peer. This variable is only needed for compatability reasons.</description>
+			</parameter>
+			<parameter id="STATE">
+				<label>State</label>
+				<description>Switches the light on using the last settings or off.</description>
+			</parameter>
+			<parameter id="FAST_STATE">
+				<label>Fast state</label>
+				<description>Like "State" but without resends and without waiting for a response.</description>
+			</parameter>
+			<parameter id="TRANSITION_TIME">
+				<label>Transition time</label>
+				<description>Sets the time in 100ms units the next operation transitions.</description>
+			</parameter>
+			<parameter id="BRIGHTNESS">
+				<label>Brightness</label>
+				<description>Sets the brightness. Don't use this variable for sliders.</description>
+			</parameter>
+			<parameter id="FAST_BRIGHTNESS">
+				<label>Fast brightness</label>
+				<description>Like "Brightness" but without resends and without waiting for a response. Use this variable for sliders.</description>
+			</parameter>
+			<parameter id="HUE">
+				<label>Hue</label>
+				<description>Sets the hue. Some examples: Red => 0, yellow => 18000, green => 25500, cyan => 36207, blue => 46920, pink => 56100.</description>
+			</parameter>
+			<parameter id="SATURATION">
+				<label>Saturation</label>
+				<description>The saturation of the current color.</description>
+			</parameter>
+			<parameter id="COLOR_TEMPERATURE">
+				<label>Color temperature</label>
+				<description>See developers.meethue.com for more information.</description>
+			</parameter>
+			<parameter id="ALERT">
+				<label>Alert</label>
+				<description>With "select" the light performs one breath cycle and with "lselect" breathe cycles for 30 seconds. Breathe cycle means (citet from http://developers.meethue.com): "The light or lights do one smooth transition from the current state to a higher brightness in the current color to a lower brightness in the current color and back to the original state."</description>
+			</parameter>
+			<parameter id="EFFECT">
+				<label>Effect</label>
+				<description>"colorloop" lets the light cycle through all hues using the current brightness and saturation settings.</description>
+			</parameter>
+			<parameter id="RGB">
+				<label>RGB</label>
+				<description>You can set a color in the format #RRGGBB here with RR (red), GG (green) and BB (blue) being a hexadecimal number between 00 and FF. The conversion sets hue, saturation and brightness (HSV). I tried setting "XY", but the RGB to xyY conversion works really bad. The conversion from RGB to HSV is still not perfect, but it works ok.</description>
+			</parameter>
+			<parameter id="COLORMODE">
+				<label>Color mode</label>
+				<description>The colormode which is currently used: hs (hue/saturation/brightness), xy (xyY) or ct (color temperature).</description>
+			</parameter>
+			<parameter id="REACHABLE">
+				<label>Reachable</label>
+				<description>"true" when the device is currently reachable.</description>
+			</parameter>
+			<parameter id="XY">
+				<label>xyY</label>
+				<description>The xyY value in the CIE 1931 xy chromaticity diagram. The format is x and y seperated by semicolon: E. g. for red: "0.675;0.322". The xy value is really bad to calculate, because the RGB color space provided by Philips doesn't seem to be right.</description>
+			</parameter>
+		</variables>
+	</parameterGroups>
+</homegearDeviceTranslation>

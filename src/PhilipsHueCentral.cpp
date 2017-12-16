@@ -850,7 +850,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 			}
 
 			searchDevicesThread();
-			stringStream << "Search completed." << std::endl;
+			stringStream << "Search completed. Please press the button on all newly added hue bridges." << std::endl;
 			return stringStream.str();
 		}
 		else return "Unknown command.\n";
