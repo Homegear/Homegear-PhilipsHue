@@ -855,6 +855,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 				index++;
 			}
 
+            searchHueBridges();
 			searchDevicesThread();
 			stringStream << "Search completed. Please press the button on all newly added hue bridges." << std::endl;
 			return stringStream.str();
@@ -1152,7 +1153,6 @@ void PhilipsHueCentral::searchDevicesThread()
 	try
 	{
 		std::lock_guard<std::mutex> searchDevicesGuard(_searchDevicesMutex);
-		searchHueBridges();
 		std::vector<std::shared_ptr<PhilipsHuePeer>> newPeers;
 		auto interfaces = GD::interfaces->getInterfaces();
 		for(auto interface : interfaces)
@@ -1500,6 +1500,30 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
 	}
 	return Variable::createError(-32500, "Unknown application error.");
+}
+
+PVariable PhilipsHueCentral::searchInterfaces(BaseLib::PRpcClientInfo clientInfo, BaseLib::PVariable metadata)
+{
+    try
+    {
+        if(_searching) return PVariable(new Variable(0));
+        _searching = true;
+        _bl->threadManager.start(_searchDevicesThread, true, &PhilipsHueCentral::searchHueBridges, this);
+        return PVariable(new Variable(-2));
+    }
+    catch(const std::exception& ex)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(BaseLib::Exception& ex)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(...)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+    }
+    return Variable::createError(-32500, "Unknown application error.");
 }
 //End RPC functions
 }
