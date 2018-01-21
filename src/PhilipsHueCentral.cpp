@@ -855,6 +855,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 				index++;
 			}
 
+            searchHueBridges();
 			searchDevicesThread();
 			stringStream << "Search completed. Please press the button on all newly added hue bridges." << std::endl;
 			return stringStream.str();
@@ -964,11 +965,10 @@ void PhilipsHueCentral::searchHueBridges()
 			PVariable info = device.second.info();
 			if(info->structValue->find("manufacturer") == info->structValue->end() || info->structValue->find("modelName") == info->structValue->end() || info->structValue->find("serialNumber") == info->structValue->end()) continue;
 			if(info->structValue->at("manufacturer")->stringValue != "Royal Philips Electronics" || info->structValue->at("modelName")->stringValue.compare(0, 18, "Philips hue bridge") != 0) continue;
-			Systems::PPhysicalInterfaceSettings settings(new Systems::PhysicalInterfaceSettings());
+			Systems::PPhysicalInterfaceSettings settings = std::make_shared<Systems::PhysicalInterfaceSettings>());
 			settings->id = BaseLib::HelperFunctions::stringReplace(info->structValue->at("serialNumber")->stringValue, ".", "-"); //Points are not allowed as they are needed for seperation of config settings
 			foundInterfaces.insert(settings->id);
 			settings->host = device.second.ip();
-			if(GD::interfaces->getInterfaceByIp(settings->host)) continue;
 			auto interface = GD::interfaces->getInterface(settings->id);
 			if(interface && interface->getHostname() == device.second.ip()) continue;
 			settings->address = GD::interfaces->getFreeAddress();
@@ -1152,7 +1152,6 @@ void PhilipsHueCentral::searchDevicesThread()
 	try
 	{
 		std::lock_guard<std::mutex> searchDevicesGuard(_searchDevicesMutex);
-		searchHueBridges();
 		std::vector<std::shared_ptr<PhilipsHuePeer>> newPeers;
 		auto interfaces = GD::interfaces->getInterfaces();
 		for(auto interface : interfaces)
@@ -1500,6 +1499,30 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
 	}
 	return Variable::createError(-32500, "Unknown application error.");
+}
+
+PVariable PhilipsHueCentral::searchInterfaces(BaseLib::PRpcClientInfo clientInfo, BaseLib::PVariable metadata)
+{
+    try
+    {
+        if(_searching) return PVariable(new Variable(0));
+        _searching = true;
+        _bl->threadManager.start(_searchDevicesThread, true, &PhilipsHueCentral::searchHueBridges, this);
+        return PVariable(new Variable(-2));
+    }
+    catch(const std::exception& ex)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(BaseLib::Exception& ex)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(...)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+    }
+    return Variable::createError(-32500, "Unknown application error.");
 }
 //End RPC functions
 }
