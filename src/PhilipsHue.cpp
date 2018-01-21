@@ -42,7 +42,7 @@ PhilipsHue::PhilipsHue(BaseLib::SharedObjects* bl, BaseLib::Systems::DeviceFamil
 	GD::out.init(bl);
 	GD::out.setPrefix("Module Philips hue: ");
 	GD::out.printDebug("Debug: Loading module...");
-	GD::interfaces.reset(new Interfaces(bl, _settings->getPhysicalInterfaceSettings()));
+	GD::interfaces = std::make_shared<Interfaces>(bl, _settings->getPhysicalInterfaceSettings());
 	_physicalInterfaces = GD::interfaces;
 }
 

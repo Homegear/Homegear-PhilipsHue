@@ -965,11 +965,10 @@ void PhilipsHueCentral::searchHueBridges()
 			PVariable info = device.second.info();
 			if(info->structValue->find("manufacturer") == info->structValue->end() || info->structValue->find("modelName") == info->structValue->end() || info->structValue->find("serialNumber") == info->structValue->end()) continue;
 			if(info->structValue->at("manufacturer")->stringValue != "Royal Philips Electronics" || info->structValue->at("modelName")->stringValue.compare(0, 18, "Philips hue bridge") != 0) continue;
-			Systems::PPhysicalInterfaceSettings settings(new Systems::PhysicalInterfaceSettings());
+			Systems::PPhysicalInterfaceSettings settings = std::make_shared<Systems::PhysicalInterfaceSettings>());
 			settings->id = BaseLib::HelperFunctions::stringReplace(info->structValue->at("serialNumber")->stringValue, ".", "-"); //Points are not allowed as they are needed for seperation of config settings
 			foundInterfaces.insert(settings->id);
 			settings->host = device.second.ip();
-			if(GD::interfaces->getInterfaceByIp(settings->host)) continue;
 			auto interface = GD::interfaces->getInterface(settings->id);
 			if(interface && interface->getHostname() == device.second.ip()) continue;
 			settings->address = GD::interfaces->getFreeAddress();

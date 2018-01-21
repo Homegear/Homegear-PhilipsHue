@@ -53,7 +53,7 @@ void Interfaces::addEventHandlers(BaseLib::Systems::IPhysicalInterface::IPhysica
 		for(auto interface : _physicalInterfaces)
 		{
 			if(_physicalInterfaceEventhandlers.find(interface.first) != _physicalInterfaceEventhandlers.end()) continue;
-			_physicalInterfaceEventhandlers[interface.first] = interface.second->addEventHandler((BaseLib::Systems::IPhysicalInterface::IPhysicalInterfaceEventSink*)central);
+			_physicalInterfaceEventhandlers[interface.first] = interface.second->addEventHandler(central);
 		}
 	}
 	catch(const std::exception& ex)
