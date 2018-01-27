@@ -46,7 +46,7 @@ public:
 	virtual void dispose();
 
 	virtual bool hasPhysicalInterface() { return false; }
-	virtual PVariable getPairingMethods();
+	virtual PVariable getPairingInfo();
 protected:
 	PhilipsHue(const PhilipsHue&);
 	PhilipsHue& operator=(const PhilipsHue&);

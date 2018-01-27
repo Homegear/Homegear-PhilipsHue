@@ -92,7 +92,7 @@ void PhilipsHue::createCentral()
     }
 }
 
-PVariable PhilipsHue::getPairingMethods()
+PVariable PhilipsHue::getPairingInfo()
 {
 	try
 	{
