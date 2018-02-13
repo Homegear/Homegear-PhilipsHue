@@ -436,6 +436,7 @@ void PhilipsHueCentral::deletePeer(uint64_t id)
 		}
 
 		raiseRPCDeleteDevices(deviceAddresses, deviceInfo);
+
 		{
 			std::lock_guard<std::mutex> peersGuard(_peersMutex);
 			if(_peersBySerial.find(peer->getSerialNumber()) != _peersBySerial.end()) _peersBySerial.erase(peer->getSerialNumber());
@@ -443,10 +444,16 @@ void PhilipsHueCentral::deletePeer(uint64_t id)
 			if(!peer->isTeam() && _peers.find(peer->getAddress()) != _peers.end()) _peers.erase(peer->getAddress());
 		}
 
-        while(peer.use_count() > 1)
+        if(_currentPeer && _currentPeer->getID() == id) _currentPeer.reset();
+
+        int32_t i = 0;
+        while(peer.use_count() > 1 && i < 600)
         {
+            if(_currentPeer && _currentPeer->getID() == id) _currentPeer.reset();
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            i++;
         }
+        if(i == 600) GD::out.printError("Error: Peer deletion took too long.");
 
 		peer->deleteFromDatabase();
 		GD::out.printMessage("Removed peer " + std::to_string(peer->getID()));
