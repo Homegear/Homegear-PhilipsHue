@@ -435,7 +435,8 @@ void PhilipsHueCentral::deletePeer(uint64_t id)
 			channels->arrayValue->push_back(PVariable(new Variable(i->first)));
 		}
 
-		raiseRPCDeleteDevices(deviceAddresses, deviceInfo);
+        std::vector<uint64_t> deletedIds{ id };
+		raiseRPCDeleteDevices(deletedIds, deviceAddresses, deviceInfo);
 
 		{
 			std::lock_guard<std::mutex> peersGuard(_peersMutex);
@@ -1229,17 +1230,20 @@ void PhilipsHueCentral::searchDevicesThread()
 
 		if(newPeers.size() > 0)
 		{
+            std::vector<uint64_t> newIds;
+            newIds.reserve(newPeers.size());
 			PVariable deviceDescriptions(new Variable(VariableType::tArray));
 			for(std::vector<std::shared_ptr<PhilipsHuePeer>>::iterator i = newPeers.begin(); i != newPeers.end(); ++i)
 			{
 				std::shared_ptr<std::vector<PVariable>> descriptions = (*i)->getDeviceDescriptions(nullptr, true, std::map<std::string, bool>());
 				if(!descriptions) continue;
+                newIds.push_back((*i)->getID());
 				for(std::vector<PVariable>::iterator j = descriptions->begin(); j != descriptions->end(); ++j)
 				{
 					deviceDescriptions->arrayValue->push_back(*j);
 				}
 			}
-			raiseRPCNewDevices(deviceDescriptions);
+			raiseRPCNewDevices(newIds, deviceDescriptions);
 		}
 	}
 	catch(const std::exception& ex)
