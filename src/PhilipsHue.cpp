@@ -96,10 +96,74 @@ PVariable PhilipsHue::getPairingInfo()
 {
 	try
 	{
-		if(!_central) return PVariable(new Variable(BaseLib::VariableType::tArray));
-		PVariable array(new Variable(BaseLib::VariableType::tArray));
-		array->arrayValue->push_back(PVariable(new Variable(std::string("searchDevices"))));
-		return array;
+		if(!_central) return std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+		PVariable info = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+
+		//{{{ General
+		info->structValue->emplace("searchInterfaces", std::make_shared<BaseLib::Variable>(true));
+		//}}}
+
+		//{{{ Family settings
+		PVariable familySettings = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+
+		PVariable field = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+		field->structValue->emplace("pos", std::make_shared<BaseLib::Variable>(0));
+		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.common.pollinginterval")));
+		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("integer")));
+		field->structValue->emplace("default", std::make_shared<BaseLib::Variable>(5000));
+		familySettings->structValue->emplace("pollingIntervall", field);
+
+		info->structValue->emplace("familySettings", familySettings);
+		//}}}
+
+		//{{{ Pairing methods
+		PVariable pairingMethods = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+		pairingMethods->structValue->emplace("searchDevices", std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct));
+		info->structValue->emplace("pairingMethods", pairingMethods);
+		//}}}
+
+		//{{{ interfaces
+		PVariable interfaces = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+
+		PVariable interface = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+		interface->structValue->emplace("name", std::make_shared<BaseLib::Variable>(std::string("Hue Bridge")));
+		interface->structValue->emplace("ipDevice", std::make_shared<BaseLib::Variable>(true));
+
+		field = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+		field->structValue->emplace("pos", std::make_shared<BaseLib::Variable>(0));
+		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.common.id")));
+		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("string")));
+		interface->structValue->emplace("id", field);
+
+		field = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+		field->structValue->emplace("pos", std::make_shared<BaseLib::Variable>(1));
+		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.common.hostname")));
+		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("string")));
+		interface->structValue->emplace("host", field);
+
+		field = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+		field->structValue->emplace("pos", std::make_shared<BaseLib::Variable>(1));
+		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.common.address")));
+		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("integer")));
+		field->structValue->emplace("default", std::make_shared<BaseLib::Variable>(0));
+		interface->structValue->emplace("address", field);
+
+		field = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("string")));
+		field->structValue->emplace("const", std::make_shared<BaseLib::Variable>(std::string("80")));
+		interface->structValue->emplace("port", field);
+
+		field = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("integer")));
+		field->structValue->emplace("const", std::make_shared<BaseLib::Variable>(100));
+		interface->structValue->emplace("responseDelay", field);
+
+		interfaces->structValue->emplace("huebridge", interface);
+
+		info->structValue->emplace("interfaces", interfaces);
+		//}}}
+
+		return info;
 	}
 	catch(const std::exception& ex)
 	{
