@@ -435,7 +435,8 @@ void PhilipsHueCentral::deletePeer(uint64_t id)
 			channels->arrayValue->push_back(PVariable(new Variable(i->first)));
 		}
 
-		raiseRPCDeleteDevices(deviceAddresses, deviceInfo);
+        std::vector<uint64_t> deletedIds{ id };
+		raiseRPCDeleteDevices(deletedIds, deviceAddresses, deviceInfo);
 
 		{
 			std::lock_guard<std::mutex> peersGuard(_peersMutex);
@@ -1229,17 +1230,20 @@ void PhilipsHueCentral::searchDevicesThread()
 
 		if(newPeers.size() > 0)
 		{
+            std::vector<uint64_t> newIds;
+            newIds.reserve(newPeers.size());
 			PVariable deviceDescriptions(new Variable(VariableType::tArray));
 			for(std::vector<std::shared_ptr<PhilipsHuePeer>>::iterator i = newPeers.begin(); i != newPeers.end(); ++i)
 			{
 				std::shared_ptr<std::vector<PVariable>> descriptions = (*i)->getDeviceDescriptions(nullptr, true, std::map<std::string, bool>());
 				if(!descriptions) continue;
+                newIds.push_back((*i)->getID());
 				for(std::vector<PVariable>::iterator j = descriptions->begin(); j != descriptions->end(); ++j)
 				{
 					deviceDescriptions->arrayValue->push_back(*j);
 				}
 			}
-			raiseRPCNewDevices(deviceDescriptions);
+			raiseRPCNewDevices(newIds, deviceDescriptions);
 		}
 	}
 	catch(const std::exception& ex)
@@ -1356,118 +1360,6 @@ PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, ui
 		deletePeer(peer->getID());
 
 		return PVariable(new Variable(VariableType::tVoid));
-	}
-	catch(const std::exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
-    return Variable::createError(-32500, "Unknown application error.");
-}
-
-PVariable PhilipsHueCentral::getDeviceInfo(BaseLib::PRpcClientInfo clientInfo, uint64_t id, std::map<std::string, bool> fields)
-{
-	try
-	{
-		if(id > 0)
-		{
-			std::shared_ptr<PhilipsHuePeer> peer(getPeer(id));
-			if(!peer) return Variable::createError(-2, "Unknown device.");
-
-			return peer->getDeviceInfo(clientInfo, fields);
-		}
-		else
-		{
-			PVariable array(new Variable(VariableType::tArray));
-
-			std::vector<std::shared_ptr<PhilipsHuePeer>> peers;
-			//Copy all peers first, because listDevices takes very long and we don't want to lock _peersMutex too long
-			_peersMutex.lock();
-			for(std::map<uint64_t, std::shared_ptr<BaseLib::Systems::Peer>>::iterator i = _peersById.begin(); i != _peersById.end(); ++i)
-			{
-				peers.push_back(std::dynamic_pointer_cast<PhilipsHuePeer>(i->second));
-			}
-			_peersMutex.unlock();
-
-			for(std::vector<std::shared_ptr<PhilipsHuePeer>>::iterator i = peers.begin(); i != peers.end(); ++i)
-			{
-				//listDevices really needs a lot of resources, so wait a little bit after each device
-				std::this_thread::sleep_for(std::chrono::milliseconds(3));
-				PVariable info = (*i)->getDeviceInfo(clientInfo, fields);
-				if(!info) continue;
-				array->arrayValue->push_back(info);
-			}
-
-			return array;
-		}
-	}
-	catch(const std::exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-        _peersMutex.unlock();
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-        _peersMutex.unlock();
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-        _peersMutex.unlock();
-    }
-    return Variable::createError(-32500, "Unknown application error.");
-}
-
-PVariable PhilipsHueCentral::putParamset(BaseLib::PRpcClientInfo clientInfo, std::string serialNumber, int32_t channel, ParameterGroup::Type::Enum type, std::string remoteSerialNumber, int32_t remoteChannel, PVariable paramset)
-{
-	try
-	{
-		std::shared_ptr<PhilipsHuePeer> peer(getPeer(serialNumber));
-		if(!peer) return Variable::createError(-2, "Unknown device.");
-		uint64_t remoteID = 0;
-		if(!remoteSerialNumber.empty())
-		{
-			std::shared_ptr<PhilipsHuePeer> remotePeer(getPeer(remoteSerialNumber));
-			if(!remotePeer)
-			{
-				if(remoteSerialNumber != _serialNumber) return Variable::createError(-3, "Remote peer is unknown.");
-			}
-			else remoteID = remotePeer->getID();
-		}
-		PVariable result = peer->putParamset(clientInfo, channel, type, remoteID, remoteChannel, paramset);
-		return result;
-	}
-	catch(const std::exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
-    return Variable::createError(-32500, "Unknown application error.");
-}
-
-PVariable PhilipsHueCentral::putParamset(BaseLib::PRpcClientInfo clientInfo, uint64_t peerID, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel, PVariable paramset)
-{
-	try
-	{
-		std::shared_ptr<PhilipsHuePeer> peer(getPeer(peerID));
-		if(!peer) return Variable::createError(-2, "Unknown device.");
-		PVariable result = peer->putParamset(clientInfo, channel, type, remoteID, remoteChannel, paramset);
-		return result;
 	}
 	catch(const std::exception& ex)
     {
