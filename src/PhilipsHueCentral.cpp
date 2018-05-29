@@ -971,6 +971,7 @@ void PhilipsHueCentral::searchHueBridges()
 		for(auto device : devices)
 		{
 			PVariable info = device.second.info();
+			if(!info) continue;
 			if(info->structValue->find("manufacturer") == info->structValue->end() || info->structValue->find("modelName") == info->structValue->end() || info->structValue->find("serialNumber") == info->structValue->end()) continue;
 			if(info->structValue->at("manufacturer")->stringValue != "Royal Philips Electronics" || info->structValue->at("modelName")->stringValue.compare(0, 18, "Philips hue bridge") != 0) continue;
 			Systems::PPhysicalInterfaceSettings settings = std::make_shared<Systems::PhysicalInterfaceSettings>();
