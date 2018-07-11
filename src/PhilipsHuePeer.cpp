@@ -561,7 +561,7 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 
 		if(!rpcValues.empty())
 		{
-			for(std::map<uint32_t, std::shared_ptr<std::vector<std::string>>>::const_iterator j = valueKeys.begin(); j != valueKeys.end(); ++j)
+			for(std::map<uint32_t, std::shared_ptr<std::vector<std::string>>>::iterator j = valueKeys.begin(); j != valueKeys.end(); ++j)
 			{
 				if(j->second->empty()) continue;
 
@@ -593,9 +593,10 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 					}
 				}
 
-				std::string address(_serialNumber + ":" + std::to_string(j->first));
-				raiseEvent(_peerID, j->first, j->second, rpcValues.at(j->first));
-				raiseRPCEvent(_peerID, j->first, address, j->second, rpcValues.at(j->first));
+                std::string eventSource = "device-" + std::to_string(_peerID);
+                std::string address(_serialNumber + ":" + std::to_string(j->first));
+                raiseEvent(eventSource, _peerID, j->first, j->second, rpcValues.at(j->first));
+                raiseRPCEvent(eventSource, _peerID, j->first, address, j->second, rpcValues.at(j->first));
 			}
 		}
 	}
@@ -1064,8 +1065,9 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 			valueKeys->push_back(valueKey);
 			values->push_back(value);
-			raiseEvent(_peerID, channel, valueKeys, values);
-			raiseRPCEvent(_peerID, channel, _serialNumber + ":" + std::to_string(channel), valueKeys, values);
+            std::string address(_serialNumber + ":" + std::to_string(channel));
+            raiseEvent(clientInfo->initInterfaceId, _peerID, channel, valueKeys, values);
+            raiseRPCEvent(clientInfo->initInterfaceId, _peerID, channel, address, valueKeys, values);
 			return PVariable(new Variable(VariableType::tVoid));
 		}
 
@@ -1127,7 +1129,12 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 				valueKeys->push_back(valueKey);
 				values->push_back(value);
 			}
-			if(!valueKeys->empty()) raiseRPCEvent(_peerID, channel, _serialNumber + ":" + std::to_string(channel), valueKeys, values);
+			if(!valueKeys->empty())
+            {
+                std::string address(_serialNumber + ":" + std::to_string(channel));
+                raiseEvent(clientInfo->initInterfaceId, _peerID, channel, valueKeys, values);
+                raiseRPCEvent(clientInfo->initInterfaceId, _peerID, channel, address, valueKeys, values);
+            }
 			return PVariable(new Variable(VariableType::tVoid));
 		}
 		else if(rpcParameter->physical->operationType != IPhysical::OperationType::Enum::command) return Variable::createError(-6, "Parameter is not settable.");
@@ -1295,8 +1302,9 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 		if(!valueKeys->empty())
 		{
-			raiseEvent(_peerID, channel, valueKeys, values);
-			raiseRPCEvent(_peerID, channel, _serialNumber + ":" + std::to_string(channel), valueKeys, values);
+            std::string address(_serialNumber + ":" + std::to_string(channel));
+            raiseEvent(clientInfo->initInterfaceId, _peerID, channel, valueKeys, values);
+            raiseRPCEvent(clientInfo->initInterfaceId, _peerID, channel, address, valueKeys, values);
 		}
 
 		return PVariable(new Variable(VariableType::tVoid));
