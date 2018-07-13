@@ -1330,9 +1330,16 @@ PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, st
 	try
 	{
 		if(serialNumber.empty()) return Variable::createError(-2, "Unknown device.");
-		std::shared_ptr<PhilipsHuePeer> peer = getPeer(serialNumber);
-		if(!peer) return Variable::createError(-2, "Unknown device.");
-		return deleteDevice(clientInfo, peer->getID(), flags);
+
+        uint64_t peerId = 0;
+
+        {
+            std::shared_ptr<PhilipsHuePeer> peer = getPeer(serialNumber);
+            if(!peer) return Variable::createError(-2, "Unknown device.");
+            peerId = peer->getID();
+        }
+
+		return deleteDevice(clientInfo, peerId, flags);
 	}
 	catch(const std::exception& ex)
     {
@@ -1349,16 +1356,19 @@ PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, st
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, uint64_t peerID, int32_t flags)
+PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, uint64_t peerId, int32_t flags)
 {
 	try
 	{
-		if(peerID == 0) return Variable::createError(-2, "Unknown device.");
-		if(peerID >= 0x40000000) return Variable::createError(-2, "Cannot delete virtual device.");
-		std::shared_ptr<PhilipsHuePeer> peer = getPeer(peerID);
-		if(!peer) return Variable::createError(-2, "Unknown device.");
+		if(peerId == 0) return Variable::createError(-2, "Unknown device.");
+		if(peerId >= 0x40000000) return Variable::createError(-2, "Cannot delete virtual device.");
 
-		deletePeer(peer->getID());
+        {
+            std::shared_ptr<PhilipsHuePeer> peer = getPeer(peerId);
+            if(!peer) return Variable::createError(-2, "Unknown device.");
+        }
+
+		deletePeer(peerId);
 
 		return PVariable(new Variable(VariableType::tVoid));
 	}
