@@ -1111,6 +1111,13 @@ void PhilipsHueCentral::searchDevicesThread()
 		auto interfaces = GD::interfaces->getInterfaces();
 		for(auto interface : interfaces)
 		{
+            if(!interface->userCreated())
+            {
+                std::lock_guard<std::mutex> newPeersGuard(_newPeersMutex);
+                _pairingMessages.emplace_back("l10n.philipshue.bridge.pressLinkButton");
+                continue;
+            }
+
 			interface->searchLights();
 			auto peersInfo = interface->getPeerInfo();
 
@@ -1189,6 +1196,14 @@ void PhilipsHueCentral::searchDevicesThread()
 				{
 					deviceDescriptions->arrayValue->push_back(*j);
 				}
+
+                {
+                    auto pairingState = std::make_shared<PairingState>();
+                    pairingState->peerId = (*i)->getID();
+                    pairingState->state = "success";
+                    std::lock_guard<std::mutex> newPeersGuard(_newPeersMutex);
+                    _newPeers[BaseLib::HelperFunctions::getTime()].emplace_back(std::move(pairingState));
+                }
 			}
 			raiseRPCNewDevices(newIds, deviceDescriptions);
 		}
@@ -1319,6 +1334,52 @@ PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, ui
 		return PVariable(new Variable(VariableType::tVoid));
 	}
 	catch(const std::exception& ex)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(BaseLib::Exception& ex)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
+    }
+    catch(...)
+    {
+        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
+    }
+    return Variable::createError(-32500, "Unknown application error.");
+}
+
+PVariable PhilipsHueCentral::getPairingState(BaseLib::PRpcClientInfo clientInfo)
+{
+    try
+    {
+        auto states = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+
+        {
+            std::lock_guard<std::mutex> newPeersGuard(_newPeersMutex);
+
+            auto pairingMessages = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tArray);
+            pairingMessages->arrayValue->reserve(_pairingMessages.size());
+            for(auto& message : _pairingMessages)
+            {
+                pairingMessages->arrayValue->push_back(std::make_shared<BaseLib::Variable>(message));
+            }
+            states->structValue->emplace("general", std::move(pairingMessages));
+
+            for(auto& element : _newPeers)
+            {
+                for(auto& peer : element.second)
+                {
+                    auto peerState = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+                    peerState->structValue->emplace("state", std::make_shared<BaseLib::Variable>(peer->state));
+                    peerState->structValue->emplace("message", std::make_shared<BaseLib::Variable>(peer->message));
+                    states->structValue->emplace(std::to_string(peer->peerId), std::move(peerState));
+                }
+            }
+        }
+
+        return states;
+    }
+    catch(const std::exception& ex)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }

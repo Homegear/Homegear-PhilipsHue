@@ -13,6 +13,11 @@ override_dh_auto_install:
 	chmod 755 $(CURDIR)/debian/homegear-philipshue/etc/homegear/devices/5
 	chmod 644 $(CURDIR)/debian/homegear-philipshue/etc/homegear/devices/5/*
 
+	mkdir -p $(CURDIR)/debian/homegear-philipshue/var/lib/homegear/admin-ui/translations/modules/philipshue
+	cp -R $(CURDIR)/misc/UI\ Translations/* $(CURDIR)/debian/homegear-philipshue/var/lib/homegear/admin-ui/translations/modules/philipshue
+	chown -R root:root $(CURDIR)/debian/homegear-philipshue/var/lib/homegear/admin-ui/translations/modules/philipshue
+	chmod -R 555 $(CURDIR)/debian/homegear-philipshue/var/lib/homegear/admin-ui/translations/modules/philipshue
+
 override_dh_strip:
 	dh_strip --dbg-package=homegear-philipshue
 

@@ -75,6 +75,7 @@ public:
 
 	virtual PVariable deleteDevice(BaseLib::PRpcClientInfo clientInfo, std::string serialNumber, int32_t flags);
 	virtual PVariable deleteDevice(BaseLib::PRpcClientInfo clientInfo, uint64_t peerID, int32_t flags);
+    virtual PVariable getPairingState(BaseLib::PRpcClientInfo clientInfo);
 	virtual PVariable searchDevices(BaseLib::PRpcClientInfo clientInfo);
 	virtual PVariable searchInterfaces(BaseLib::PRpcClientInfo clientInfo, BaseLib::PVariable metadata);
 protected:
@@ -94,6 +95,7 @@ protected:
 	std::atomic_bool _searching;
 	std::mutex _searchDevicesMutex;
 	std::thread _searchDevicesThread;
+    std::list<std::string> _pairingMessages;
 
 	/**
 	 * Creates a new peer. The method does not add the peer to the peer arrays.
