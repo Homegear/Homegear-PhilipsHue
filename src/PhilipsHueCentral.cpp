@@ -1114,7 +1114,7 @@ void PhilipsHueCentral::searchDevicesThread()
             if(!interface->userCreated())
             {
                 std::lock_guard<std::mutex> newPeersGuard(_newPeersMutex);
-                _pairingMessages.emplace_back("l10n.philipshue.bridge.pressLinkButton");
+                _pairingMessages.emplace_back(std::make_shared<PairingMessage>("l10n.philipshue.bridge.pressLinkButton", std::list<std::string>{ interface->getID(), interface->getIpAddress() }));
                 continue;
             }
 

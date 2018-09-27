@@ -295,7 +295,7 @@ void HueBridge::createUser()
                 {
                     auto data = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
                     data->structValue->emplace("IP_ADDRESS", std::make_shared<BaseLib::Variable>(_ipAddress));
-                    _bl->globalServiceMessages.set(HUE_FAMILY_ID, 0, BaseLib::HelperFunctions::getTimeSeconds(), "l10n.philipshue.bridge.pressLinkButton;" + _settings->id, data, 1);
+                    _bl->globalServiceMessages.set(HUE_FAMILY_ID, 0, _settings->id, BaseLib::HelperFunctions::getTimeSeconds(), "l10n.philipshue.bridge.pressLinkButton", std::list<std::string>{ _settings->id, _ipAddress }, data, 1);
                     _out.printError("Please press the link button on your hue bridge to initialize the connection to Homegear.");
                 }
 				else if(json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 7) _out.printError("Error: Please change the bridge's id in philipshue.conf to only contain alphanumerical characters and \"-\".");
@@ -307,7 +307,7 @@ void HueBridge::createUser()
 			}
 			else if(json->arrayValue->at(0)->structValue->find("success") != json->arrayValue->at(0)->structValue->end())
 			{
-                _bl->globalServiceMessages.unset(HUE_FAMILY_ID, 0, "l10n.philipshue.bridge.pressLinkButton;" + _settings->id);
+                _bl->globalServiceMessages.unset(HUE_FAMILY_ID, 0, _settings->id, "l10n.philipshue.bridge.pressLinkButton");
 				json = json->arrayValue->at(0)->structValue->at("success");
 				if(json->structValue->find("username") != json->structValue->end())
 				{

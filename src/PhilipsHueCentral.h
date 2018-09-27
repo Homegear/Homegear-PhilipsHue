@@ -95,7 +95,6 @@ protected:
 	std::atomic_bool _searching;
 	std::mutex _searchDevicesMutex;
 	std::thread _searchDevicesThread;
-    std::list<std::string> _pairingMessages;
 
 	/**
 	 * Creates a new peer. The method does not add the peer to the peer arrays.
