@@ -1361,7 +1361,16 @@ PVariable PhilipsHueCentral::getPairingState(BaseLib::PRpcClientInfo clientInfo)
             pairingMessages->arrayValue->reserve(_pairingMessages.size());
             for(auto& message : _pairingMessages)
             {
-                pairingMessages->arrayValue->push_back(std::make_shared<BaseLib::Variable>(message));
+                auto pairingMessage = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+                pairingMessage->structValue->emplace("messageId", std::make_shared<BaseLib::Variable>(message->messageId));
+                auto variables = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tArray);
+                variables->arrayValue->reserve(message->variables.size());
+                for(auto& variable : message->variables)
+                {
+                    variables->arrayValue->emplace_back(std::make_shared<BaseLib::Variable>(variable));
+                }
+                pairingMessage->structValue->emplace("variables", variables);
+                pairingMessages->arrayValue->push_back(pairingMessage);
             }
             states->structValue->emplace("general", std::move(pairingMessages));
 
@@ -1371,7 +1380,14 @@ PVariable PhilipsHueCentral::getPairingState(BaseLib::PRpcClientInfo clientInfo)
                 {
                     auto peerState = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
                     peerState->structValue->emplace("state", std::make_shared<BaseLib::Variable>(peer->state));
-                    peerState->structValue->emplace("message", std::make_shared<BaseLib::Variable>(peer->message));
+                    peerState->structValue->emplace("messageId", std::make_shared<BaseLib::Variable>(peer->messageId));
+                    auto variables = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tArray);
+                    variables->arrayValue->reserve(peer->variables.size());
+                    for(auto& variable : peer->variables)
+                    {
+						variables->arrayValue->emplace_back(std::make_shared<BaseLib::Variable>(variable));
+                    }
+                    peerState->structValue->emplace("variables", variables);
                     states->structValue->emplace(std::to_string(peer->peerId), std::move(peerState));
                 }
             }
