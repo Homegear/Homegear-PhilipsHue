@@ -2,7 +2,7 @@
 # {{{ Pairing info
 l10n.philipshue.pairingInfo.pollingInterval: 'Abfrageinterval'
 l10n.philipshue.pairingInfo.id: 'ID'
-l10n.philipshue.pairingInfo.hostname: 'Hostname'
+l10n.philipshue.pairingInfo.hostname: 'IP-Adresse'
 l10n.philipshue.pairingInfo.address: 'Adresse'
 # }}}
 
