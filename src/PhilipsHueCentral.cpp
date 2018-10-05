@@ -976,6 +976,7 @@ void PhilipsHueCentral::searchHueBridges()
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
+    _searching = false;
 }
 
 std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams(bool findNew)
@@ -1353,6 +1354,9 @@ PVariable PhilipsHueCentral::getPairingState(BaseLib::PRpcClientInfo clientInfo)
     try
     {
         auto states = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+
+		states->structValue->emplace("pairingModeEnabled", std::make_shared<BaseLib::Variable>(_searching));
+		states->structValue->emplace("pairingModeEndTime", std::make_shared<BaseLib::Variable>(-1));
 
         {
             std::lock_guard<std::mutex> newPeersGuard(_newPeersMutex);
