@@ -108,7 +108,7 @@ PVariable PhilipsHue::getPairingInfo()
 
 		PVariable field = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
 		field->structValue->emplace("pos", std::make_shared<BaseLib::Variable>(0));
-		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.common.pollinginterval")));
+		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.philipshue.pairingInfo.pollingInterval")));
 		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("integer")));
 		field->structValue->emplace("default", std::make_shared<BaseLib::Variable>(5000));
 		familySettings->structValue->emplace("pollingIntervall", field);
@@ -131,19 +131,19 @@ PVariable PhilipsHue::getPairingInfo()
 
 		field = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
 		field->structValue->emplace("pos", std::make_shared<BaseLib::Variable>(0));
-		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.common.id")));
+		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.philipshue.pairingInfo.id")));
 		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("string")));
 		interface->structValue->emplace("id", field);
 
 		field = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
 		field->structValue->emplace("pos", std::make_shared<BaseLib::Variable>(1));
-		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.common.hostname")));
+		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.philipshue.pairingInfo.hostname")));
 		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("string")));
 		interface->structValue->emplace("host", field);
 
 		field = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
 		field->structValue->emplace("pos", std::make_shared<BaseLib::Variable>(1));
-		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.common.address")));
+		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.philipshue.pairingInfo.address")));
 		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("integer")));
 		field->structValue->emplace("default", std::make_shared<BaseLib::Variable>(0));
 		interface->structValue->emplace("address", field);

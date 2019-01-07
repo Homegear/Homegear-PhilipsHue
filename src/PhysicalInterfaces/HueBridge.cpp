@@ -291,7 +291,13 @@ void HueBridge::createUser()
 			if(json->arrayValue->at(0)->structValue->find("error") != json->arrayValue->at(0)->structValue->end())
 			{
 				json = json->arrayValue->at(0)->structValue->at("error");
-				if(json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 101) _out.printError("Please press the link button on your hue bridge to initialize the connection to Homegear.");
+				if(json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 101)
+                {
+                    auto data = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
+                    data->structValue->emplace("IP_ADDRESS", std::make_shared<BaseLib::Variable>(_ipAddress));
+                    _bl->globalServiceMessages.set(HUE_FAMILY_ID, 0, _settings->id, BaseLib::HelperFunctions::getTimeSeconds(), "l10n.philipshue.bridge.pressLinkButton", std::list<std::string>{ _settings->id, _ipAddress }, data, 1);
+                    _out.printError("Please press the link button on your hue bridge to initialize the connection to Homegear.");
+                }
 				else if(json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 7) _out.printError("Error: Please change the bridge's id in philipshue.conf to only contain alphanumerical characters and \"-\".");
 				else
 				{
@@ -301,6 +307,7 @@ void HueBridge::createUser()
 			}
 			else if(json->arrayValue->at(0)->structValue->find("success") != json->arrayValue->at(0)->structValue->end())
 			{
+                _bl->globalServiceMessages.unset(HUE_FAMILY_ID, 0, _settings->id, "l10n.philipshue.bridge.pressLinkButton");
 				json = json->arrayValue->at(0)->structValue->at("success");
 				if(json->structValue->find("username") != json->structValue->end())
 				{
@@ -331,16 +338,15 @@ void HueBridge::searchLights()
 	try
     {
 		if(_noHost) return;
-		for(int32_t i = 0; i < 12; i++)
-		{
-			if(_username.empty())
-			{
-				_out.printWarning("Warning: Not searching for lights, because username is empty. Please press the link button on your Hue Bridge.");
-				createUser();
-				std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-				continue;
-			}
-		}
+        if(_username.empty())
+        {
+            createUser();
+            if(_username.empty())
+            {
+                _out.printWarning("Warning: Not searching for lights, because username is empty. Please press the link button on your Hue Bridge.");
+                return;
+            }
+        }
 
     	std::string header = "POST /api/" + _username + "/lights HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: 0\r\nConnection: Keep-Alive\r\n\r\n";
     	std::string response;
