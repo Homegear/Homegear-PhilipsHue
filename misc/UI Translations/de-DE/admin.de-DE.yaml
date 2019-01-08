@@ -1,0 +1,11 @@
+---
+# {{{ Pairing info
+l10n.philipshue.pairingInfo.pollingInterval: 'Abfrageinterval'
+l10n.philipshue.pairingInfo.id: 'ID'
+l10n.philipshue.pairingInfo.hostname: 'IP-Adresse'
+l10n.philipshue.pairingInfo.address: 'Adresse'
+# }}}
+
+# {{{ Pairing
+l10n.philipshue.bridge.pressLinkButton: 'Bitte drücken Sie den Link-Knopf auf Ihrer Hue-Bridge mit der ID %variable0% (IP-Adresse: %variable1%).'
+# }}}
