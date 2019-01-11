@@ -25,6 +25,11 @@
 			<typeNumber>0x403</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
+		<device id="OSRAM Surface Light TW">
+			<description>Surface Light TW</description>
+			<typeNumber>0x404</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
 		<device id="Philips LLC001">
 			<description>Philips LivingColors</description>
 			<typeNumber>0x101</typeNumber>
@@ -60,6 +65,11 @@
 			<typeNumber>0x600</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
+		<device id="innr RB 185 C">
+			<description>innr RB 185-C</description>
+			<typeNumber>0x700</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
 	</supportedDevices>
 	<properties/>
 	<functions>
@@ -81,10 +91,6 @@
 			<direction>fromCentral</direction>
 			<type>0x2</type>
 			<jsonPayload>
-				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
 				<element>
 					<key>alert</key>
 					<parameterId>ALERT</parameterId>
