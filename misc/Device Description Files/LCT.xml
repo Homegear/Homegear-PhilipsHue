@@ -25,6 +25,11 @@
 			<typeNumber>0x403</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
+		<device id="OSRAM Surface Light TW">
+			<description>Surface Light TW</description>
+			<typeNumber>0x404</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
 		<device id="Philips LLC001">
 			<description>Philips LivingColors</description>
 			<typeNumber>0x101</typeNumber>
@@ -58,6 +63,11 @@
 		<device id="NLG-RGBW light">
 			<description>Neuhaus RGBW Light</description>
 			<typeNumber>0x600</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
+		<device id="innr RB 185 C">
+			<description>innr RB 185-C</description>
+			<typeNumber>0x700</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
 	</supportedDevices>

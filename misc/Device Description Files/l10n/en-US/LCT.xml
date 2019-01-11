@@ -37,6 +37,9 @@
 		<device id="NLG-RGBW light">
 			<description>Neuhaus RGBW Light</description>
 		</device>
+		<device id="RB 185 C">
+			<description>innr RB 185-C</description>
+		</device>
 	</supportedDevices>
 	<parameterGroups>
 		<configParameters id="maint_ch_master--0"/>
