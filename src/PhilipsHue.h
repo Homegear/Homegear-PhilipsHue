@@ -41,7 +41,7 @@ class PhilipsHueCentral;
 class PhilipsHue : public BaseLib::Systems::DeviceFamily
 {
 public:
-	PhilipsHue(BaseLib::SharedObjects* bl, BaseLib::Systems::DeviceFamily::IFamilyEventSink* eventHandler);
+	PhilipsHue(BaseLib::SharedObjects* bl, BaseLib::Systems::IFamilyEventSink* eventHandler);
 	virtual ~PhilipsHue();
 	virtual void dispose();
 
