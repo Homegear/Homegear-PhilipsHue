@@ -151,6 +151,16 @@
 				</element>
 			</jsonPayload>
 		</packet>
+		<packet id="STATE_OFF">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<constValueBoolean>false</constValueBoolean>
+				</element>
+			</jsonPayload>
+		</packet>
 	</packets>
 	<parameterGroups>
 		<configParameters id="config--1"/>
@@ -276,7 +286,7 @@
 					</casts>
 				</properties>
 				<logicalInteger>
-					<minimumValue>1</minimumValue>
+					<minimumValue>0</minimumValue>
 					<maximumValue>254</maximumValue>
 				</logicalInteger>
 				<physicalInteger groupId="BRIGHTNESS">
@@ -285,6 +295,13 @@
 				<packets>
 					<packet id="BRIGHTNESS_SET">
 						<type>set</type>
+						<conditionOperator>ge</conditionOperator>
+						<conditionValue>1</conditionValue>
+					</packet>
+					<packet id="STATE_OFF">
+						<type>set</type>
+						<conditionOperator>e</conditionOperator>
+						<conditionValue>0</conditionValue>
 					</packet>
 					<packet id="INFO">
 						<type>event</type>
@@ -298,7 +315,7 @@
 					</casts>
 				</properties>
 				<logicalInteger>
-					<minimumValue>1</minimumValue>
+					<minimumValue>0</minimumValue>
 					<maximumValue>254</maximumValue>
 				</logicalInteger>
 				<physicalInteger groupId="BRIGHTNESS">
@@ -307,6 +324,13 @@
 				<packets>
 					<packet id="FAST_BRIGHTNESS_SET">
 						<type>set</type>
+						<conditionOperator>ge</conditionOperator>
+						<conditionValue>1</conditionValue>
+					</packet>
+					<packet id="STATE_OFF">
+						<type>set</type>
+						<conditionOperator>e</conditionOperator>
+						<conditionValue>0</conditionValue>
 					</packet>
 					<packet id="INFO">
 						<type>event</type>
