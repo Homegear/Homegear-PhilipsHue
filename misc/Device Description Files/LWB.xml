@@ -5,6 +5,26 @@
 			<typeNumber>0x304</typeNumber>
 			<minFirmwareVersion>0</minFirmwareVersion>
 		</device>
+		<device id="Philips LWB010">
+			<description>Philips hue white lamp</description>
+			<typeNumber>0x310</typeNumber>
+			<minFirmwareVersion>0</minFirmwareVersion>
+		</device>
+		<device id="innr RB 162">
+			<description>innr RB 162</description>
+			<typeNumber>0x701</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
+		<device id="IKEA of Sweden TRADFRI bulb E27 opal 1000lm">
+			<description>IKEA TRADFRI bulb E27</description>
+			<typeNumber>0x800</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
+		<device id="IKEA of Sweden TRADFRI bulb E27 W opal 1000lm">
+			<description>IKEA TRADFRI bulb E27 W</description>
+			<typeNumber>0x801</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
 	</supportedDevices>
 	<properties/>
 	<functions>
@@ -26,10 +46,6 @@
 			<direction>fromCentral</direction>
 			<type>0x2</type>
 			<jsonPayload>
-				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
 				<element>
 					<key>alert</key>
 					<parameterId>ALERT</parameterId>
@@ -132,6 +148,16 @@
 				<element>
 					<key>bri</key>
 					<parameterId>BRIGHTNESS</parameterId>
+				</element>
+			</jsonPayload>
+		</packet>
+		<packet id="STATE_OFF">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<constValueBoolean>false</constValueBoolean>
 				</element>
 			</jsonPayload>
 		</packet>
@@ -260,7 +286,7 @@
 					</casts>
 				</properties>
 				<logicalInteger>
-					<minimumValue>1</minimumValue>
+					<minimumValue>0</minimumValue>
 					<maximumValue>254</maximumValue>
 				</logicalInteger>
 				<physicalInteger groupId="BRIGHTNESS">
@@ -269,6 +295,13 @@
 				<packets>
 					<packet id="BRIGHTNESS_SET">
 						<type>set</type>
+						<conditionOperator>ge</conditionOperator>
+						<conditionValue>1</conditionValue>
+					</packet>
+					<packet id="STATE_OFF">
+						<type>set</type>
+						<conditionOperator>e</conditionOperator>
+						<conditionValue>0</conditionValue>
 					</packet>
 					<packet id="INFO">
 						<type>event</type>
@@ -282,7 +315,7 @@
 					</casts>
 				</properties>
 				<logicalInteger>
-					<minimumValue>1</minimumValue>
+					<minimumValue>0</minimumValue>
 					<maximumValue>254</maximumValue>
 				</logicalInteger>
 				<physicalInteger groupId="BRIGHTNESS">
@@ -291,6 +324,13 @@
 				<packets>
 					<packet id="FAST_BRIGHTNESS_SET">
 						<type>set</type>
+						<conditionOperator>ge</conditionOperator>
+						<conditionValue>1</conditionValue>
+					</packet>
+					<packet id="STATE_OFF">
+						<type>set</type>
+						<conditionOperator>e</conditionOperator>
+						<conditionValue>0</conditionValue>
 					</packet>
 					<packet id="INFO">
 						<type>event</type>
