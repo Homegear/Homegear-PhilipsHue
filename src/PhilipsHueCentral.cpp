@@ -891,7 +891,7 @@ std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createTeam(int32_t address, s
     return std::shared_ptr<PhilipsHuePeer>();
 }
 
-void PhilipsHueCentral::searchHueBridges()
+void PhilipsHueCentral::searchHueBridges(bool removeNotFound)
 {
 	try
 	{
@@ -925,7 +925,11 @@ void PhilipsHueCentral::searchHueBridges()
 			foundInterfaces.insert(settings->id);
 			settings->host = device.second.ip();
 			auto interface = GD::interfaces->getInterface(settings->id);
-			if(interface && interface->getHostname() == device.second.ip()) continue;
+			if(interface && interface->getHostname() == device.second.ip())
+            {
+			    GD::out.printInfo("Info: Ignoring already known Hue Bridge with IP address " + device.second.ip() + " and serial number " + settings->id + ".");
+                continue;
+            }
 			settings->address = GD::interfaces->getFreeAddress();
 			if(settings->address > 4095)
 			{
@@ -962,7 +966,7 @@ void PhilipsHueCentral::searchHueBridges()
 			}
 		}
 		if(!foundInterfaces.empty()) GD::interfaces->addEventHandlers((BaseLib::Systems::IPhysicalInterface::IPhysicalInterfaceEventSink*)this);
-		GD::interfaces->removeUnknownInterfaces(foundInterfaces);
+		if(removeNotFound) GD::interfaces->removeUnknownInterfaces(foundInterfaces);
 	}
 	catch(const std::exception& ex)
     {
@@ -1253,7 +1257,7 @@ void PhilipsHueCentral::worker()
 				{
 					countsPer10Minutes = 600;
 					counter = 0;
-					searchHueBridges();
+					searchHueBridges(false);
 					searchTeams(false);
 				}
 				counter++;
