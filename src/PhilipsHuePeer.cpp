@@ -186,7 +186,7 @@ void PhilipsHuePeer::loadVariables(BaseLib::Systems::ICentral* central, std::sha
 		}
 		if(!_physicalInterface)
 		{
-			GD::out.printError("Error: Could not find correct physical interface for peer " + std::to_string(_peerID) + ". The peer might not work correctly.");
+			GD::out.printError("Error: Could not find correct physical interface for peer " + std::to_string(_peerID) + ". The peer might not work correctly. The expected interface ID is: " + _physicalInterfaceId);
 			_physicalInterface = GD::interfaces->getDefaultInterface();
 		}
 	}

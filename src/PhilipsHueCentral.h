@@ -111,7 +111,7 @@ protected:
 	void deletePeer(uint64_t id);
 	void searchDevicesThread();
 	std::vector<std::shared_ptr<PhilipsHuePeer>> searchTeams(bool findNew = true);
-	void searchHueBridges();
+	void searchHueBridges(bool removeNotFound = true);
 
 	void init();
 	void worker();
