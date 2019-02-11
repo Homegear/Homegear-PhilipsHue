@@ -249,6 +249,10 @@
 			<type>0x2</type>
 			<jsonPayload>
 				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+				</element>
+				<element>
 					<key>transitiontime</key>
 					<parameterId>TRANSITION_TIME</parameterId>
 				</element>
