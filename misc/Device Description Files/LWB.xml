@@ -15,6 +15,11 @@
 			<typeNumber>0x701</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
+		<device id="innr UC 110">
+			<description>innr UC 110</description>
+			<typeNumber>0x702</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
 		<device id="IKEA of Sweden TRADFRI bulb E27 opal 1000lm">
 			<description>IKEA TRADFRI bulb E27</description>
 			<typeNumber>0x800</typeNumber>
@@ -23,6 +28,16 @@
 		<device id="IKEA of Sweden TRADFRI bulb E27 W opal 1000lm">
 			<description>IKEA TRADFRI bulb E27 W</description>
 			<typeNumber>0x801</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
+		<device id="IKEA of Sweden TRADFRI bulb GU10 W 400lm">
+			<description>IKEA TRADFRI bulb GU10 W 400lm</description>
+			<typeNumber>0x802</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
+		<device id="MLI ZBT-DimmableLight">
+			<description>Mueller Licht Dimmable Light</description>
+			<typeNumber>0x900</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
 	</supportedDevices>
