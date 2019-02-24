@@ -1043,17 +1043,19 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 			PVariable result;
 			uint8_t brightness = std::lround(hsv.getBrightness() * 255.0);
-			/*if(brightness < 10) result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(false)), true, wait);
-			else result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(true)), true, wait);
-			if(result->errorStruct) return result;*/
 			result = setValue(clientInfo, channel, "BRIGHTNESS", PVariable(new Variable((int32_t)brightness)), true, wait);
 			if(result->errorStruct) return result;
 			int32_t hue = std::lround(hsv.getHue() * getHueFactor(hsv.getHue()));
 			result = setValue(clientInfo, channel, "HUE", PVariable(new Variable(hue)), true, wait);
 			if(result->errorStruct) return result;
 			uint8_t saturation = std::lround(hsv.getSaturation() * 255.0);
-			result = setValue(clientInfo, channel, "SATURATION", PVariable(new Variable((int32_t)saturation)), false, wait);
+			result = setValue(clientInfo, channel, "SATURATION", PVariable(new Variable((int32_t)saturation)), brightness < 5, wait);
 			if(result->errorStruct) return result;
+			if(brightness < 5)
+			{
+				result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(false)), false, wait);
+				if(result->errorStruct) return result;
+			}
 
 			//Convert back, because the value might be different than the passed one.
 			value->stringValue = hsv.toRGB().toString();
