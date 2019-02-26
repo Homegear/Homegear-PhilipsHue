@@ -2,7 +2,7 @@
 	<supportedDevices>
 		<device id="OSRAM Plug 01">
 			<description>OSRAM Plug 01</description>
-			<typeNumber>0x404</typeNumber>
+			<typeNumber>0x405</typeNumber>
 			<minFirmwareVersion>0</minFirmwareVersion>
 		</device>
 		<device id="Busch-Jaeger RM01">

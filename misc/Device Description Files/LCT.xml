@@ -70,6 +70,21 @@
 			<typeNumber>0x700</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
+		<device id="IKEA of Sweden TRADFRI bulb E27 CWS opal 600lm">
+			<description>IKEA TRADFRI bulb E27 CWS opal 600lm</description>
+			<typeNumber>0x803</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
+		<device id="IKEA of Sweden TRADFRI bulb E27 WS opal 980lm">
+			<description>IKEA TRADFRI bulb E27 WS opal 980lm</description>
+			<typeNumber>0x804</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
+		<device id="MLI ZBT-ExtendedColor">
+			<description>Mueller Licht Tint RGB</description>
+			<typeNumber>0x901</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
 	</supportedDevices>
 	<properties/>
 	<functions>
