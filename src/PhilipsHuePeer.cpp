@@ -954,62 +954,6 @@ PVariable PhilipsHuePeer::putParamset(BaseLib::PRpcClientInfo clientInfo, int32_
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHuePeer::getParamset(BaseLib::PRpcClientInfo clientInfo, int32_t channel, ParameterGroup::Type::Enum type, uint64_t remoteID, int32_t remoteChannel, bool checkAcls)
-{
-	try
-	{
-		if(_disposing) return Variable::createError(-32500, "Peer is disposing.");
-		if(channel < 0) channel = 0;
-		if(remoteChannel < 0) remoteChannel = 0;
-		Functions::iterator functionIterator = _rpcDevice->functions.find(channel);
-		if(functionIterator == _rpcDevice->functions.end()) return Variable::createError(-2, "Unknown channel");
-		PParameterGroup parameterGroup = functionIterator->second->getParameterGroup(type);
-		if(!parameterGroup) return Variable::createError(-3, "Unknown parameter set");
-		PVariable variables(new Variable(VariableType::tStruct));
-
-		auto central = getCentral();
-		if(!central) return Variable::createError(-32500, "Could not get central.");
-
-		for(Parameters::iterator i = parameterGroup->parameters.begin(); i != parameterGroup->parameters.end(); ++i)
-		{
-			if(i->second->id.empty()) continue;
-			if(!i->second->visible && !i->second->service && !i->second->internal && !i->second->transform)
-			{
-				GD::out.printDebug("Debug: Omitting parameter " + i->second->id + " because of it's ui flag.");
-				continue;
-			}
-			PVariable element;
-			if(type == ParameterGroup::Type::Enum::variables)
-			{
-				if(checkAcls && !clientInfo->acls->checkVariableReadAccess(central->getPeer(_peerID), channel, i->first)) continue;
-				if(!i->second->readable) continue;
-				if(valuesCentral.find(channel) == valuesCentral.end()) continue;
-				if(valuesCentral[channel].find(i->second->id) == valuesCentral[channel].end()) continue;
-				std::vector<uint8_t> parameterData = valuesCentral[channel][i->second->id].getBinaryData();
-				element = i->second->convertFromPacket(parameterData);
-			}
-
-			if(!element) continue;
-			if(element->type == VariableType::tVoid) continue;
-			variables->structValue->insert(StructElement(i->second->id, element));
-		}
-		return variables;
-	}
-	catch(const std::exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
-    return Variable::createError(-32500, "Unknown application error.");
-}
-
 PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t channel, std::string valueKey, PVariable value, bool wait)
 {
 	return setValue(clientInfo, channel, valueKey, value, false, wait);
