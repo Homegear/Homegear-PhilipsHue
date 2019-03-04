@@ -43,8 +43,8 @@ public:
 
 	virtual void searchLights() = 0;
 	virtual bool userCreated() = 0;
-	virtual std::vector<std::shared_ptr<PhilipsHuePacket>> getPeerInfo() { return std::vector<std::shared_ptr<PhilipsHuePacket>>(); }
-	virtual std::vector<std::shared_ptr<PhilipsHuePacket>> getGroupInfo() { return std::vector<std::shared_ptr<PhilipsHuePacket>>(); }
+	virtual std::set<std::shared_ptr<PhilipsHuePacket>> getPeerInfo() { return std::set<std::shared_ptr<PhilipsHuePacket>>(); }
+	virtual std::set<std::shared_ptr<PhilipsHuePacket>> getGroupInfo() { return std::set<std::shared_ptr<PhilipsHuePacket>>(); }
 	virtual void sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet) {}
 protected:
 	BaseLib::Output _out;

@@ -393,37 +393,48 @@ void HueBridge::searchLights()
     }
 }
 
-std::vector<std::shared_ptr<PhilipsHuePacket>> HueBridge::getPeerInfo()
+std::set<std::shared_ptr<PhilipsHuePacket>> HueBridge::getPeerInfo()
 {
 	try
 	{
-		if(_noHost) return std::vector<std::shared_ptr<PhilipsHuePacket>>();
-		if(_username.empty()) return std::vector<std::shared_ptr<PhilipsHuePacket>>();
+		if(_noHost) return std::set<std::shared_ptr<PhilipsHuePacket>>();
+		if(_username.empty()) return std::set<std::shared_ptr<PhilipsHuePacket>>();
 
 		std::string getAllData = "GET /api/" + _username + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
 		std::string response;
 		_client->sendRequest(getAllData, response);
 
 		PVariable json = getJson(response);
-		if(!json) return std::vector<std::shared_ptr<PhilipsHuePacket>>();
+		if(!json) return std::set<std::shared_ptr<PhilipsHuePacket>>();
 
 		if(!json->arrayValue->empty() && json->arrayValue->at(0)->structValue->find("error") != json->arrayValue->at(0)->structValue->end())
 		{
 			json = json->arrayValue->at(0)->structValue->at("error");
 			if(json->structValue->find("description") != json->structValue->end()) _out.printError("getPeerInfo returned error: " + json->structValue->at("description")->stringValue);
 			else _out.printError("Unknown error during polling. Response was: " + response);
-			return std::vector<std::shared_ptr<PhilipsHuePacket>>();
+			return std::set<std::shared_ptr<PhilipsHuePacket>>();
 		}
 
-		std::vector<std::shared_ptr<PhilipsHuePacket>> peers;
+		std::set<std::shared_ptr<PhilipsHuePacket>> peers;
 		if(json->structValue->find("lights") != json->structValue->end())
 		{
 			json = json->structValue->at("lights");
-			for(std::map<std::string, PVariable>::iterator i = json->structValue->begin(); i != json->structValue->end(); ++i)
+			for(auto i = json->structValue->begin(); i != json->structValue->end(); ++i)
 			{
 				std::string address = i->first;
 				std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(PhilipsHuePacket::Category::light, (_settings->address << 20) | BaseLib::Math::getNumber(address), 0, 1, i->second, BaseLib::HelperFunctions::getTime()));
-				peers.push_back(packet);
+				peers.emplace(packet);
+			}
+		}
+
+		if(json->structValue->find("sensors") != json->structValue->end())
+		{
+			json = json->structValue->at("sensors");
+			for(auto i = json->structValue->begin(); i != json->structValue->end(); ++i)
+			{
+				std::string address = i->first;
+				std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(PhilipsHuePacket::Category::sensor, (_settings->address << 20) | BaseLib::Math::getNumber(address), 0, 1, i->second, BaseLib::HelperFunctions::getTime()));
+				peers.emplace(packet);
 			}
 		}
 		return peers;
@@ -440,40 +451,40 @@ std::vector<std::shared_ptr<PhilipsHuePacket>> HueBridge::getPeerInfo()
     {
         _out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
-    return std::vector<std::shared_ptr<PhilipsHuePacket>>();
+    return std::set<std::shared_ptr<PhilipsHuePacket>>();
 }
 
-std::vector<std::shared_ptr<PhilipsHuePacket>> HueBridge::getGroupInfo()
+std::set<std::shared_ptr<PhilipsHuePacket>> HueBridge::getGroupInfo()
 {
 	try
 	{
-		if(_noHost) return std::vector<std::shared_ptr<PhilipsHuePacket>>();
-		if(_username.empty()) return std::vector<std::shared_ptr<PhilipsHuePacket>>();
+		if(_noHost) return std::set<std::shared_ptr<PhilipsHuePacket>>();
+		if(_username.empty()) return std::set<std::shared_ptr<PhilipsHuePacket>>();
 
 		std::string getAllData = "GET /api/" + _username + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
 		std::string response;
 		_client->sendRequest(getAllData, response);
 
 		PVariable json = getJson(response);
-		if(!json) return std::vector<std::shared_ptr<PhilipsHuePacket>>();
+		if(!json) return std::set<std::shared_ptr<PhilipsHuePacket>>();
 
 		if(!json->arrayValue->empty() && json->arrayValue->at(0)->structValue->find("error") != json->arrayValue->at(0)->structValue->end())
 		{
 			json = json->arrayValue->at(0)->structValue->at("error");
 			if(json->structValue->find("description") != json->structValue->end()) _out.printError("getPeerInfo returned error: " + json->structValue->at("description")->stringValue);
 			else _out.printError("Unknown error during polling. Response was: " + response);
-			return std::vector<std::shared_ptr<PhilipsHuePacket>>();
+			return std::set<std::shared_ptr<PhilipsHuePacket>>();
 		}
 
-		std::vector<std::shared_ptr<PhilipsHuePacket>> peers;
+		std::set<std::shared_ptr<PhilipsHuePacket>> peers;
 		if(json->structValue->find("groups") != json->structValue->end())
 		{
 			json = json->structValue->at("groups");
-			for(std::map<std::string, PVariable>::iterator i = json->structValue->begin(); i != json->structValue->end(); ++i)
+			for(auto i = json->structValue->begin(); i != json->structValue->end(); ++i)
 			{
 				std::string address = i->first;
 				std::shared_ptr<PhilipsHuePacket> packet(new PhilipsHuePacket(PhilipsHuePacket::Category::group, (_settings->address << 20) | BaseLib::Math::getNumber(address), 0, 1, i->second, BaseLib::HelperFunctions::getTime()));
-				peers.push_back(packet);
+				peers.emplace(packet);
 			}
 		}
 		return peers;
@@ -490,7 +501,7 @@ std::vector<std::shared_ptr<PhilipsHuePacket>> HueBridge::getGroupInfo()
     {
         _out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
-    return std::vector<std::shared_ptr<PhilipsHuePacket>>();
+    return std::set<std::shared_ptr<PhilipsHuePacket>>();
 }
 
 PVariable HueBridge::getJson(std::string& jsonString)
