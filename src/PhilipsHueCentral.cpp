@@ -159,14 +159,14 @@ void PhilipsHueCentral::sendPacket(std::shared_ptr<IPhilipsHueInterface>& interf
     }
 }
 
-uint32_t PhilipsHueCentral::getDeviceType(const std::string& manufacturer, const std::string& modelId)
+uint32_t PhilipsHueCentral::getDeviceType(const std::string& manufacturer, const std::string& modelId, PhilipsHuePacket::Category category)
 {
 	try
 	{
 		if(modelId.length() < 4) return (uint32_t)DeviceType::none;
 		std::string typeId = manufacturer.empty() ? modelId : manufacturer + ' ' + modelId;
 		uint32_t typeNumber = GD::family->getRpcDevices()->getTypeNumberFromTypeId(typeId);
-		if(typeNumber == 0)
+		if(typeNumber == 0 && category == PhilipsHuePacket::Category::light)
 		{
 			if(modelId.compare(0, 3, "LCT") == 0) return (uint32_t)DeviceType::LCT001;
 			else if(modelId.compare(0, 3, "LLC") == 0) return (uint32_t)DeviceType::LLC001;
@@ -1128,13 +1128,13 @@ void PhilipsHueCentral::searchDevicesThread()
 
 			{
 				std::lock_guard<std::mutex> peerInitGuard(_peerInitMutex);
-				for(auto peerInfo : peersInfo)
+				for(auto& peerInfo : peersInfo)
 				{
 					PVariable info = peerInfo->getJson();
 					if(info->structValue->find("modelid") == info->structValue->end() || info->structValue->find("swversion") == info->structValue->end()) continue;
 					std::string manufacturer;
 					if(info->structValue->find("manufacturername") != info->structValue->end()) manufacturer = BaseLib::HelperFunctions::trim(info->structValue->at("manufacturername")->stringValue);
-					uint32_t deviceType = getDeviceType(manufacturer, BaseLib::HelperFunctions::trim(info->structValue->at("modelid")->stringValue));
+					uint32_t deviceType = getDeviceType(manufacturer, BaseLib::HelperFunctions::trim(info->structValue->at("modelid")->stringValue), peerInfo->getCategory());
 
 					std::shared_ptr<PhilipsHuePeer> peer = getPeer(peerInfo->senderAddress());
 					if(peer)
@@ -1148,7 +1148,7 @@ void PhilipsHueCentral::searchDevicesThread()
 						peer.reset();
 					}
 					std::string swversion = info->structValue->at("swversion")->stringValue;
-					int32_t pos = swversion.find_first_of('.');
+					auto pos = swversion.find_first_of('.');
 					if(pos > 0) pos = swversion.find_first_of('.', pos + 1);
 					if(pos > 0) swversion = swversion.substr(0, pos);
 					BaseLib::HelperFunctions::stringReplace(swversion, ".", "");

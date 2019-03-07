@@ -50,8 +50,8 @@ class HueBridge  : public IPhilipsHueInterface
         virtual bool isOpen() { return (bool)_client; }
         virtual void searchLights();
         virtual bool userCreated() { return !_username.empty(); };
-        virtual std::vector<std::shared_ptr<PhilipsHuePacket>> getPeerInfo();
-        virtual std::vector<std::shared_ptr<PhilipsHuePacket>> getGroupInfo();
+        virtual std::set<std::shared_ptr<PhilipsHuePacket>> getPeerInfo();
+        virtual std::set<std::shared_ptr<PhilipsHuePacket>> getGroupInfo();
     protected:
         bool _noHost = true;
         int64_t _lastAction = 0;

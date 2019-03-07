@@ -1,0 +1,168 @@
+<homegearDevice version="1">
+	<supportedDevices>
+		<device id="Philips PHDL00">
+			<description>Philips daylight sensor</description>
+			<typeNumber>0x10001</typeNumber>
+			<minFirmwareVersion>0x0</minFirmwareVersion>
+		</device>
+	</supportedDevices>
+	<properties/>
+	<functions>
+		<function channel="0" type="MAINTENANCE" channelCount="1">
+			<properties>
+				<internal>true</internal>
+			</properties>
+			<configParameters>maint_ch_master--0</configParameters>
+			<variables>maint_ch_values--0</variables>
+		</function>
+		<function channel="1" type="SENSOR" channelCount="1">
+			<properties/>
+			<configParameters>config--1</configParameters>
+			<variables>sensor_valueset--1</variables>
+		</function>
+	</functions>
+	<packets>
+		<packet id="INFO">
+			<direction>toCentral</direction>
+			<type>0x1</type>
+			<channel>1</channel>
+			<jsonPayload>
+				<element>
+					<key>state</key>
+					<subkey>dark</subkey>
+					<parameterId>DARK</parameterId>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>daylight</subkey>
+					<parameterId>DAYLIGHT</parameterId>
+				</element>
+				<element>
+					<key>state</key>
+					<subkey>status</subkey>
+					<parameterId>STATUS</parameterId>
+				</element>
+			</jsonPayload>
+		</packet>
+	</packets>
+	<parameterGroups>
+		<configParameters id="config--1"/>
+		<configParameters id="maint_ch_master--0"/>
+		<variables id="maint_ch_values--0">
+			<parameter id="UNREACH">
+				<properties>
+					<writeable>false</writeable>
+					<service>true</service>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="UNREACH">
+					<operationType>internal</operationType>
+				</physicalInteger>
+			</parameter>
+			<parameter id="STICKY_UNREACH">
+				<properties>
+					<service>true</service>
+					<sticky>true</sticky>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="STICKY_UNREACH">
+					<operationType>internal</operationType>
+				</physicalInteger>
+			</parameter>
+			<parameter id="CONFIG_PENDING">
+				<properties>
+					<writeable>false</writeable>
+					<service>true</service>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="CONFIG_PENDING">
+					<operationType>internal</operationType>
+				</physicalInteger>
+			</parameter>
+			<parameter id="RSSI_DEVICE">
+				<properties>
+					<writeable>false</writeable>
+				</properties>
+				<logicalInteger/>
+				<physicalInteger groupId="RSSI_DEVICE">
+					<operationType>internal</operationType>
+				</physicalInteger>
+			</parameter>
+			<parameter id="RSSI_PEER">
+				<properties>
+					<writeable>false</writeable>
+				</properties>
+				<logicalInteger/>
+				<physicalInteger groupId="RSSI_PEER">
+					<operationType>internal</operationType>
+				</physicalInteger>
+			</parameter>
+		</variables>
+		<variables id="sensor_valueset--1">
+			<parameter id="PEER_ID">
+				<properties>
+					<!-- Needed for the CCU2. Must be writeable, otherwise it can't be used in the CCU. -->
+					<control>EASYPHILIPSHUE.PEERID</control>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger/>
+			</parameter>
+			<parameter id="DARK">
+				<properties>
+					<writeable>false</writeable>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="DARK">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="DAYLIGHT">
+				<properties>
+					<writeable>false</writeable>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalBoolean/>
+				<physicalInteger groupId="DAYLIGHT">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+			<parameter id="STATUS">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger>
+					<minimumValue>0</minimumValue>
+					<maximumValue>255</maximumValue>
+				</logicalInteger>
+				<physicalInteger groupId="STATUS">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
+		</variables>
+	</parameterGroups>
+</homegearDevice>
+
