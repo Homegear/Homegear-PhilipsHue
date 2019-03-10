@@ -44,7 +44,8 @@ class PhilipsHuePacket : public BaseLib::Systems::Packet
 		enum class Category
 		{
 			light = 0,
-			group = 1
+			group = 1,
+			sensor = 2
 		};
 
         //Properties
