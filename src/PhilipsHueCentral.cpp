@@ -166,7 +166,7 @@ uint32_t PhilipsHueCentral::getDeviceType(const std::string& manufacturer, const
 		if(modelId.length() < 4) return (uint32_t)DeviceType::none;
 		std::string typeId = manufacturer.empty() ? modelId : manufacturer + ' ' + modelId;
 		uint32_t typeNumber = GD::family->getRpcDevices()->getTypeNumberFromTypeId(typeId);
-		if(typeNumber == 0 && category == PhilipsHuePacket::Category::light)
+		if(typeNumber == 0 && (category == PhilipsHuePacket::Category::light || category == PhilipsHuePacket::Category::group))
 		{
 			if(modelId.compare(0, 3, "LCT") == 0) return (uint32_t)DeviceType::LCT001;
 			else if(modelId.compare(0, 3, "LLC") == 0) return (uint32_t)DeviceType::LLC001;
