@@ -115,7 +115,7 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
         data.push_back('\n');
         BaseLib::Http response;
 
-        Exception exception("");
+        std::string exception;
         for(int i = 0; i < 5; i++)
         {
             try
@@ -124,23 +124,23 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
                 _client->sendRequest(data, response);
                 if(response.getHeader().responseCode < 200 || response.getHeader().responseCode > 299)
                 {
-                    exception = Exception("Error sending command to Hue Bridge. Response code was: " + std::to_string(response.getHeader().responseCode));
+                    exception = "Error sending command to Hue Bridge. Response code was: " + std::to_string(response.getHeader().responseCode);
                     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                 }
-                else exception = Exception("");
+                else exception = "";
                 break;
             }
             catch(Exception& ex)
             {
-                exception = ex;
+                exception = std::string(ex.what());
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             }
         }
 
         std::string responseString(response.getContent().data(), response.getContentSize());
-        if(!exception.what().empty())
+        if(!exception.empty())
         {
-            _out.printError("Error: Command was not send to Hue Bridge: " + exception.what() + " Response was: " + responseString);
+            _out.printError("Error: Command was not send to Hue Bridge: " + exception + " Response was: " + responseString);
         }
 
         json = getJson(responseString);
@@ -512,7 +512,7 @@ PVariable HueBridge::getJson(std::string& jsonString)
     }
     catch(const BaseLib::Rpc::JsonDecoderException& ex)
     {
-        _out.printError("Error parsing json: " + ex.what() + ". Data was: " + jsonString);
+        _out.printError("Error parsing json: " + std::string(ex.what()) + ". Data was: " + jsonString);
     }
     catch(const std::exception& ex)
     {
@@ -535,7 +535,7 @@ void HueBridge::listen()
     {
         std::string getAllData = "GET /api/" + _username + " HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nConnection: Keep-Alive\r\n\r\n";
         std::string response;
-        Exception exception("");
+        std::string exception;
 
         while(!_stopCallbackThread)
         {
@@ -560,18 +560,18 @@ void HueBridge::listen()
                     {
                         if(_stopCallbackThread) return;
                         _client->sendRequest(getAllData, response);
-                        exception = BaseLib::Exception("");
+                        exception = "";
                         break;
                     }
                     catch(const BaseLib::Exception& ex)
                     {
-                        exception = ex;
+                        exception = std::string(ex.what());
                         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                     }
                 }
-                if(!exception.what().empty())
+                if(!exception.empty())
                 {
-                    _out.printError("Error: Command was not send to Hue Bridge: " + exception.what());
+                    _out.printError("Error: Command was not send to Hue Bridge: " + exception);
                     continue;
                 }
 
