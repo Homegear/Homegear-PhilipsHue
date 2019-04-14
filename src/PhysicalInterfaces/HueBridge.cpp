@@ -108,8 +108,8 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
         std::string data;
         _jsonEncoder->encode(json, data);
         std::string header;
-        if(huePacket->getCategory() == PhilipsHuePacket::Category::light) header = "PUT /api/" + _username + "/lights/" + std::to_string(packet->destinationAddress() & 0xFFFFF) + "/state HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: " + std::to_string(data.size()) + "\r\nConnection: Keep-Alive\r\n\r\n";
-        else if(huePacket->getCategory() == PhilipsHuePacket::Category::group) header = "PUT /api/" + _username + "/groups/" + std::to_string(packet->destinationAddress() & 0xFFFFF) + "/action HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: " + std::to_string(data.size()) + "\r\nConnection: Keep-Alive\r\n\r\n";
+        if(huePacket->getCategory() == PhilipsHuePacket::Category::light) header = "PUT /api/" + _username + "/lights/" + std::to_string(huePacket->destinationAddress() & 0xFFFFF) + "/state HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: " + std::to_string(data.size()) + "\r\nConnection: Keep-Alive\r\n\r\n";
+        else if(huePacket->getCategory() == PhilipsHuePacket::Category::group) header = "PUT /api/" + _username + "/groups/" + std::to_string(huePacket->destinationAddress() & 0xFFFFF) + "/action HTTP/1.1\r\nUser-Agent: Homegear\r\nHost: " + _hostname + ":" + std::to_string(_port) + "\r\nContent-Type: application/json\r\nContent-Length: " + std::to_string(data.size()) + "\r\nConnection: Keep-Alive\r\n\r\n";
         data.insert(data.begin(), header.begin(), header.end());
         data.push_back('\r');
         data.push_back('\n');
