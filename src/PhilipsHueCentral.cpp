@@ -30,6 +30,8 @@
 #include "PhilipsHueCentral.h"
 #include "GD.h"
 
+#include <iomanip>
+
 namespace PhilipsHue {
 
 PhilipsHueCentral::PhilipsHueCentral(ICentralEventSink* eventHandler) : BaseLib::Systems::ICentral(HUE_FAMILY_ID, GD::bl, eventHandler)

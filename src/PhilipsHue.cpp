@@ -32,6 +32,8 @@
 #include "PhilipsHueCentral.h"
 #include "GD.h"
 
+#include <iomanip>
+
 namespace PhilipsHue
 {
 
