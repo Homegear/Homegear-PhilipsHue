@@ -126,11 +126,12 @@ void HueBridge::sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet)
                 {
                     exception = "Error sending command to Hue Bridge. Response code was: " + std::to_string(response.getHeader().responseCode);
                     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                    continue;
                 }
                 else exception = "";
                 break;
             }
-            catch(Exception& ex)
+            catch(const std::exception& ex)
             {
                 exception = std::string(ex.what());
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -563,7 +564,7 @@ void HueBridge::listen()
                         exception = "";
                         break;
                     }
-                    catch(const BaseLib::Exception& ex)
+                    catch(const std::exception& ex)
                     {
                         exception = std::string(ex.what());
                         std::this_thread::sleep_for(std::chrono::milliseconds(1000));

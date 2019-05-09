@@ -57,6 +57,7 @@ void PhilipsHue::dispose()
 {
 	if(_disposed) return;
 	DeviceFamily::dispose();
+    _central.reset();
 	GD::interfaces.reset();
 	_physicalInterfaces.reset();
 }
@@ -113,7 +114,7 @@ PVariable PhilipsHue::getPairingInfo()
 		field->structValue->emplace("label", std::make_shared<BaseLib::Variable>(std::string("l10n.philipshue.pairingInfo.pollingInterval")));
 		field->structValue->emplace("type", std::make_shared<BaseLib::Variable>(std::string("integer")));
 		field->structValue->emplace("default", std::make_shared<BaseLib::Variable>(5000));
-		familySettings->structValue->emplace("pollingIntervall", field);
+		familySettings->structValue->emplace("pollingInterval", field);
 
 		info->structValue->emplace("familySettings", familySettings);
 		//}}}
