@@ -1230,7 +1230,7 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 {
 	try
 	{
-		if(_searching) return std::make_shared<BaseLib::Variable>(0);
+		if(_searching) return std::make_shared<BaseLib::Variable>(-3);
 		_searching = true;
 		_bl->threadManager.start(_searchDevicesThread, true, &PhilipsHueCentral::searchDevicesThread, this);
         return std::make_shared<BaseLib::Variable>(-2);
