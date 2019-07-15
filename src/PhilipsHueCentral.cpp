@@ -30,6 +30,8 @@
 #include "PhilipsHueCentral.h"
 #include "GD.h"
 
+#include <iomanip>
+
 namespace PhilipsHue {
 
 PhilipsHueCentral::PhilipsHueCentral(ICentralEventSink* eventHandler) : BaseLib::Systems::ICentral(HUE_FAMILY_ID, GD::bl, eventHandler)
@@ -74,14 +76,6 @@ void PhilipsHueCentral::dispose(bool wait)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
 }
 
 bool PhilipsHueCentral::onPacketReceived(std::string& senderID, std::shared_ptr<BaseLib::Systems::Packet> packet)
@@ -107,14 +101,6 @@ bool PhilipsHueCentral::onPacketReceived(std::string& senderID, std::shared_ptr<
 	catch(const std::exception& ex)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
     return false;
 }
@@ -149,14 +135,6 @@ void PhilipsHueCentral::sendPacket(std::shared_ptr<IPhilipsHueInterface>& interf
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
 }
 
 uint32_t PhilipsHueCentral::getDeviceType(const std::string& manufacturer, const std::string& modelId, PhilipsHuePacket::Category category)
@@ -183,14 +161,6 @@ uint32_t PhilipsHueCentral::getDeviceType(const std::string& manufacturer, const
 	catch(const std::exception& ex)
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
     return (uint32_t)DeviceType::none;
 }
@@ -234,16 +204,6 @@ void PhilipsHueCentral::loadPeers()
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     	_peersMutex.unlock();
     }
-    catch(BaseLib::Exception& ex)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    	_peersMutex.unlock();
-    }
-    catch(...)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    	_peersMutex.unlock();
-    }
 }
 
 void PhilipsHueCentral::loadVariables()
@@ -266,14 +226,6 @@ void PhilipsHueCentral::loadVariables()
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
 }
 
 void PhilipsHueCentral::savePeers(bool full)
@@ -294,14 +246,6 @@ void PhilipsHueCentral::savePeers(bool full)
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
 }
 
 void PhilipsHueCentral::saveVariables()
@@ -315,14 +259,6 @@ void PhilipsHueCentral::saveVariables()
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
 }
 
 std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::getPeer(int32_t address)
@@ -335,14 +271,6 @@ std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::getPeer(int32_t address)
 	catch(const std::exception& ex)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
     return std::shared_ptr<PhilipsHuePeer>();
 }
@@ -358,14 +286,6 @@ std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::getPeer(uint64_t id)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
     return std::shared_ptr<PhilipsHuePeer>();
 }
 
@@ -379,14 +299,6 @@ std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::getPeer(std::string serialNum
 	catch(const std::exception& ex)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
     return std::shared_ptr<PhilipsHuePeer>();
 }
@@ -459,14 +371,6 @@ void PhilipsHueCentral::deletePeer(uint64_t id)
 	catch(const std::exception& ex)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
 }
 
@@ -723,16 +627,6 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 				_peersMutex.unlock();
 				GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
 			}
-			catch(BaseLib::Exception& ex)
-			{
-				_peersMutex.unlock();
-				GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-			}
-			catch(...)
-			{
-				_peersMutex.unlock();
-				GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-			}
 		}
 		else if(command.compare(0, 13, "peers setname") == 0 || command.compare(0, 2, "pn") == 0)
 		{
@@ -820,14 +714,6 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
     return "Error executing command. See log file for more details.\n";
 }
 
@@ -850,14 +736,6 @@ std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createPeer(int32_t address, i
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
     return std::shared_ptr<PhilipsHuePeer>();
 }
 
@@ -879,14 +757,6 @@ std::shared_ptr<PhilipsHuePeer> PhilipsHueCentral::createTeam(int32_t address, s
 	catch(const std::exception& ex)
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
     return std::shared_ptr<PhilipsHuePeer>();
 }
@@ -971,14 +841,6 @@ void PhilipsHueCentral::searchHueBridges(bool removeNotFound)
 	catch(const std::exception& ex)
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
     _searching = false;
 }
@@ -1096,14 +958,6 @@ std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams(bool
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-    	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
     return std::vector<std::shared_ptr<PhilipsHuePeer>>();
 }
 
@@ -1187,43 +1041,37 @@ void PhilipsHueCentral::searchDevicesThread()
 			newPeers.push_back(team);
 		}
 
-		if(newPeers.size() > 0)
-		{
+        if(!newPeers.empty())
+        {
             std::vector<uint64_t> newIds;
             newIds.reserve(newPeers.size());
-			PVariable deviceDescriptions(new Variable(VariableType::tArray));
-			for(std::vector<std::shared_ptr<PhilipsHuePeer>>::iterator i = newPeers.begin(); i != newPeers.end(); ++i)
-			{
-				std::shared_ptr<std::vector<PVariable>> descriptions = (*i)->getDeviceDescriptions(nullptr, true, std::map<std::string, bool>());
-				if(!descriptions) continue;
-                newIds.push_back((*i)->getID());
-				for(std::vector<PVariable>::iterator j = descriptions->begin(); j != descriptions->end(); ++j)
-				{
-					deviceDescriptions->arrayValue->push_back(*j);
-				}
+            PVariable deviceDescriptions = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tArray);
+            deviceDescriptions->arrayValue->reserve(100);
+            for(auto& newPeer : newPeers)
+            {
+                std::shared_ptr<std::vector<PVariable>> descriptions = newPeer->getDeviceDescriptions(nullptr, true, std::map<std::string, bool>());
+                if(!descriptions) continue;
+                newIds.push_back(newPeer->getID());
+                for(auto& description : *descriptions)
+                {
+                    if(deviceDescriptions->arrayValue->size() + 1 > deviceDescriptions->arrayValue->capacity()) deviceDescriptions->arrayValue->reserve(deviceDescriptions->arrayValue->size() + 100);
+                    deviceDescriptions->arrayValue->push_back(description);
+                }
 
                 {
                     auto pairingState = std::make_shared<PairingState>();
-                    pairingState->peerId = (*i)->getID();
+                    pairingState->peerId = newPeer->getID();
                     pairingState->state = "success";
                     std::lock_guard<std::mutex> newPeersGuard(_newPeersMutex);
                     _newPeers[BaseLib::HelperFunctions::getTime()].emplace_back(std::move(pairingState));
                 }
-			}
-			raiseRPCNewDevices(newIds, deviceDescriptions);
-		}
+            }
+            raiseRPCNewDevices(newIds, deviceDescriptions);
+        }
 	}
 	catch(const std::exception& ex)
 	{
 			GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
     _searching = false;
 }
@@ -1266,27 +1114,11 @@ void PhilipsHueCentral::worker()
 			{
 				GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
 			}
-			catch(BaseLib::Exception& ex)
-			{
-				GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-			}
-			catch(...)
-			{
-				GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-			}
 		}
 	}
 	catch(const std::exception& ex)
 	{
 			GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
 }
 
@@ -1311,14 +1143,6 @@ PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, st
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
     return Variable::createError(-32500, "Unknown application error.");
 }
 
@@ -1341,14 +1165,6 @@ PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, ui
 	catch(const std::exception& ex)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
     return Variable::createError(-32500, "Unknown application error.");
 }
@@ -1407,14 +1223,6 @@ PVariable PhilipsHueCentral::getPairingState(BaseLib::PRpcClientInfo clientInfo)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
     }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-    }
     return Variable::createError(-32500, "Unknown application error.");
 }
 
@@ -1422,7 +1230,7 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 {
 	try
 	{
-		if(_searching) return std::make_shared<BaseLib::Variable>(0);
+		if(_searching) return std::make_shared<BaseLib::Variable>(-3);
 		_searching = true;
 		_bl->threadManager.start(_searchDevicesThread, true, &PhilipsHueCentral::searchDevicesThread, this);
         return std::make_shared<BaseLib::Variable>(-2);
@@ -1430,14 +1238,6 @@ PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
 	catch(const std::exception& ex)
 	{
 		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-	}
-	catch(BaseLib::Exception& ex)
-	{
-		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-	}
-	catch(...)
-	{
-		GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
 	}
 	return Variable::createError(-32500, "Unknown application error.");
 }
@@ -1454,14 +1254,6 @@ PVariable PhilipsHueCentral::searchInterfaces(BaseLib::PRpcClientInfo clientInfo
     catch(const std::exception& ex)
     {
         GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(BaseLib::Exception& ex)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    }
-    catch(...)
-    {
-        GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     }
     return Variable::createError(-32500, "Unknown application error.");
 }
