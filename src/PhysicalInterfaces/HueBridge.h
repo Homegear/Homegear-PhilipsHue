@@ -47,13 +47,14 @@ class HueBridge  : public IPhilipsHueInterface
         void stopListening();
         void sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet);
         int64_t lastAction() { return _lastAction; }
-        virtual bool isOpen() { return (bool)_client; }
+        virtual bool isOpen() { return (bool)_client && _connected; }
         virtual void searchLights();
         virtual bool userCreated() { return !_username.empty(); };
         virtual std::set<std::shared_ptr<PhilipsHuePacket>> getPeerInfo();
         virtual std::set<std::shared_ptr<PhilipsHuePacket>> getGroupInfo();
     protected:
         bool _noHost = true;
+        std::atomic_bool _connected{false};
         int64_t _lastAction = 0;
         uint32_t _pollingInterval = 3000;
         int64_t _nextPoll = 0;

@@ -224,6 +224,7 @@ void HueBridge::startListening()
         _ipAddress = _client->getIpAddress();
         _myAddress = _settings->address;
         _noHost = _hostname.empty();
+        _connected = false;
         if(!_noHost)
         {
             if(_settings->listenThreadPriority > -1) _bl->threadManager.start(_listenThread, true, _settings->listenThreadPriority, _settings->listenThreadPolicy, &HueBridge::listen, this);
@@ -572,9 +573,12 @@ void HueBridge::listen()
                 }
                 if(!exception.empty())
                 {
+                    _connected = false;
                     _out.printError("Error: Command was not send to Hue Bridge: " + exception);
                     continue;
                 }
+
+                _connected = true;
 
                 PVariable json = getJson(response);
                 if(!json) return;
