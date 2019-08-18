@@ -66,11 +66,11 @@ void PhilipsHueCentral::dispose(bool wait)
 		if(_disposing) return;
 		_disposing = true;
 		_stopWorkerThread = true;
-		GD::out.printDebug("Removing device " + std::to_string(_deviceId) + " from physical device's event queue...");
+        GD::bl->threadManager.join(_searchDevicesThread);
+        GD::out.printDebug("Debug: Waiting for worker thread of device " + std::to_string(_deviceId) + "...");
+        _bl->threadManager.join(_workerThread);
+        GD::out.printDebug("Removing device " + std::to_string(_deviceId) + " from physical device's event queue...");
 		GD::interfaces->removeEventHandlers();
-		GD::bl->threadManager.join(_searchDevicesThread);
-		GD::out.printDebug("Debug: Waiting for worker thread of device " + std::to_string(_deviceId) + "...");
-		_bl->threadManager.join(_workerThread);
 	}
     catch(const std::exception& ex)
     {
