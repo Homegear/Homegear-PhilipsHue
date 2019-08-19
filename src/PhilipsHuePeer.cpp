@@ -65,6 +65,8 @@ PhilipsHuePeer::PhilipsHuePeer(int32_t id, int32_t address, std::string serialNu
 PhilipsHuePeer::~PhilipsHuePeer()
 {
 	dispose();
+	std::lock_guard<std::mutex> teamPeersGuard(_teamPeersMutex);
+	_teamPeers.clear();
 }
 
 std::string PhilipsHuePeer::handleCliCommand(std::string command)

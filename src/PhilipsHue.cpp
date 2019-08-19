@@ -1,3 +1,5 @@
+#include <memory>
+
 /* Copyright 2013-2019 Homegear GmbH
  *
  * Homegear is free software: you can redistribute it and/or modify
@@ -64,7 +66,7 @@ void PhilipsHue::dispose()
 
 std::shared_ptr<BaseLib::Systems::ICentral> PhilipsHue::initializeCentral(uint32_t deviceId, int32_t address, std::string serialNumber)
 {
-	return std::shared_ptr<PhilipsHueCentral>(new PhilipsHueCentral(deviceId, serialNumber, 1, this));
+	return std::make_shared<PhilipsHueCentral>(deviceId, serialNumber, 1, this);
 }
 
 void PhilipsHue::createCentral()

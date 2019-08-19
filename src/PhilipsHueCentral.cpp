@@ -179,12 +179,11 @@ void PhilipsHueCentral::loadPeers()
 			std::shared_ptr<PhilipsHuePeer> peer(new PhilipsHuePeer(peerID, address, row->second.at(3)->textValue, _deviceId, this));
 			if(!peer->load(this)) continue;
 			if(!peer->getRpcDevice()) continue;
-			_peersMutex.lock();
+			std::lock_guard<std::mutex> peersGuard(_peersMutex);
 			if(!peer->isTeam()) _peers[peer->getAddress()] = peer;
 			else teams.push_back(peer);
 			if(!peer->getSerialNumber().empty()) _peersBySerial[peer->getSerialNumber()] = peer;
 			_peersById[peerID] = peer;
-			_peersMutex.unlock();
 		}
 
 		for(auto team : teams)
@@ -202,7 +201,6 @@ void PhilipsHueCentral::loadPeers()
 	catch(const std::exception& ex)
     {
     	GD::out.printEx(__FILE__, __LINE__, __PRETTY_FUNCTION__, ex.what());
-    	_peersMutex.unlock();
     }
 }
 
