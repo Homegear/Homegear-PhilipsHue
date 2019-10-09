@@ -50,8 +50,8 @@ public:
 	std::shared_ptr<IPhilipsHueInterface> addInterface(Systems::PPhysicalInterfaceSettings settings, bool storeInDatabase);
 	void removeUnknownInterfaces(std::set<std::string>& knownInterfaces);
 	std::shared_ptr<IPhilipsHueInterface> getDefaultInterface();
-	std::shared_ptr<IPhilipsHueInterface> getInterface(std::string& name);
-	std::shared_ptr<IPhilipsHueInterface> getInterfaceByIp(std::string& ipAddress);
+	std::shared_ptr<IPhilipsHueInterface> getInterface(const std::string& name);
+	std::shared_ptr<IPhilipsHueInterface> getInterfaceByIp(const std::string& ipAddress);
 	std::vector<std::shared_ptr<IPhilipsHueInterface>> getInterfaces();
 	uint32_t getFreeAddress();
 	void removeUsedAddress(uint32_t address);

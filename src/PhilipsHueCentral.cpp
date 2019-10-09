@@ -787,7 +787,7 @@ void PhilipsHueCentral::searchHueBridges(bool removeNotFound)
 			PVariable info = device.second.info();
 			if(!info) continue;
 			if(info->structValue->find("manufacturer") == info->structValue->end() || info->structValue->find("modelName") == info->structValue->end() || info->structValue->find("serialNumber") == info->structValue->end()) continue;
-			if(info->structValue->at("manufacturer")->stringValue != "Royal Philips Electronics" || info->structValue->at("modelName")->stringValue.compare(0, 18, "Philips hue bridge") != 0) continue;
+			if(info->structValue->at("modelName")->stringValue.compare(0, 18, "Philips hue bridge") != 0) continue;
 			Systems::PPhysicalInterfaceSettings settings = std::make_shared<Systems::PhysicalInterfaceSettings>();
 			settings->id = BaseLib::HelperFunctions::stringReplace(info->structValue->at("serialNumber")->stringValue, ".", "-"); //Points are not allowed as they are needed for seperation of config settings
 			foundInterfaces.insert(settings->id);

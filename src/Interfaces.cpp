@@ -43,6 +43,8 @@ Interfaces::~Interfaces()
 {
 	_physicalInterfaces.clear();
 	_defaultPhysicalInterface.reset();
+    _physicalInterfaceEventhandlers.clear();
+    _usedAddresses.clear();
 }
 
 void Interfaces::addEventHandlers(BaseLib::Systems::IPhysicalInterface::IPhysicalInterfaceEventSink* central)
@@ -99,6 +101,7 @@ std::vector<std::shared_ptr<IPhilipsHueInterface>> Interfaces::getInterfaces()
 	try
 	{
 		std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
+        interfaces.reserve(_physicalInterfaces.size());
 		for(auto interfaceBase : _physicalInterfaces)
 		{
 			std::shared_ptr<IPhilipsHueInterface> interface(std::dynamic_pointer_cast<IPhilipsHueInterface>(interfaceBase.second));
@@ -119,7 +122,7 @@ std::shared_ptr<IPhilipsHueInterface> Interfaces::getDefaultInterface()
 	return _defaultPhysicalInterface;
 }
 
-std::shared_ptr<IPhilipsHueInterface> Interfaces::getInterface(std::string& name)
+std::shared_ptr<IPhilipsHueInterface> Interfaces::getInterface(const std::string& name)
 {
 	std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
 	auto interfaceBase = _physicalInterfaces.find(name);
@@ -128,7 +131,7 @@ std::shared_ptr<IPhilipsHueInterface> Interfaces::getInterface(std::string& name
 	return interface;
 }
 
-std::shared_ptr<IPhilipsHueInterface> Interfaces::getInterfaceByIp(std::string& ipAddress)
+std::shared_ptr<IPhilipsHueInterface> Interfaces::getInterfaceByIp(const std::string& ipAddress)
 {
 	std::lock_guard<std::mutex> interfaceGuard(_physicalInterfacesMutex);
 	for(auto interfaceBase : _physicalInterfaces)
