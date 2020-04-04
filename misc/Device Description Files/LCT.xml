@@ -285,6 +285,32 @@
 				</element>
 			</jsonPayload>
 		</packet>
+		<packet id="FAST_SATURATION_SET">
+			<direction>fromCentral</direction>
+			<type>0x2</type>
+			<jsonPayload>
+				<element>
+					<key>on</key>
+					<constValueBoolean>true</constValueBoolean>
+				</element>
+				<element>
+					<key>transitiontime</key>
+					<parameterId>0</parameterId>
+				</element>
+				<element>
+					<key>bri</key>
+					<parameterId>BRIGHTNESS</parameterId>
+				</element>
+				<element>
+					<key>hue</key>
+					<parameterId>HUE</parameterId>
+				</element>
+				<element>
+					<key>sat</key>
+					<parameterId>SATURATION</parameterId>
+				</element>
+			</jsonPayload>
+		</packet>
 		<packet id="STATE_SET">
 			<direction>fromCentral</direction>
 			<type>0x2</type>
@@ -565,6 +591,28 @@
 					</packet>
 				</packets>
 			</parameter>
+			<parameter id="FAST_SATURATION">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalInteger>
+					<minimumValue>0</minimumValue>
+					<maximumValue>255</maximumValue>
+				</logicalInteger>
+				<physicalInteger groupId="FAST_SATURATION">
+					<operationType>command</operationType>
+				</physicalInteger>
+				<packets>
+					<packet id="FAST_SATURATION_SET">
+						<type>set</type>
+					</packet>
+					<packet id="INFO">
+						<type>event</type>
+					</packet>
+				</packets>
+			</parameter>
 			<parameter id="COLOR_TEMPERATURE">
 				<properties>
 					<casts>
@@ -659,6 +707,17 @@
 				</properties>
 				<logicalString/>
 				<physicalInteger groupId="RGB">
+					<operationType>command</operationType>
+				</physicalInteger>
+			</parameter>
+			<parameter id="FAST_RGB">
+				<properties>
+					<casts>
+						<rpcBinary/>
+					</casts>
+				</properties>
+				<logicalString/>
+				<physicalInteger groupId="FAST_RGB">
 					<operationType>command</operationType>
 				</physicalInteger>
 			</parameter>

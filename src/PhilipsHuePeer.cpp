@@ -860,7 +860,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		std::shared_ptr<std::vector<std::string>> valueKeys(new std::vector<std::string>());
 		std::shared_ptr<std::vector<PVariable>> values(new std::vector<PVariable>());
 
-		if(valueKey == "RGB") //Special case, because it sets two parameters (XY and BRIGHTNESS)
+		if(valueKey == "RGB" || valueKey == "FAST_RGB") //Special case, because it sets two parameters (XY and BRIGHTNESS)
 		{
 			std::lock_guard<std::timed_mutex> incomingPacketGuard(_incomingPacketMutex);
 			BaseLib::Color::RGB cRGB(value->stringValue);
@@ -875,7 +875,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 			result = setValue(clientInfo, channel, "HUE", PVariable(new Variable(hue)), true, wait);
 			if(result->errorStruct) return result;
 			uint8_t saturation = std::lround(hsv.getSaturation() * 255.0);
-			result = setValue(clientInfo, channel, "SATURATION", PVariable(new Variable((int32_t)saturation)), brightness < 5, wait);
+			result = setValue(clientInfo, channel, (valueKey == "RGB" ? "SATURATION" : "FAST_RGB"), PVariable(new Variable((int32_t)saturation)), brightness < 5, wait);
 			if(result->errorStruct) return result;
 			if(brightness < 5)
 			{
