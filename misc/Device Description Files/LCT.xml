@@ -85,6 +85,11 @@
 			<typeNumber>0x901</typeNumber>
 			<minFirmwareVersion>0x0</minFirmwareVersion>
 		</device>
+        <device id="GLEDOPTO GL-H-001">
+        	<description>GLEDOPTO Milight to Zigbee Bridge</description>
+            <typeNumber>0x1001</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
 	</supportedDevices>
 	<properties/>
 	<functions>
