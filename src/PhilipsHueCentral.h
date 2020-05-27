@@ -76,7 +76,7 @@ public:
 	virtual PVariable deleteDevice(BaseLib::PRpcClientInfo clientInfo, std::string serialNumber, int32_t flags);
 	virtual PVariable deleteDevice(BaseLib::PRpcClientInfo clientInfo, uint64_t peerID, int32_t flags);
     virtual PVariable getPairingState(BaseLib::PRpcClientInfo clientInfo);
-	virtual PVariable searchDevices(BaseLib::PRpcClientInfo clientInfo);
+	virtual PVariable searchDevices(BaseLib::PRpcClientInfo clientInfo, const std::string& interfaceId);
 	virtual PVariable searchInterfaces(BaseLib::PRpcClientInfo clientInfo, BaseLib::PVariable metadata);
 protected:
 	//In table variables
@@ -109,7 +109,7 @@ protected:
 	std::shared_ptr<PhilipsHuePeer> createPeer(int32_t address, int32_t firmwareVersion, uint32_t deviceType, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save = true);
 	std::shared_ptr<PhilipsHuePeer> createTeam(int32_t address, std::string serialNumber, std::shared_ptr<IPhilipsHueInterface> interface, bool save);
 	void deletePeer(uint64_t id);
-	void searchDevicesThread();
+	void searchDevicesThread(std::string interfaceId);
 	std::vector<std::shared_ptr<PhilipsHuePeer>> searchTeams(bool findNew = true);
 	void searchHueBridges(bool removeNotFound = true);
 
