@@ -90,6 +90,16 @@
             <typeNumber>0x1001</typeNumber>
             <minFirmwareVersion>0x0</minFirmwareVersion>
         </device>
+        <device id="YSRSAI ZB-CT01">
+        	<description>YSRSAI ZB-CT01</description>
+            <typeNumber>0x1101</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="YSRSAI ZB-CL01">
+        	<description>YSRSAI ZB-CL01</description>
+            <typeNumber>0x1102</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device> 
 	</supportedDevices>
 	<properties/>
 	<functions>
