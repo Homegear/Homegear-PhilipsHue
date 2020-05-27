@@ -284,7 +284,7 @@ bool PhilipsHuePeer::getAllValuesHook2(PRpcClientInfo clientInfo, PParameter par
 			{
 				std::vector<uint8_t> parameterData;
 				auto& rpcConfigurationParameter = valuesCentral[channel][parameter->id];
-				parameter->convertToPacket(PVariable(new Variable((int32_t)_peerID)), rpcConfigurationParameter.invert(), parameterData);
+				parameter->convertToPacket(PVariable(new Variable((int32_t)_peerID)), rpcConfigurationParameter.mainRole(), parameterData);
                 rpcConfigurationParameter.setBinaryData(parameterData);
 			}
 		}
@@ -375,8 +375,8 @@ void PhilipsHuePeer::getValuesFromPacket(std::shared_ptr<PhilipsHuePacket> packe
 						//This is a little nasty and costs a lot of resources, but we need to run the data through the packet converter
 						std::vector<uint8_t> encodedData;
 						_binaryEncoder->encodeResponse(json, encodedData);
-						PVariable data = (*k)->convertFromPacket(encodedData, false, true);
-						(*k)->convertToPacket(data, false, currentFrameValues.values[(*k)->id].value);
+						PVariable data = (*k)->convertFromPacket(encodedData, Role(), true);
+						(*k)->convertToPacket(data, Role(), currentFrameValues.values[(*k)->id].value);
 					}
 				}
 			}
@@ -460,7 +460,7 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 						}
 
 						valueKeys[*j]->push_back(i->first);
-						rpcValues[*j]->push_back(parameter.rpcParameter->convertFromPacket(i->second.value, parameter.invert(), true));
+						rpcValues[*j]->push_back(parameter.rpcParameter->convertFromPacket(i->second.value, parameter.mainRole(), true));
 					}
 				}
 			}
@@ -495,7 +495,7 @@ void PhilipsHuePeer::packetReceived(std::shared_ptr<PhilipsHuePacket> packet)
 						else saveParameter(0, ParameterGroup::Type::Enum::variables, j->first, "RGB", parameterData);
 
 						j->second->push_back("RGB");
-						rpcValues[j->first]->push_back(rgbParameter.rpcParameter->convertFromPacket(parameterData, rgbParameter.invert(), true));
+						rpcValues[j->first]->push_back(rgbParameter.rpcParameter->convertFromPacket(parameterData, rgbParameter.mainRole(), true));
 						break;
 					}
 				}
@@ -822,7 +822,7 @@ PVariable PhilipsHuePeer::getParamset(BaseLib::PRpcClientInfo clientInfo, int32_
 				if(valuesCentral[channel].find(i->second->id) == valuesCentral[channel].end()) continue;
 				auto& parameter = valuesCentral[channel][i->second->id];
 				std::vector<uint8_t> parameterData = parameter.getBinaryData();
-				element = i->second->convertFromPacket(parameterData, parameter.invert(), false);
+				element = i->second->convertFromPacket(parameterData, parameter.mainRole(), false);
 			}
 
 			if(!element) continue;
@@ -912,7 +912,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 					if(variableIterator != channelIterator->second.end())
 					{
 						std::vector<uint8_t> parameterData = variableIterator->second.getBinaryData();
-						_ignorePacketsUntil = BaseLib::HelperFunctions::getTime() + 1000 + (variableIterator->second.rpcParameter->convertFromPacket(parameterData, variableIterator->second.invert(), false)->integerValue * 100);
+						_ignorePacketsUntil = BaseLib::HelperFunctions::getTime() + 1000 + (variableIterator->second.rpcParameter->convertFromPacket(parameterData, variableIterator->second.mainRole(), false)->integerValue * 100);
 						std::shared_ptr<PhilipsHueCentral> central = std::dynamic_pointer_cast<PhilipsHueCentral>(getCentral());
 						if(central)
 						{
@@ -948,12 +948,12 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		if(rpcParameter->physical->operationType == IPhysical::OperationType::Enum::store)
 		{
 			std::vector<uint8_t> parameterData;
-			rpcParameter->convertToPacket(value, parameter.invert(), parameterData);
+			rpcParameter->convertToPacket(value, parameter.mainRole(), parameterData);
 			parameter.setBinaryData(parameterData);
 			if(parameter.databaseId > 0) saveParameter(parameter.databaseId, parameterData);
 			else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameterData);
 
-			value = rpcParameter->convertFromPacket(parameterData, parameter.invert(), false);
+			value = rpcParameter->convertFromPacket(parameterData, parameter.mainRole(), false);
 			if(rpcParameter->readable)
 			{
 				valueKeys->push_back(valueKey);
@@ -982,12 +982,12 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
         }
 
 		std::vector<uint8_t> parameterData;
-		rpcParameter->convertToPacket(value, parameter.invert(), parameterData);
+		rpcParameter->convertToPacket(value, parameter.mainRole(), parameterData);
 		parameter.setBinaryData(parameterData);
 		if(parameter.databaseId > 0) saveParameter(parameter.databaseId, parameterData);
 		else saveParameter(0, ParameterGroup::Type::Enum::variables, channel, valueKey, parameterData);
 
-		value = rpcParameter->convertFromPacket(parameterData, parameter.invert(), false);
+		value = rpcParameter->convertFromPacket(parameterData, parameter.mainRole(), false);
 		if(_bl->debugLevel > 4) GD::out.printDebug("Debug: " + valueKey + " of peer " + std::to_string(_peerID) + " with serial number " + _serialNumber + ":" + std::to_string(channel) + " was set to " + BaseLib::HelperFunctions::getHexString(parameterData) + ", " + value->print(false, false, true) + ".");
 
 		valueKeys->push_back(valueKey);
