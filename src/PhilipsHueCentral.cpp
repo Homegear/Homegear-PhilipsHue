@@ -702,7 +702,7 @@ std::string PhilipsHueCentral::handleCliCommand(std::string command)
 			}
 
             searchHueBridges();
-			searchDevicesThread();
+			searchDevicesThread("");
 			stringStream << "Search completed. Please press the button on all newly added hue bridges." << std::endl;
 			return stringStream.str();
 		}
@@ -959,15 +959,17 @@ std::vector<std::shared_ptr<PhilipsHuePeer>> PhilipsHueCentral::searchTeams(bool
     return std::vector<std::shared_ptr<PhilipsHuePeer>>();
 }
 
-void PhilipsHueCentral::searchDevicesThread()
+void PhilipsHueCentral::searchDevicesThread(std::string interfaceId)
 {
 	try
 	{
 		std::lock_guard<std::mutex> searchDevicesGuard(_searchDevicesMutex);
 		std::vector<std::shared_ptr<PhilipsHuePeer>> newPeers;
 		auto interfaces = GD::interfaces->getInterfaces();
-		for(auto interface : interfaces)
+		for(auto& interface : interfaces)
 		{
+		    if(!interfaceId.empty() && interface->getID() != interfaceId) continue;
+
             if(!interface->userCreated())
             {
                 std::lock_guard<std::mutex> newPeersGuard(_newPeersMutex);
@@ -1224,13 +1226,13 @@ PVariable PhilipsHueCentral::getPairingState(BaseLib::PRpcClientInfo clientInfo)
     return Variable::createError(-32500, "Unknown application error.");
 }
 
-PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo)
+PVariable PhilipsHueCentral::searchDevices(BaseLib::PRpcClientInfo clientInfo, const std::string& interfaceId)
 {
 	try
 	{
 		if(_searching) return std::make_shared<BaseLib::Variable>(-3);
 		_searching = true;
-		_bl->threadManager.start(_searchDevicesThread, true, &PhilipsHueCentral::searchDevicesThread, this);
+		_bl->threadManager.start(_searchDevicesThread, true, &PhilipsHueCentral::searchDevicesThread, this, interfaceId);
         return std::make_shared<BaseLib::Variable>(-2);
 	}
 	catch(const std::exception& ex)
