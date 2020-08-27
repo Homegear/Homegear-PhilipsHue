@@ -5,6 +5,11 @@
 			<typeNumber>0x405</typeNumber>
 			<minFirmwareVersion>0</minFirmwareVersion>
 		</device>
+		<device id="LEDVANCE Plug Z3">
+            <description>Ledvance On/Off Plug</description>
+            <typeNumber>0x406</typeNumber>
+            <minFirmwareVersion>0</minFirmwareVersion>
+        </device>
 		<device id="Busch-Jaeger RM01">
 			<description>Busch-Jaeger RM01</description>
 			<typeNumber>0x501</typeNumber>
