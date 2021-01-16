@@ -1160,7 +1160,7 @@ PVariable PhilipsHueCentral::deleteDevice(BaseLib::PRpcClientInfo clientInfo, ui
 
 		deletePeer(peerId);
 
-		return PVariable(new Variable(VariableType::tVoid));
+		return std::make_shared<Variable>(VariableType::tVoid);
 	}
 	catch(const std::exception& ex)
     {

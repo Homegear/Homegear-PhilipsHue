@@ -850,7 +850,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 		Peer::setValue(clientInfo, channel, valueKey, value, wait); //Ignore result, otherwise setHomegerValue might not be executed
 		if(_disposing) return Variable::createError(-32500, "Peer is disposing.");
 		if(valueKey.empty()) return Variable::createError(-5, "Value key is empty.");
-		if(channel == 0 && serviceMessages->set(valueKey, value->booleanValue)) return PVariable(new Variable(VariableType::tVoid));
+		if(channel == 0 && serviceMessages->set(valueKey, value->booleanValue)) return std::make_shared<Variable>(VariableType::tVoid);
 		std::unordered_map<uint32_t, std::unordered_map<std::string, RpcConfigurationParameter>>::iterator channelIterator = valuesCentral.find(channel);
 		if(channelIterator == valuesCentral.end()) return Variable::createError(-2, "Unknown channel.");
 		std::unordered_map<std::string, RpcConfigurationParameter>::iterator parameterIterator = channelIterator->second.find(valueKey);
@@ -871,17 +871,17 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
 
 			PVariable result;
 			uint8_t brightness = std::lround(hsv.getBrightness() * 255.0);
-			result = setValue(clientInfo, channel, "BRIGHTNESS", PVariable(new Variable((int32_t)brightness)), true, wait);
+			result = setValue(clientInfo, channel, "BRIGHTNESS", std::make_shared<Variable>((int32_t)brightness), true, wait);
 			if(result->errorStruct) return result;
 			int32_t hue = std::lround(hsv.getHue() * getHueFactor(hsv.getHue()));
-			result = setValue(clientInfo, channel, "HUE", PVariable(new Variable(hue)), true, wait);
+			result = setValue(clientInfo, channel, "HUE", std::make_shared<Variable>(hue), true, wait);
 			if(result->errorStruct) return result;
 			uint8_t saturation = std::lround(hsv.getSaturation() * 255.0);
-			result = setValue(clientInfo, channel, (valueKey == "RGB" ? "SATURATION" : "FAST_RGB"), PVariable(new Variable((int32_t)saturation)), brightness < 5, wait);
+			result = setValue(clientInfo, channel, (valueKey == "RGB" ? "SATURATION" : "FAST_RGB"), std::make_shared<Variable>((int32_t)saturation), brightness < 5, wait);
 			if(result->errorStruct) return result;
 			if(brightness < 5)
 			{
-				result = setValue(clientInfo, channel, "STATE", PVariable(new Variable(false)), false, wait);
+				result = setValue(clientInfo, channel, "STATE", std::make_shared<Variable>(false), false, wait);
 				if(result->errorStruct) return result;
 			}
 
@@ -898,7 +898,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
             std::string address(_serialNumber + ":" + std::to_string(channel));
             raiseEvent(clientInfo->initInterfaceId, _peerID, channel, valueKeys, values);
             raiseRPCEvent(clientInfo->initInterfaceId, _peerID, channel, address, valueKeys, values);
-			return PVariable(new Variable(VariableType::tVoid));
+			return std::make_shared<Variable>(VariableType::tVoid);
 		}
 
 		if(valueKey == "STATE" || valueKey == "FAST_STATE")
@@ -1152,7 +1152,7 @@ PVariable PhilipsHuePeer::setValue(BaseLib::PRpcClientInfo clientInfo, uint32_t 
             raiseRPCEvent(clientInfo->initInterfaceId, _peerID, channel, address, valueKeys, values);
 		}
 
-		return PVariable(new Variable(VariableType::tVoid));
+		return std::make_shared<Variable>(VariableType::tVoid);
 	}
 	catch(const std::exception& ex)
     {
