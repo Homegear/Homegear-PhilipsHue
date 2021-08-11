@@ -239,7 +239,7 @@ void HueBridge::createUser() {
         if (json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 101) {
           auto data = std::make_shared<BaseLib::Variable>(BaseLib::VariableType::tStruct);
           data->structValue->emplace("IP_ADDRESS", std::make_shared<BaseLib::Variable>(_ipAddress));
-          _bl->globalServiceMessages.set(HUE_FAMILY_ID, _settings->id, 0, _settings->id, BaseLib::HelperFunctions::getTimeSeconds(), "l10n.philipshue.bridge.pressLinkButton", std::list<std::string>{_settings->id, _ipAddress}, data, 1);
+          _bl->globalServiceMessages.set(HUE_FAMILY_ID, _settings->id, 0, _settings->id, BaseLib::ServiceMessagePriority::kError, BaseLib::HelperFunctions::getTimeSeconds(), "l10n.philipshue.bridge.pressLinkButton", std::list<std::string>{_settings->id, _ipAddress}, data, 1);
           _out.printError("Please press the link button on your hue bridge to initialize the connection to Homegear.");
         } else if (json->structValue->find("type") != json->structValue->end() && json->structValue->at("type")->integerValue == 7)
           _out.printError("Error: Please change the bridge's id in philipshue.conf to only contain alphanumerical characters and \"-\".");
