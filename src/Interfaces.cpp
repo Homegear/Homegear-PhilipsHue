@@ -106,7 +106,7 @@ std::vector<std::shared_ptr<IPhilipsHueInterface>> Interfaces::getInterfaces()
 		{
 			std::shared_ptr<IPhilipsHueInterface> interface(std::dynamic_pointer_cast<IPhilipsHueInterface>(interfaceBase.second));
 			if(!interface) continue;
-			if(interface->isOpen()) interfaces.push_back(interface);
+			interfaces.push_back(interface);
 		}
 	}
 	catch(const std::exception& ex)

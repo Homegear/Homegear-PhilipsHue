@@ -42,16 +42,16 @@ class HueBridge  : public IPhilipsHueInterface
 {
     public:
         HueBridge(std::shared_ptr<BaseLib::Systems::PhysicalInterfaceSettings> settings);
-        virtual ~HueBridge();
+        ~HueBridge() override;
         void startListening();
         void stopListening();
         void sendPacket(std::shared_ptr<BaseLib::Systems::Packet> packet);
         int64_t lastAction() { return _lastAction; }
-        virtual bool isOpen() { return (bool)_client && _connected; }
-        virtual void searchLights();
-        virtual bool userCreated() { return !_username.empty(); };
-        virtual std::set<std::shared_ptr<PhilipsHuePacket>> getPeerInfo();
-        virtual std::set<std::shared_ptr<PhilipsHuePacket>> getGroupInfo();
+        bool isOpen() override { return (bool)_client && _connected; }
+        void searchLights() override;
+        bool userCreated() override;
+        std::set<std::shared_ptr<PhilipsHuePacket>> getPeerInfo() override;
+        std::set<std::shared_ptr<PhilipsHuePacket>> getGroupInfo() override;
     protected:
         bool _noHost = true;
         std::atomic_bool _connected{false};
@@ -62,6 +62,7 @@ class HueBridge  : public IPhilipsHueInterface
         std::unique_ptr<BaseLib::HttpClient> _client;
         std::unique_ptr<BaseLib::Rpc::JsonEncoder> _jsonEncoder;
         std::unique_ptr<BaseLib::Rpc::JsonDecoder> _jsonDecoder;
+        std::mutex _usernameMutex;
         std::string _username;
 
         void listen();
