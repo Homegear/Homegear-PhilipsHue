@@ -7,5 +7,5 @@ l10n.philipshue.pairingInfo.address: 'Address'
 # }}}
 
 # {{{ Pairing
-l10n.philipshue.bridge.pressLinkButton: 'To complete linking of your Hue bridge with the ID %variable0% (IP address: %variable1%), please press the button on the top of the brigde.'
+l10n.philipshue.bridge.pressLinkButton: 'To complete linking of your Hue bridge with the ID %variable0% (IP address: %variable1%), please press the button on the top of the bridge. After that please search for devices within 30 seconds.'
 # }}}

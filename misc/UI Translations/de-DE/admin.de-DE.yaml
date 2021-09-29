@@ -7,5 +7,5 @@ l10n.philipshue.pairingInfo.address: 'Adresse'
 # }}}
 
 # {{{ Pairing
-l10n.philipshue.bridge.pressLinkButton: 'Bitte drücken Sie zum Abschluss der Verlinkung Ihrer Hue-Bridge mit der ID %variable0% (IP-Adresse: %variable1%) den Knopf auf der Oberseite der Brigde.'
+l10n.philipshue.bridge.pressLinkButton: 'Bitte drücken Sie zum Abschluss der Verlinkung Ihrer Hue-Bridge mit der ID %variable0% (IP-Adresse: %variable1%) den Knopf auf der Oberseite der Bridge. Führen Sie im Anschluss innerhalb von 30 Sekunden eine Gerätesuche aus.'
 # }}}
