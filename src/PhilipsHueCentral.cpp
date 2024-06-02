@@ -840,7 +840,7 @@ void PhilipsHueCentral::searchDevicesThread(std::string interfaceId) {
           if (info->structValue->find("manufacturername") != info->structValue->end()) manufacturer = BaseLib::HelperFunctions::trim(info->structValue->at("manufacturername")->stringValue);
           std::string type;
           if (info->structValue->find("type") != info->structValue->end()) type = BaseLib::HelperFunctions::trim(info->structValue->at("type")->stringValue);
-          uint32_t deviceType = getDeviceType(manufacturer, BaseLib::HelperFunctions::trim(info->structValue->at("modelid")->stringValue), peerInfo->getCategory());
+          uint32_t deviceType = getDeviceType(manufacturer, BaseLib::HelperFunctions::trim(info->structValue->at("modelid")->stringValue), type, peerInfo->getCategory());
 
           std::shared_ptr<PhilipsHuePeer> peer = getPeer(peerInfo->senderAddress());
           if (peer) {
