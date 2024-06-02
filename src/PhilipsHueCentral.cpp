@@ -120,7 +120,7 @@ void PhilipsHueCentral::sendPacket(std::shared_ptr<IPhilipsHueInterface> &interf
   }
 }
 
-uint32_t PhilipsHueCentral::getDeviceType(const std::string &manufacturer, const std::string &modelId, PhilipsHuePacket::Category category) {
+uint32_t PhilipsHueCentral::getDeviceType(const std::string &manufacturer, const std::string &modelId, const std::string &type, PhilipsHuePacket::Category category) {
   try {
     if (modelId.length() < 4) return (uint32_t)DeviceType::none;
     std::string typeId = manufacturer.empty() ? modelId : manufacturer + ' ' + modelId;
@@ -130,6 +130,8 @@ uint32_t PhilipsHueCentral::getDeviceType(const std::string &manufacturer, const
       else if (modelId.compare(0, 3, "LLC") == 0) return (uint32_t)DeviceType::LLC001;
       else if (modelId.compare(0, 3, "LST") == 0) return (uint32_t)DeviceType::LST001;
       else if (modelId.compare(0, 3, "LWB") == 0) return (uint32_t)DeviceType::LWB004;
+      else if (type == "Extended color light") return (uint32_t)DeviceType::LST001;
+      else if (type == "On/Off plug-in unit") return (uint32_t)DeviceType::LST001;
       else {
         GD::out.printInfo("Info: Device type for ID \"" + typeId + "\" not found. Setting device type to LCT001.");
         return (uint32_t)DeviceType::LCT001; //default
@@ -836,6 +838,8 @@ void PhilipsHueCentral::searchDevicesThread(std::string interfaceId) {
           if (info->structValue->find("modelid") == info->structValue->end() || info->structValue->find("swversion") == info->structValue->end()) continue;
           std::string manufacturer;
           if (info->structValue->find("manufacturername") != info->structValue->end()) manufacturer = BaseLib::HelperFunctions::trim(info->structValue->at("manufacturername")->stringValue);
+          std::string type;
+          if (info->structValue->find("type") != info->structValue->end()) type = BaseLib::HelperFunctions::trim(info->structValue->at("type")->stringValue);
           uint32_t deviceType = getDeviceType(manufacturer, BaseLib::HelperFunctions::trim(info->structValue->at("modelid")->stringValue), peerInfo->getCategory());
 
           std::shared_ptr<PhilipsHuePeer> peer = getPeer(peerInfo->senderAddress());
