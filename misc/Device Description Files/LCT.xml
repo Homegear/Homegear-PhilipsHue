@@ -1,811 +1,816 @@
 <homegearDevice version="1">
-	<supportedDevices>
-		<device id="Philips LCT001">
-			<description>Philips hue A19</description>
-			<typeNumber>0x1</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="Philips LCT007">
-			<description>Philips hue A60</description>
-			<typeNumber>0x7</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="OSRAM Classic A60 RGBW">
-			<description>OSRAM LIGHTIFY Classic A60 RGBW</description>
-			<typeNumber>0x401</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="OSRAM Gardenspot RGB">
-			<description>OSRAM Gardenspot RGB</description>
-			<typeNumber>0x402</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="OSRAM Classic B40 TW - LIGHTIFY">
-			<description>Classic B40 TW</description>
-			<typeNumber>0x403</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="OSRAM Surface Light TW">
-			<description>Surface Light TW</description>
-			<typeNumber>0x404</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="Philips LLC001">
-			<description>Philips LivingColors</description>
-			<typeNumber>0x101</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="Philips LLC006">
-			<description>Philips LivingColors</description>
-			<typeNumber>0x106</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="Philips LLC007">
-			<description>Philips LivingColors</description>
-			<typeNumber>0x107</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="Philips LLC011">
-			<description>Philips LivingColors Bloom</description>
-			<typeNumber>0x111</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="Philips LST001">
-			<description>Philips LightStrip</description>
-			<typeNumber>0x201</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="Philips LST002">
-			<description>Philips LightStrip Plus</description>
-			<typeNumber>0x202</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="NLG-RGBW light">
-			<description>Neuhaus RGBW Light</description>
-			<typeNumber>0x600</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="innr RB 185 C">
-			<description>innr RB 185-C</description>
-			<typeNumber>0x700</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="IKEA of Sweden TRADFRI bulb E27 CWS opal 600lm">
-			<description>IKEA TRADFRI bulb E27 CWS opal 600lm</description>
-			<typeNumber>0x803</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="IKEA of Sweden TRADFRI bulb E27 WS opal 980lm">
-			<description>IKEA TRADFRI bulb E27 WS opal 980lm</description>
-			<typeNumber>0x804</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
-		<device id="MLI ZBT-ExtendedColor">
-			<description>Mueller Licht Tint RGB</description>
-			<typeNumber>0x901</typeNumber>
-			<minFirmwareVersion>0x0</minFirmwareVersion>
-		</device>
+    <supportedDevices>
+        <device id="Philips LCT001">
+            <description>Philips hue A19</description>
+            <typeNumber>0x1</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="Philips LCT007">
+            <description>Philips hue A60</description>
+            <typeNumber>0x7</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="OSRAM Classic A60 RGBW">
+            <description>OSRAM LIGHTIFY Classic A60 RGBW</description>
+            <typeNumber>0x401</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="OSRAM Gardenspot RGB">
+            <description>OSRAM Gardenspot RGB</description>
+            <typeNumber>0x402</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="OSRAM Classic B40 TW - LIGHTIFY">
+            <description>Classic B40 TW</description>
+            <typeNumber>0x403</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="OSRAM Surface Light TW">
+            <description>Surface Light TW</description>
+            <typeNumber>0x404</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="Philips LLC001">
+            <description>Philips LivingColors</description>
+            <typeNumber>0x101</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="Philips LLC006">
+            <description>Philips LivingColors</description>
+            <typeNumber>0x106</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="Philips LLC007">
+            <description>Philips LivingColors</description>
+            <typeNumber>0x107</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="Philips LLC011">
+            <description>Philips LivingColors Bloom</description>
+            <typeNumber>0x111</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="Philips LST001">
+            <description>Philips LightStrip</description>
+            <typeNumber>0x201</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="Philips LST002">
+            <description>Philips LightStrip Plus</description>
+            <typeNumber>0x202</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="Signify Netherlands B.V. 929003598101">
+            <description>Hue Surimu panel</description>
+            <typeNumber>0x203</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="NLG-RGBW light">
+            <description>Neuhaus RGBW Light</description>
+            <typeNumber>0x600</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="innr RB 185 C">
+            <description>innr RB 185-C</description>
+            <typeNumber>0x700</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="IKEA of Sweden TRADFRI bulb E27 CWS opal 600lm">
+            <description>IKEA TRADFRI bulb E27 CWS opal 600lm</description>
+            <typeNumber>0x803</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="IKEA of Sweden TRADFRI bulb E27 WS opal 980lm">
+            <description>IKEA TRADFRI bulb E27 WS opal 980lm</description>
+            <typeNumber>0x804</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
+        <device id="MLI ZBT-ExtendedColor">
+            <description>Mueller Licht Tint RGB</description>
+            <typeNumber>0x901</typeNumber>
+            <minFirmwareVersion>0x0</minFirmwareVersion>
+        </device>
         <device id="GLEDOPTO GL-H-001">
-        	<description>GLEDOPTO Milight to Zigbee Bridge</description>
+            <description>GLEDOPTO Milight to Zigbee Bridge</description>
             <typeNumber>0x1001</typeNumber>
             <minFirmwareVersion>0x0</minFirmwareVersion>
         </device>
         <device id="YSRSAI ZB-CT01">
-        	<description>YSRSAI ZB-CT01</description>
+            <description>YSRSAI ZB-CT01</description>
             <typeNumber>0x1101</typeNumber>
             <minFirmwareVersion>0x0</minFirmwareVersion>
         </device>
         <device id="YSRSAI ZB-CL01">
-        	<description>YSRSAI ZB-CL01</description>
+            <description>YSRSAI ZB-CL01</description>
             <typeNumber>0x1102</typeNumber>
             <minFirmwareVersion>0x0</minFirmwareVersion>
-        </device> 
-	</supportedDevices>
-	<properties/>
-	<functions>
-		<function channel="0" type="MAINTENANCE" channelCount="1">
-			<properties>
-				<internal>true</internal>
-			</properties>
-			<configParameters>maint_ch_master--0</configParameters>
-			<variables>maint_ch_values--0</variables>
-		</function>
-		<function channel="1" type="SWITCH" channelCount="1">
-			<properties/>
-			<configParameters>config--1</configParameters>
-			<variables>switch_valueset--1</variables>
-		</function>
-	</functions>
-	<packets>
-		<packet id="ALERT_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>alert</key>
-					<parameterId>ALERT</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="BRIGHTNESS_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
-				<element>
-					<key>transitiontime</key>
-					<parameterId>TRANSITION_TIME</parameterId>
-				</element>
-				<element>
-					<key>bri</key>
-					<parameterId>BRIGHTNESS</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="FAST_BRIGHTNESS_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
-				<element>
-					<key>transitiontime</key>
-					<constValueInteger>0</constValueInteger>
-				</element>
-				<element>
-					<key>bri</key>
-					<parameterId>BRIGHTNESS</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="COLOR_TEMPERATURE_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>transitiontime</key>
-					<parameterId>TRANSITION_TIME</parameterId>
-				</element>
-				<element>
-					<key>ct</key>
-					<parameterId>COLOR_TEMPERATURE</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="EFFECT_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>transitiontime</key>
-					<parameterId>TRANSITION_TIME</parameterId>
-				</element>
-				<element>
-					<key>effect</key>
-					<parameterId>EFFECT</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="HUE_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>transitiontime</key>
-					<parameterId>TRANSITION_TIME</parameterId>
-				</element>
-				<element>
-					<key>bri</key>
-					<parameterId>BRIGHTNESS</parameterId>
-				</element>
-				<element>
-					<key>hue</key>
-					<parameterId>HUE</parameterId>
-				</element>
-				<element>
-					<key>sat</key>
-					<parameterId>SATURATION</parameterId>
-				</element>
-				<element>
-					<key>on</key>
-					<parameterId>STATE</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="INFO">
-			<direction>toCentral</direction>
-			<type>0x1</type>
-			<channel>1</channel>
-			<jsonPayload>
-				<element>
-					<key>state</key>
-					<subkey>on</subkey>
-					<parameterId>STATE</parameterId>
-				</element>
-				<element>
-					<key>state</key>
-					<subkey>bri</subkey>
-					<parameterId>BRIGHTNESS</parameterId>
-				</element>
-				<element>
-					<key>state</key>
-					<subkey>hue</subkey>
-					<parameterId>HUE</parameterId>
-				</element>
-				<element>
-					<key>state</key>
-					<subkey>sat</subkey>
-					<parameterId>SATURATION</parameterId>
-				</element>
-				<element>
-					<key>state</key>
-					<subkey>ct</subkey>
-					<parameterId>COLOR_TEMPERATURE</parameterId>
-				</element>
-				<element>
-					<key>state</key>
-					<subkey>alert</subkey>
-					<parameterId>ALERT</parameterId>
-				</element>
-				<element>
-					<key>state</key>
-					<subkey>effect</subkey>
-					<parameterId>EFFECT</parameterId>
-				</element>
-				<element>
-					<key>state</key>
-					<subkey>colormode</subkey>
-					<parameterId>COLORMODE</parameterId>
-				</element>
-				<element>
-					<key>state</key>
-					<subkey>reachable</subkey>
-					<parameterId>REACHABLE</parameterId>
-				</element>
-				<element>
-					<key>state</key>
-					<subkey>xy</subkey>
-					<parameterId>XY</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="SATURATION_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
-				<element>
-					<key>transitiontime</key>
-					<parameterId>TRANSITION_TIME</parameterId>
-				</element>
-				<element>
-					<key>bri</key>
-					<parameterId>BRIGHTNESS</parameterId>
-				</element>
-				<element>
-					<key>hue</key>
-					<parameterId>HUE</parameterId>
-				</element>
-				<element>
-					<key>sat</key>
-					<parameterId>SATURATION</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="FAST_SATURATION_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>on</key>
-					<constValueBoolean>true</constValueBoolean>
-				</element>
-				<element>
-					<key>transitiontime</key>
-					<parameterId>0</parameterId>
-				</element>
-				<element>
-					<key>bri</key>
-					<parameterId>BRIGHTNESS</parameterId>
-				</element>
-				<element>
-					<key>hue</key>
-					<parameterId>HUE</parameterId>
-				</element>
-				<element>
-					<key>sat</key>
-					<parameterId>SATURATION</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="STATE_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>transitiontime</key>
-					<parameterId>TRANSITION_TIME</parameterId>
-				</element>
-				<element>
-					<key>on</key>
-					<parameterId>STATE</parameterId>
-				</element>
-				<element>
-					<key>bri</key>
-					<parameterId>BRIGHTNESS</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="FAST_STATE_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>transitiontime</key>
-					<constValueInteger>0</constValueInteger>
-				</element>
-				<element>
-					<key>on</key>
-					<parameterId>STATE</parameterId>
-				</element>
-				<element>
-					<key>bri</key>
-					<parameterId>BRIGHTNESS</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="STATE_OFF">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>on</key>
-					<constValueBoolean>false</constValueBoolean>
-				</element>
-			</jsonPayload>
-		</packet>
-		<packet id="XY_SET">
-			<direction>fromCentral</direction>
-			<type>0x2</type>
-			<jsonPayload>
-				<element>
-					<key>transitiontime</key>
-					<parameterId>TRANSITION_TIME</parameterId>
-				</element>
-				<element>
-					<key>xy</key>
-					<parameterId>XY</parameterId>
-				</element>
-			</jsonPayload>
-		</packet>
-	</packets>
-	<parameterGroups>
-		<configParameters id="config--1"/>
-		<configParameters id="maint_ch_master--0"/>
-		<variables id="maint_ch_values--0">
-			<parameter id="UNREACH">
-				<properties>
-					<writeable>false</writeable>
-					<service>true</service>
-				</properties>
-				<logicalBoolean/>
-				<physicalInteger groupId="UNREACH">
-					<operationType>internal</operationType>
-				</physicalInteger>
-			</parameter>
-			<parameter id="STICKY_UNREACH">
-				<properties>
-					<service>true</service>
-					<sticky>true</sticky>
-				</properties>
-				<logicalBoolean/>
-				<physicalInteger groupId="STICKY_UNREACH">
-					<operationType>internal</operationType>
-				</physicalInteger>
-			</parameter>
-			<parameter id="CONFIG_PENDING">
-				<properties>
-					<writeable>false</writeable>
-					<service>true</service>
-				</properties>
-				<logicalBoolean/>
-				<physicalInteger groupId="CONFIG_PENDING">
-					<operationType>internal</operationType>
-				</physicalInteger>
-			</parameter>
-			<parameter id="RSSI_DEVICE">
-				<properties>
-					<writeable>false</writeable>
-				</properties>
-				<logicalInteger/>
-				<physicalInteger groupId="RSSI_DEVICE">
-					<operationType>internal</operationType>
-				</physicalInteger>
-			</parameter>
-			<parameter id="RSSI_PEER">
-				<properties>
-					<writeable>false</writeable>
-				</properties>
-				<logicalInteger/>
-				<physicalInteger groupId="RSSI_PEER">
-					<operationType>internal</operationType>
-				</physicalInteger>
-			</parameter>
-		</variables>
-		<variables id="switch_valueset--1">
-			<parameter id="PEER_ID">
-				<properties>
-					<!-- Needed for the CCU2. Must be writeable, otherwise it can't be used in the CCU. -->
-					<control>EASYPHILIPSHUE.PEERID</control>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalInteger/>
-			</parameter>
-			<parameter id="STATE">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalBoolean/>
-				<physicalInteger groupId="STATE">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="STATE_SET">
-						<type>set</type>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="FAST_STATE">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalBoolean/>
-				<physicalInteger groupId="STATE">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="FAST_STATE_SET">
-						<type>set</type>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="TRANSITION_TIME">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalInteger>
-					<defaultValue>5</defaultValue>
-					<minimumValue>0</minimumValue>
-					<maximumValue>65535</maximumValue>
-				</logicalInteger>
-				<physicalNone groupId="TRANSITION_TIME">
-					<operationType>store</operationType>
-				</physicalNone>
-			</parameter>
-			<parameter id="BRIGHTNESS">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalInteger>
-					<minimumValue>0</minimumValue>
-					<maximumValue>254</maximumValue>
-				</logicalInteger>
-				<physicalInteger groupId="BRIGHTNESS">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="BRIGHTNESS_SET">
-						<type>set</type>
-						<conditionOperator>ge</conditionOperator>
-						<conditionValue>1</conditionValue>
-					</packet>
-					<packet id="STATE_OFF">
-						<type>set</type>
-						<conditionOperator>e</conditionOperator>
-						<conditionValue>0</conditionValue>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="FAST_BRIGHTNESS">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalInteger>
-					<minimumValue>0</minimumValue>
-					<maximumValue>254</maximumValue>
-				</logicalInteger>
-				<physicalInteger groupId="BRIGHTNESS">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="FAST_BRIGHTNESS_SET">
-						<type>set</type>
-						<conditionOperator>ge</conditionOperator>
-						<conditionValue>1</conditionValue>
-					</packet>
-					<packet id="STATE_OFF">
-						<type>set</type>
-						<conditionOperator>e</conditionOperator>
-						<conditionValue>0</conditionValue>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="HUE">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalInteger>
-					<minimumValue>0</minimumValue>
-					<maximumValue>65535</maximumValue>
-				</logicalInteger>
-				<physicalInteger groupId="HUE">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="HUE_SET">
-						<type>set</type>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="SATURATION">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalInteger>
-					<minimumValue>0</minimumValue>
-					<maximumValue>255</maximumValue>
-				</logicalInteger>
-				<physicalInteger groupId="SATURATION">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="SATURATION_SET">
-						<type>set</type>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="FAST_SATURATION">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalInteger>
-					<minimumValue>0</minimumValue>
-					<maximumValue>255</maximumValue>
-				</logicalInteger>
-				<physicalInteger groupId="FAST_SATURATION">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="FAST_SATURATION_SET">
-						<type>set</type>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="COLOR_TEMPERATURE">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalInteger>
-					<minimumValue>153</minimumValue>
-					<maximumValue>500</maximumValue>
-				</logicalInteger>
-				<physicalInteger groupId="COLOR_TEMPERATURE">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="COLOR_TEMPERATURE_SET">
-						<type>set</type>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="ALERT">
-				<properties>
-					<casts>
-						<optionString/>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalEnumeration>
-					<defaultValue>0</defaultValue>
-					<value>
-						<id>none</id>
-						<index>0</index>
-					</value>
-					<value>
-						<id>select</id>
-						<index>1</index>
-					</value>
-					<value>
-						<id>lselect</id>
-						<index>2</index>
-					</value>
-				</logicalEnumeration>
-				<physicalString groupId="ALERT">
-					<operationType>command</operationType>
-				</physicalString>
-				<packets>
-					<packet id="ALERT_SET">
-						<type>set</type>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="EFFECT">
-				<properties>
-					<casts>
-						<optionString/>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalEnumeration>
-					<defaultValue>0</defaultValue>
-					<value>
-						<id>none</id>
-						<index>0</index>
-					</value>
-					<value>
-						<id>colorloop</id>
-						<index>1</index>
-					</value>
-				</logicalEnumeration>
-				<physicalInteger groupId="EFFECT">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="EFFECT_SET">
-						<type>set</type>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="RGB">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalString/>
-				<physicalInteger groupId="RGB">
-					<operationType>command</operationType>
-				</physicalInteger>
-			</parameter>
-			<parameter id="FAST_RGB">
-				<properties>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalString/>
-				<physicalInteger groupId="FAST_RGB">
-					<operationType>command</operationType>
-				</physicalInteger>
-			</parameter>
-			<parameter id="COLORMODE">
-				<properties>
-					<writeable>false</writeable>
-					<casts>
-						<optionString/>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalEnumeration>
-					<value>
-						<id>hs</id>
-						<index>0</index>
-					</value>
-					<value>
-						<id>xy</id>
-						<index>1</index>
-					</value>
-					<value>
-						<id>ct</id>
-						<index>2</index>
-					</value>
-				</logicalEnumeration>
-				<physicalInteger groupId="COLORMODE">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="REACHABLE">
-				<properties>
-					<writeable>false</writeable>
-					<service>true</service>
-					<casts>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalBoolean/>
-				<physicalInteger groupId="REACHABLE">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-			<parameter id="XY">
-				<properties>
-					<casts>
-						<stringJsonArrayDecimal/>
-						<rpcBinary/>
-					</casts>
-				</properties>
-				<logicalString/>
-				<physicalInteger groupId="XY">
-					<operationType>command</operationType>
-				</physicalInteger>
-				<packets>
-					<packet id="XY_SET">
-						<type>set</type>
-					</packet>
-					<packet id="INFO">
-						<type>event</type>
-					</packet>
-				</packets>
-			</parameter>
-		</variables>
-	</parameterGroups>
+        </device>
+    </supportedDevices>
+    <properties/>
+    <functions>
+        <function channel="0" type="MAINTENANCE" channelCount="1">
+            <properties>
+                <internal>true</internal>
+            </properties>
+            <configParameters>maint_ch_master--0</configParameters>
+            <variables>maint_ch_values--0</variables>
+        </function>
+        <function channel="1" type="SWITCH" channelCount="1">
+            <properties/>
+            <configParameters>config--1</configParameters>
+            <variables>switch_valueset--1</variables>
+        </function>
+    </functions>
+    <packets>
+        <packet id="ALERT_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>alert</key>
+                    <parameterId>ALERT</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="BRIGHTNESS_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>on</key>
+                    <constValueBoolean>true</constValueBoolean>
+                </element>
+                <element>
+                    <key>transitiontime</key>
+                    <parameterId>TRANSITION_TIME</parameterId>
+                </element>
+                <element>
+                    <key>bri</key>
+                    <parameterId>BRIGHTNESS</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="FAST_BRIGHTNESS_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>on</key>
+                    <constValueBoolean>true</constValueBoolean>
+                </element>
+                <element>
+                    <key>transitiontime</key>
+                    <constValueInteger>0</constValueInteger>
+                </element>
+                <element>
+                    <key>bri</key>
+                    <parameterId>BRIGHTNESS</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="COLOR_TEMPERATURE_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>transitiontime</key>
+                    <parameterId>TRANSITION_TIME</parameterId>
+                </element>
+                <element>
+                    <key>ct</key>
+                    <parameterId>COLOR_TEMPERATURE</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="EFFECT_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>transitiontime</key>
+                    <parameterId>TRANSITION_TIME</parameterId>
+                </element>
+                <element>
+                    <key>effect</key>
+                    <parameterId>EFFECT</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="HUE_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>transitiontime</key>
+                    <parameterId>TRANSITION_TIME</parameterId>
+                </element>
+                <element>
+                    <key>bri</key>
+                    <parameterId>BRIGHTNESS</parameterId>
+                </element>
+                <element>
+                    <key>hue</key>
+                    <parameterId>HUE</parameterId>
+                </element>
+                <element>
+                    <key>sat</key>
+                    <parameterId>SATURATION</parameterId>
+                </element>
+                <element>
+                    <key>on</key>
+                    <parameterId>STATE</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="INFO">
+            <direction>toCentral</direction>
+            <type>0x1</type>
+            <channel>1</channel>
+            <jsonPayload>
+                <element>
+                    <key>state</key>
+                    <subkey>on</subkey>
+                    <parameterId>STATE</parameterId>
+                </element>
+                <element>
+                    <key>state</key>
+                    <subkey>bri</subkey>
+                    <parameterId>BRIGHTNESS</parameterId>
+                </element>
+                <element>
+                    <key>state</key>
+                    <subkey>hue</subkey>
+                    <parameterId>HUE</parameterId>
+                </element>
+                <element>
+                    <key>state</key>
+                    <subkey>sat</subkey>
+                    <parameterId>SATURATION</parameterId>
+                </element>
+                <element>
+                    <key>state</key>
+                    <subkey>ct</subkey>
+                    <parameterId>COLOR_TEMPERATURE</parameterId>
+                </element>
+                <element>
+                    <key>state</key>
+                    <subkey>alert</subkey>
+                    <parameterId>ALERT</parameterId>
+                </element>
+                <element>
+                    <key>state</key>
+                    <subkey>effect</subkey>
+                    <parameterId>EFFECT</parameterId>
+                </element>
+                <element>
+                    <key>state</key>
+                    <subkey>colormode</subkey>
+                    <parameterId>COLORMODE</parameterId>
+                </element>
+                <element>
+                    <key>state</key>
+                    <subkey>reachable</subkey>
+                    <parameterId>REACHABLE</parameterId>
+                </element>
+                <element>
+                    <key>state</key>
+                    <subkey>xy</subkey>
+                    <parameterId>XY</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="SATURATION_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>on</key>
+                    <constValueBoolean>true</constValueBoolean>
+                </element>
+                <element>
+                    <key>transitiontime</key>
+                    <parameterId>TRANSITION_TIME</parameterId>
+                </element>
+                <element>
+                    <key>bri</key>
+                    <parameterId>BRIGHTNESS</parameterId>
+                </element>
+                <element>
+                    <key>hue</key>
+                    <parameterId>HUE</parameterId>
+                </element>
+                <element>
+                    <key>sat</key>
+                    <parameterId>SATURATION</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="FAST_SATURATION_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>on</key>
+                    <constValueBoolean>true</constValueBoolean>
+                </element>
+                <element>
+                    <key>transitiontime</key>
+                    <parameterId>0</parameterId>
+                </element>
+                <element>
+                    <key>bri</key>
+                    <parameterId>BRIGHTNESS</parameterId>
+                </element>
+                <element>
+                    <key>hue</key>
+                    <parameterId>HUE</parameterId>
+                </element>
+                <element>
+                    <key>sat</key>
+                    <parameterId>SATURATION</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="STATE_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>transitiontime</key>
+                    <parameterId>TRANSITION_TIME</parameterId>
+                </element>
+                <element>
+                    <key>on</key>
+                    <parameterId>STATE</parameterId>
+                </element>
+                <element>
+                    <key>bri</key>
+                    <parameterId>BRIGHTNESS</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="FAST_STATE_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>transitiontime</key>
+                    <constValueInteger>0</constValueInteger>
+                </element>
+                <element>
+                    <key>on</key>
+                    <parameterId>STATE</parameterId>
+                </element>
+                <element>
+                    <key>bri</key>
+                    <parameterId>BRIGHTNESS</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="STATE_OFF">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>on</key>
+                    <constValueBoolean>false</constValueBoolean>
+                </element>
+            </jsonPayload>
+        </packet>
+        <packet id="XY_SET">
+            <direction>fromCentral</direction>
+            <type>0x2</type>
+            <jsonPayload>
+                <element>
+                    <key>transitiontime</key>
+                    <parameterId>TRANSITION_TIME</parameterId>
+                </element>
+                <element>
+                    <key>xy</key>
+                    <parameterId>XY</parameterId>
+                </element>
+            </jsonPayload>
+        </packet>
+    </packets>
+    <parameterGroups>
+        <configParameters id="config--1"/>
+        <configParameters id="maint_ch_master--0"/>
+        <variables id="maint_ch_values--0">
+            <parameter id="UNREACH">
+                <properties>
+                    <writeable>false</writeable>
+                    <service>true</service>
+                </properties>
+                <logicalBoolean/>
+                <physicalInteger groupId="UNREACH">
+                    <operationType>internal</operationType>
+                </physicalInteger>
+            </parameter>
+            <parameter id="STICKY_UNREACH">
+                <properties>
+                    <service>true</service>
+                    <sticky>true</sticky>
+                </properties>
+                <logicalBoolean/>
+                <physicalInteger groupId="STICKY_UNREACH">
+                    <operationType>internal</operationType>
+                </physicalInteger>
+            </parameter>
+            <parameter id="CONFIG_PENDING">
+                <properties>
+                    <writeable>false</writeable>
+                    <service>true</service>
+                </properties>
+                <logicalBoolean/>
+                <physicalInteger groupId="CONFIG_PENDING">
+                    <operationType>internal</operationType>
+                </physicalInteger>
+            </parameter>
+            <parameter id="RSSI_DEVICE">
+                <properties>
+                    <writeable>false</writeable>
+                </properties>
+                <logicalInteger/>
+                <physicalInteger groupId="RSSI_DEVICE">
+                    <operationType>internal</operationType>
+                </physicalInteger>
+            </parameter>
+            <parameter id="RSSI_PEER">
+                <properties>
+                    <writeable>false</writeable>
+                </properties>
+                <logicalInteger/>
+                <physicalInteger groupId="RSSI_PEER">
+                    <operationType>internal</operationType>
+                </physicalInteger>
+            </parameter>
+        </variables>
+        <variables id="switch_valueset--1">
+            <parameter id="PEER_ID">
+                <properties>
+                    <!-- Needed for the CCU2. Must be writeable, otherwise it can't be used in the CCU. -->
+                    <control>EASYPHILIPSHUE.PEERID</control>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalInteger/>
+            </parameter>
+            <parameter id="STATE">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalBoolean/>
+                <physicalInteger groupId="STATE">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="STATE_SET">
+                        <type>set</type>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="FAST_STATE">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalBoolean/>
+                <physicalInteger groupId="STATE">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="FAST_STATE_SET">
+                        <type>set</type>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="TRANSITION_TIME">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalInteger>
+                    <defaultValue>5</defaultValue>
+                    <minimumValue>0</minimumValue>
+                    <maximumValue>65535</maximumValue>
+                </logicalInteger>
+                <physicalNone groupId="TRANSITION_TIME">
+                    <operationType>store</operationType>
+                </physicalNone>
+            </parameter>
+            <parameter id="BRIGHTNESS">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalInteger>
+                    <minimumValue>0</minimumValue>
+                    <maximumValue>254</maximumValue>
+                </logicalInteger>
+                <physicalInteger groupId="BRIGHTNESS">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="BRIGHTNESS_SET">
+                        <type>set</type>
+                        <conditionOperator>ge</conditionOperator>
+                        <conditionValue>1</conditionValue>
+                    </packet>
+                    <packet id="STATE_OFF">
+                        <type>set</type>
+                        <conditionOperator>e</conditionOperator>
+                        <conditionValue>0</conditionValue>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="FAST_BRIGHTNESS">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalInteger>
+                    <minimumValue>0</minimumValue>
+                    <maximumValue>254</maximumValue>
+                </logicalInteger>
+                <physicalInteger groupId="BRIGHTNESS">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="FAST_BRIGHTNESS_SET">
+                        <type>set</type>
+                        <conditionOperator>ge</conditionOperator>
+                        <conditionValue>1</conditionValue>
+                    </packet>
+                    <packet id="STATE_OFF">
+                        <type>set</type>
+                        <conditionOperator>e</conditionOperator>
+                        <conditionValue>0</conditionValue>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="HUE">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalInteger>
+                    <minimumValue>0</minimumValue>
+                    <maximumValue>65535</maximumValue>
+                </logicalInteger>
+                <physicalInteger groupId="HUE">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="HUE_SET">
+                        <type>set</type>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="SATURATION">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalInteger>
+                    <minimumValue>0</minimumValue>
+                    <maximumValue>255</maximumValue>
+                </logicalInteger>
+                <physicalInteger groupId="SATURATION">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="SATURATION_SET">
+                        <type>set</type>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="FAST_SATURATION">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalInteger>
+                    <minimumValue>0</minimumValue>
+                    <maximumValue>255</maximumValue>
+                </logicalInteger>
+                <physicalInteger groupId="FAST_SATURATION">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="FAST_SATURATION_SET">
+                        <type>set</type>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="COLOR_TEMPERATURE">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalInteger>
+                    <minimumValue>153</minimumValue>
+                    <maximumValue>500</maximumValue>
+                </logicalInteger>
+                <physicalInteger groupId="COLOR_TEMPERATURE">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="COLOR_TEMPERATURE_SET">
+                        <type>set</type>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="ALERT">
+                <properties>
+                    <casts>
+                        <optionString/>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalEnumeration>
+                    <defaultValue>0</defaultValue>
+                    <value>
+                        <id>none</id>
+                        <index>0</index>
+                    </value>
+                    <value>
+                        <id>select</id>
+                        <index>1</index>
+                    </value>
+                    <value>
+                        <id>lselect</id>
+                        <index>2</index>
+                    </value>
+                </logicalEnumeration>
+                <physicalString groupId="ALERT">
+                    <operationType>command</operationType>
+                </physicalString>
+                <packets>
+                    <packet id="ALERT_SET">
+                        <type>set</type>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="EFFECT">
+                <properties>
+                    <casts>
+                        <optionString/>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalEnumeration>
+                    <defaultValue>0</defaultValue>
+                    <value>
+                        <id>none</id>
+                        <index>0</index>
+                    </value>
+                    <value>
+                        <id>colorloop</id>
+                        <index>1</index>
+                    </value>
+                </logicalEnumeration>
+                <physicalInteger groupId="EFFECT">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="EFFECT_SET">
+                        <type>set</type>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="RGB">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalString/>
+                <physicalInteger groupId="RGB">
+                    <operationType>command</operationType>
+                </physicalInteger>
+            </parameter>
+            <parameter id="FAST_RGB">
+                <properties>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalString/>
+                <physicalInteger groupId="FAST_RGB">
+                    <operationType>command</operationType>
+                </physicalInteger>
+            </parameter>
+            <parameter id="COLORMODE">
+                <properties>
+                    <writeable>false</writeable>
+                    <casts>
+                        <optionString/>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalEnumeration>
+                    <value>
+                        <id>hs</id>
+                        <index>0</index>
+                    </value>
+                    <value>
+                        <id>xy</id>
+                        <index>1</index>
+                    </value>
+                    <value>
+                        <id>ct</id>
+                        <index>2</index>
+                    </value>
+                </logicalEnumeration>
+                <physicalInteger groupId="COLORMODE">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="REACHABLE">
+                <properties>
+                    <writeable>false</writeable>
+                    <service>true</service>
+                    <casts>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalBoolean/>
+                <physicalInteger groupId="REACHABLE">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+            <parameter id="XY">
+                <properties>
+                    <casts>
+                        <stringJsonArrayDecimal/>
+                        <rpcBinary/>
+                    </casts>
+                </properties>
+                <logicalString/>
+                <physicalInteger groupId="XY">
+                    <operationType>command</operationType>
+                </physicalInteger>
+                <packets>
+                    <packet id="XY_SET">
+                        <type>set</type>
+                    </packet>
+                    <packet id="INFO">
+                        <type>event</type>
+                    </packet>
+                </packets>
+            </parameter>
+        </variables>
+    </parameterGroups>
 </homegearDevice>
 
