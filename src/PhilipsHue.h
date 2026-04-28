@@ -30,6 +30,8 @@
 #ifndef PHILIPSHUE_H_
 #define PHILIPSHUE_H_
 
+#include <cstdint>
+
 #include <homegear-base/BaseLib.h>
 
 using namespace BaseLib;

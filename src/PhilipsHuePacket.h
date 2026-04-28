@@ -30,6 +30,8 @@
 #ifndef PHILIPSHUEPACKET_H_
 #define PHILIPSHUEPACKET_H_
 
+#include <cstdint>
+
 #include <homegear-base/BaseLib.h>
 
 #include <map>
