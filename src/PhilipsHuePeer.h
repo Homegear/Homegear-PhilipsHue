@@ -30,6 +30,8 @@
 #ifndef PHILIPSHUEPEER_H_
 #define PHILIPSHUEPEER_H_
 
+#include <cstdint>
+
 #include "PhilipsHuePacket.h"
 #include "PhysicalInterfaces/IPhilipsHueInterface.h"
 

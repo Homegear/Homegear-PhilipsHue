@@ -30,6 +30,8 @@
 #ifndef PHILIPSHUECENTRAL_H_
 #define PHILIPSHUECENTRAL_H_
 
+#include <cstdint>
+
 #include <homegear-base/BaseLib.h>
 #include "PhilipsHuePeer.h"
 #include "PhilipsHuePacket.h"
