@@ -30,6 +30,8 @@
 #ifndef HUEBRIDGE_H
 #define HUEBRIDGE_H
 
+#include <cstdint>
+
 #include "../PhilipsHuePacket.h"
 #include "IPhilipsHueInterface.h"
 
